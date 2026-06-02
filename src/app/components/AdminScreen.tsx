@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Users, Shield, Settings, ChevronRight, UserPlus, Trash2, Edit2,
-  Download, BarChart2, TrendingUp, Target, Megaphone, Map, Bell
+  Download, BarChart2, TrendingUp, Target, Megaphone, Map, Bell, MessageCircle
 } from 'lucide-react';
 import { InsightsPanel } from './InsightsPanel';
+import { WhatsAppModal } from './WhatsAppModal';
 import { ComunicadoModal } from './ComunicadoModal';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { HeatmapScreen } from './HeatmapScreen';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell,
@@ -37,10 +39,31 @@ function exportCSV(rows: Record<string, unknown>[], filename: string) {
 
 export function AdminScreen({ user, electors, users, canExport }: Props) {
   const showDashboard = user.role === 'lideranca' || user.role === 'coordenador_geral';
-  const [activeTab, setActiveTab] = useState<'users' | 'dashboard' | 'mapa' | 'alertas' | 'settings'>(
+  const [activeTab, setActiveTab] = useState<'users' | 'dashboard' | 'mapa' | 'alertas' | 'whatsapp' | 'settings'>(
     showDashboard ? 'dashboard' : 'users'
   );
   const [showComunicado, setShowComunicado] = useState(false);
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [disparosHistory, setDisparosHistory] = useState<{
+    id: string; mensagem: string; template_tipo: string;
+    total_destinatarios: number; total_enviados: number; total_falhas: number;
+    status: string; remetente_nome: string; criado_em: string;
+  }[]>([]);
+  const whatsappConfigured = import.meta.env.VITE_WHATSAPP_CONFIGURED === 'true';
+
+  const fetchDisparos = async () => {
+    if (!isSupabaseConfigured || !supabase) return;
+    const { data } = await supabase
+      .from('disparos_whatsapp')
+      .select('id, mensagem, template_tipo, total_destinatarios, total_enviados, total_falhas, status, remetente_nome, criado_em')
+      .order('criado_em', { ascending: false })
+      .limit(20);
+    if (data) setDisparosHistory(data);
+  };
+
+  useEffect(() => {
+    if (activeTab === 'whatsapp') fetchDisparos();
+  }, [activeTab]);
 
   // ── Export handlers ──
   const handleExportUsers = () => {
@@ -161,6 +184,14 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
       {showComunicado && (
         <ComunicadoModal user={user} onClose={() => setShowComunicado(false)} />
       )}
+      {showWhatsApp && (
+        <WhatsAppModal
+          user={user}
+          electors={electors}
+          onClose={() => setShowWhatsApp(false)}
+          onSent={() => { setShowWhatsApp(false); fetchDisparos(); }}
+        />
+      )}
 
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
@@ -224,6 +255,17 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             >
               <Bell className="w-4 h-4 inline mr-1" />
               Alertas
+            </button>
+          )}
+          {showDashboard && (
+            <button
+              onClick={() => setActiveTab('whatsapp')}
+              className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors ${
+                activeTab === 'whatsapp' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500'
+              }`}
+            >
+              <MessageCircle className="w-4 h-4 inline mr-1" />
+              WhatsApp
             </button>
           )}
           <button
@@ -459,12 +501,85 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
           </div>
         )}
 
-        {/* ── Tab Alertas ── */}
+        {/* -- Tab Alertas -- */}
         {activeTab === 'alertas' && showDashboard && (
           <InsightsPanel electors={electors} users={users} />
         )}
 
-        {/* ── Tab Configurações ── */}
+        {/* -- Tab WhatsApp -- */}
+        {activeTab === 'whatsapp' && showDashboard && (
+          <div className="space-y-4">
+            {/* Setup card quando API não configurada */}
+            {!whatsappConfigured && (
+              <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex gap-3">
+                <MessageCircle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-yellow-800 text-sm">Evolution API não configurada</p>
+                  <p className="text-xs text-yellow-700 mt-1">
+                    Configure os secrets <code className="bg-yellow-100 px-1 rounded">EVOLUTION_API_URL</code>,{' '}
+                    <code className="bg-yellow-100 px-1 rounded">EVOLUTION_API_KEY</code> e{' '}
+                    <code className="bg-yellow-100 px-1 rounded">EVOLUTION_INSTANCE</code> no Supabase, e adicione{' '}
+                    <code className="bg-yellow-100 px-1 rounded">VITE_WHATSAPP_CONFIGURED=true</code> ao .env para habilitar.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Botão Novo Disparo */}
+            <button
+              onClick={() => setShowWhatsApp(true)}
+              disabled={!whatsappConfigured}
+              className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Novo Disparo
+            </button>
+
+            {/* Histórico de disparos */}
+            <div className="bg-white rounded-xl shadow-sm">
+              <div className="p-4 border-b border-gray-100">
+                <h2 className="font-bold text-gray-900 text-sm flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4 text-green-600" />
+                  Histórico de Disparos
+                </h2>
+              </div>
+              {disparosHistory.length === 0 ? (
+                <div className="p-8 text-center text-gray-400">
+                  <MessageCircle className="w-10 h-10 mx-auto mb-2 opacity-25" />
+                  <p className="text-sm">Nenhum disparo realizado ainda</p>
+                </div>
+              ) : (
+                <div className="divide-y divide-gray-100">
+                  {disparosHistory.map(d => {
+                    const statusStyle =
+                      d.status === 'concluido' ? 'bg-green-100 text-green-800' :
+                      d.status === 'enviando'  ? 'bg-blue-100 text-blue-800' :
+                      d.status === 'erro'      ? 'bg-red-100 text-red-800' :
+                                                 'bg-gray-100 text-gray-700';
+                    return (
+                      <div key={d.id} className="p-4">
+                        <div className="flex items-start justify-between gap-2">
+                          <p className="text-sm text-gray-800 line-clamp-2 flex-1">{d.mensagem}</p>
+                          <span className={`flex-shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full ${statusStyle}`}>
+                            {d.status}
+                          </span>
+                        </div>
+                        <div className="flex gap-3 mt-2 text-xs text-gray-500">
+                          <span>📤 {d.total_enviados}/{d.total_destinatarios}</span>
+                          {d.total_falhas > 0 && <span className="text-red-500">✗ {d.total_falhas} falhas</span>}
+                          <span>por {d.remetente_nome}</span>
+                          <span>{new Date(d.criado_em).toLocaleDateString('pt-BR')}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* -- Tab Configurações -- */}
         {activeTab === 'settings' && (
           <div className="space-y-4">
             <div className="bg-white rounded-xl shadow">

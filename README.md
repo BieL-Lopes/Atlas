@@ -81,6 +81,7 @@ politiqui/
 │   │   │   ├── AdminScreen.tsx         # Dashboard Liderança + heatmap + alertas IA
 │   │   │   ├── HeatmapScreen.tsx       # Mapa de calor eleitoral (Leaflet)
 │   │   │   ├── InsightsPanel.tsx       # Painel de alertas inteligentes (IA)
+│   │   │   ├── WhatsAppModal.tsx       # Modal de disparos via WhatsApp (Evolution API)
 │   │   │   ├── AgendaScreen.tsx        # Agenda integrada ao Supabase
 │   │   │   ├── PollsScreen.tsx         # Enquetes integradas ao Supabase
 │   │   │   ├── CaptadorResultsScreen.tsx # Resultados e ranking do captador
@@ -308,6 +309,16 @@ Permissões adicionais (`rbac.ts`): `canCreateElector`, `canDeleteElector`, `can
 ### Comunicados & Notificações Push
 - Liderança e Coord. Geral enviam comunicados pelo app
 - Realtime via Supabase WebSocket: novos comunicados aparecem instantaneamente sem refresh
+
+### Automação via WhatsApp (Evolution API)
+- Disparos segmentados para eleitores com `aceitaWhatsapp = true` — filtro não removível (compliance legal)
+- Filtros de segmentação: nível de voto (forte/médio/fraco/indeciso), bairro, região
+- **4 templates** pré-definidos: Livre, Evento, Mobilização, Confirmação de presença
+- Fluxo guiado: compose → confirm → sending → done
+- Edge Function `send-whatsapp` com rate limiting de 500ms entre envios (Deno, Evolution API REST)
+- Log completo na tabela `disparos_whatsapp`: status, contadores enviados/falhas, remetente
+- Aba **WhatsApp** no AdminScreen com histórico e card de setup quando API não configurada
+- Configuração: `VITE_WHATSAPP_CONFIGURED=true` + secrets `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCE` no Supabase
 - Notificação push quando app está em segundo plano (Web Push API + Edge Function)
 - Clique na notificação navega automaticamente para a tela de comunicados
 

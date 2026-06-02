@@ -43,7 +43,7 @@
 | Score eleitoral automático por eleitor | ✅ |
 | Mapa / heatmap eleitoral | ✅ |
 | IA de campanha (alertas inteligentes) | 🔲 ⭐ |
-| Automação via WhatsApp | 🔲 ⭐ |
+| Automação via WhatsApp | ✅ ⭐ |
 
 ---
 
@@ -274,16 +274,19 @@
 
 ---
 
-#### 9.11 — Automação via WhatsApp 🔲 ⭐
+#### 9.11 — Automação via WhatsApp ✅ ⭐
 **Complexidade: Muito Alta** — integração com API externa, compliance legal obrigatório.
 
-> O campo `aceitaWhatsapp` já existe no cadastro do eleitor — a base está preparada.
+> Provider: **Evolution API** (open-source, self-hosted). O campo `aceitaWhatsapp` já existe no cadastro.
 
-- [ ] Integração com WhatsApp Business API (Twilio, Z-API ou similar)
-- [ ] Disparos segmentados: por bairro, por nível de apoio, por região
-- [ ] Templates de mensagem para eventos, mobilização e confirmação de presença
-- [ ] Respeitar o opt-in (`aceitaWhatsapp = true`) para evitar problemas legais
-- [ ] Log de envios com status de entrega por eleitor
+- [x] Integração com Evolution API (REST, self-hosted, gratuito)
+- [x] Disparos segmentados: por nível de apoio, por bairro, por região
+- [x] Templates: Livre, Evento, Mobilização, Confirmação de presença
+- [x] `aceitaWhatsapp = true` sempre forçado — filtro não removível (compliance legal)
+- [x] Log de disparos com status (pendente/enviando/concluido/erro) e contadores enviados/falhas
+- [x] Edge Function `send-whatsapp` com rate limiting (500ms entre envios)
+- [x] Aba **WhatsApp** no AdminScreen (Liderança e Coord. Geral) com histórico de disparos
+- [x] Card de setup quando API não configurada (`VITE_WHATSAPP_CONFIGURED`)
 
 ---
 

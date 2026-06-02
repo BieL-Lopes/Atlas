@@ -369,3 +369,55 @@ CREATE POLICY "push_sub_self" ON public.push_subscriptions
 DROP POLICY IF EXISTS "push_sub_service" ON public.push_subscriptions;
 CREATE POLICY "push_sub_service" ON public.push_subscriptions
   FOR SELECT USING (auth.role() = 'service_role');
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- Tabela: disparos_whatsapp (log de disparos em massa via WhatsApp)
+-- ─────────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.disparos_whatsapp (
+  id                   UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  mensagem             TEXT NOT NULL,
+  template_tipo        TEXT NOT NULL DEFAULT 'livre'
+    CONSTRAINT disparo_template_check
+      CHECK (template_tipo IN ('livre', 'evento', 'mobilizacao', 'confirmacao')),
+  filtros              JSONB NOT NULL DEFAULT '{}',
+  total_destinatarios  INTEGER NOT NULL DEFAULT 0,
+  total_enviados       INTEGER NOT NULL DEFAULT 0,
+  total_falhas         INTEGER NOT NULL DEFAULT 0,
+  status               TEXT NOT NULL DEFAULT 'pendente'
+    CONSTRAINT disparo_status_check
+      CHECK (status IN ('pendente', 'enviando', 'concluido', 'erro')),
+  remetente_id         UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
+  remetente_nome       TEXT NOT NULL DEFAULT '',
+  criado_em            TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS disparos_whatsapp_criado_em_idx ON public.disparos_whatsapp (criado_em DESC);
+CREATE INDEX IF NOT EXISTS disparos_whatsapp_remetente_idx ON public.disparos_whatsapp (remetente_id);
+
+ALTER TABLE public.disparos_whatsapp ENABLE ROW LEVEL SECURITY;
+
+-- Liderança e Coord. Geral podem ver e criar disparos
+DROP POLICY IF EXISTS "disparo_read" ON public.disparos_whatsapp;
+CREATE POLICY "disparo_read" ON public.disparos_whatsapp
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM public.perfis
+      WHERE id = auth.uid()
+        AND role IN ('lideranca', 'coordenador_geral')
+    )
+  );
+
+DROP POLICY IF EXISTS "disparo_insert" ON public.disparos_whatsapp;
+CREATE POLICY "disparo_insert" ON public.disparos_whatsapp
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.perfis
+      WHERE id = auth.uid()
+        AND role IN ('lideranca', 'coordenador_geral')
+    )
+  );
+
+-- Service role pode atualizar status e contadores (Edge Function)
+DROP POLICY IF EXISTS "disparo_service_update" ON public.disparos_whatsapp;
+CREATE POLICY "disparo_service_update" ON public.disparos_whatsapp
+  FOR UPDATE USING (auth.role() = 'service_role');
