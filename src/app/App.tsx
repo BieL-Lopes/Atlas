@@ -480,6 +480,7 @@ export default function App() {
               medio: electors.filter(e => e.nivelVoto === 'medio').length,
               fraco: electors.filter(e => e.nivelVoto === 'fraco').length,
             }}
+            electors={electors}
             onNavigate={setCurrentScreen}
             onLogout={handleLogout}
             userRole={user?.role || 'eleitor'}

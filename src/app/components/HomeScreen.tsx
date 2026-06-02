@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Plus, Users, TrendingUp, MapPin, LogOut, Clock, Calendar, PieChart, Megaphone, ChevronDown, ChevronUp, Flame, Target, Trophy } from 'lucide-react';
 import { UserRole, getPermissions, ROLE_LABELS } from '../lib/rbac';
+import { ElectorData } from './CaptureForm';
 import { User } from '../lib/auth';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { META_DIARIA, MEDALS } from '../lib/gamification';
@@ -11,7 +12,7 @@ interface Activity {
   time: string;
   title: string;
   location: string;
-  type: 'reuniao' | 'visita';
+  type: string;
 }
 
 interface Comunicado {
@@ -39,30 +40,68 @@ interface HomeScreenProps {
   onLogout: () => void;
   userRole: UserRole;
   captadorStats?: CaptadorStats;
+  electors?: ElectorData[];
 }
 
-// Atividades mockadas para demonstração
-const MOCK_ACTIVITIES: Activity[] = [
-  {
-    id: '1',
-    time: '14:00',
-    title: 'Reunião com Liderança do Bairro Centro',
-    location: 'Salão Comunitário',
-    type: 'reuniao'
-  },
-  {
-    id: '2',
-    time: '16:30',
-    title: 'Visita na casa do eleitor João da Silva',
-    location: 'Rua das Flores, 123',
-    type: 'visita'
-  }
-];
 
-export function HomeScreen({ user, userName, totalCadastros, votoStats, onNavigate, onLogout, userRole, captadorStats }: HomeScreenProps) {
+
+export function HomeScreen({ user, userName, totalCadastros, votoStats, onNavigate, onLogout, userRole, captadorStats, electors = [] }: HomeScreenProps) {
   const permissions = getPermissions(userRole);
   const [comunicados, setComunicados] = useState<Comunicado[]>([]);
   const [expandedCom, setExpandedCom] = useState<string | null>(null);
+  const [agendaHoje, setAgendaHoje] = useState<Activity[]>([]);
+
+  // Agenda do dia — busca do Supabase
+  useEffect(() => {
+    if (!user || !isSupabaseConfigured || !supabase) return;
+    const hoje = new Date().toISOString().split('T')[0];
+    supabase
+      .from('agenda_itens')
+      .select('id, titulo, hora, local, tipo')
+      .eq('criado_por', user.id)
+      .eq('data', hoje)
+      .order('hora', { ascending: true })
+      .then(({ data }) => {
+        if (data) {
+          setAgendaHoje(data.map((a: Record<string, string>) => ({
+            id: a.id,
+            time: a.hora?.slice(0, 5) ?? '',
+            title: a.titulo,
+            location: a.local ?? '',
+            type: a.tipo ?? 'outro',
+          })));
+        }
+      });
+  }, [user?.id]);
+
+  // Top 3 bairros por número de eleitores
+  const top3Regioes = useMemo(() => {
+    if (!electors.length) return [];
+    const map: Record<string, number> = {};
+    electors.forEach(e => {
+      const key = e.bairro || e.cidade || 'Sem região';
+      map[key] = (map[key] || 0) + 1;
+    });
+    return Object.entries(map).sort(([, a], [, b]) => b - a).slice(0, 3);
+  }, [electors]);
+
+  const maxRegiao = top3Regioes[0]?.[1] ?? 1;
+
+  // Cadastros desta semana
+  const thisWeekCount = useMemo(() => {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const base = captadorStats
+      ? electors.filter(e => e.createdBy === user?.id)
+      : electors;
+    return base.filter(e => new Date(e.dataCadastro) >= weekAgo).length;
+  }, [electors, captadorStats, user?.id]);
+
+  // Número de regiões únicas
+  const totalRegioes = useMemo(
+    () => new Set(electors.map(e => e.bairro || e.cidade).filter(Boolean)).size || 1,
+    [electors]
+  );
 
   useEffect(() => {
     if (!user || !isSupabaseConfigured || !supabase) return;
@@ -148,7 +187,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
           </div>
           <div className="flex items-center text-green-600 text-sm">
             <TrendingUp className="w-4 h-4 mr-1" />
-            <span>+{Math.floor((captadorStats ? captadorStats.total : totalCadastros) * 0.3)} esta semana</span>
+            <span>+{thisWeekCount} esta semana</span>
           </div>
         </button>
 
@@ -226,7 +265,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
               </div>
               <div className="flex items-center">
                 <MapPin className="w-4 h-4 text-blue-600 mr-1" />
-                <p className="text-2xl font-bold text-blue-600">{Math.max(1, Math.floor(totalCadastros / 10))}</p>
+                <p className="text-2xl font-bold text-blue-600">{totalRegioes}</p>
               </div>
             </div>
           </div>
@@ -302,50 +341,26 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
             <MapPin className="w-5 h-5 mr-2 text-blue-600" />
             <h3 className="font-bold text-gray-900">Top 3 Regiões</h3>
           </div>
-
-          <div className="space-y-4">
-            {/* Item 1 - Centro */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm font-medium text-gray-700">Centro</span>
-                <span className="text-sm font-semibold text-blue-600">45 votos</span>
-              </div>
-              <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-600 rounded-full transition-all"
-                  style={{ width: '80%' }}
-                ></div>
-              </div>
+          {top3Regioes.length === 0 ? (
+            <p className="text-sm text-gray-400 text-center py-4">Nenhum eleitor cadastrado ainda</p>
+          ) : (
+            <div className="space-y-4">
+              {top3Regioes.map(([nome, count]) => (
+                <div key={nome}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-sm font-medium text-gray-700">{nome}</span>
+                    <span className="text-sm font-semibold text-blue-600">{count} eleitor{count !== 1 ? 'es' : ''}</span>
+                  </div>
+                  <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-blue-600 rounded-full transition-all"
+                      style={{ width: `${(count / maxRegiao) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
-
-            {/* Item 2 - Jardim Primavera */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm font-medium text-gray-700">Jardim Primavera</span>
-                <span className="text-sm font-semibold text-blue-600">28 votos</span>
-              </div>
-              <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-600 rounded-full transition-all"
-                  style={{ width: '50%' }}
-                ></div>
-              </div>
-            </div>
-
-            {/* Item 3 - Vila Nova */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm font-medium text-gray-700">Vila Nova</span>
-                <span className="text-sm font-semibold text-blue-600">15 votos</span>
-              </div>
-              <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-blue-600 rounded-full transition-all"
-                  style={{ width: '30%' }}
-                ></div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Agenda do Dia */}
@@ -361,35 +376,45 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
           </div>
 
           <div className="space-y-3">
-            {MOCK_ACTIVITIES.map(activity => (
-              <div
-                key={activity.id}
-                className="bg-white rounded-xl shadow p-4 border-l-4 border-blue-600"
-              >
-                <div className="flex items-start">
-                  <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mr-3 flex-shrink-0">
-                    <Clock className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center mb-1">
-                      <span className="font-bold text-blue-600 mr-2">{activity.time}</span>
-                      <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                        activity.type === 'reuniao'
-                          ? 'bg-purple-100 text-purple-700'
-                          : 'bg-green-100 text-green-700'
-                      }`}>
-                        {activity.type === 'reuniao' ? '🤝 Reunião' : '🏠 Visita'}
-                      </span>
+            {agendaHoje.length === 0 ? (
+              <div className="bg-white rounded-xl shadow p-4 text-center text-sm text-gray-400">
+                Nenhum item na agenda para hoje
+              </div>
+            ) : (
+              agendaHoje.map(activity => (
+                <div
+                  key={activity.id}
+                  className="bg-white rounded-xl shadow p-4 border-l-4 border-blue-600"
+                >
+                  <div className="flex items-start">
+                    <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mr-3 flex-shrink-0">
+                      <Clock className="w-6 h-6 text-blue-600" />
                     </div>
-                    <p className="font-semibold text-gray-900 mb-1">{activity.title}</p>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <MapPin className="w-3 h-3 mr-1" />
-                      <span>{activity.location}</span>
+                    <div className="flex-1">
+                      <div className="flex items-center mb-1">
+                        <span className="font-bold text-blue-600 mr-2">{activity.time}</span>
+                        <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                          activity.type === 'reuniao'
+                            ? 'bg-purple-100 text-purple-700'
+                            : activity.type === 'visita'
+                            ? 'bg-green-100 text-green-700'
+                            : 'bg-gray-100 text-gray-700'
+                        }`}>
+                          {activity.type === 'reuniao' ? '🤝 Reunião' : activity.type === 'visita' ? '🏠 Visita' : activity.type}
+                        </span>
+                      </div>
+                      <p className="font-semibold text-gray-900 mb-1">{activity.title}</p>
+                      {activity.location && (
+                        <div className="flex items-center text-sm text-gray-600">
+                          <MapPin className="w-3 h-3 mr-1" />
+                          <span>{activity.location}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
 
             <button
               onClick={() => onNavigate('agenda')}
