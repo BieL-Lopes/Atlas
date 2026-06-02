@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import {
   Users, Shield, Settings, ChevronRight, UserPlus, Trash2, Edit2,
-  Download, BarChart2, TrendingUp, Target, Megaphone, Map
+  Download, BarChart2, TrendingUp, Target, Megaphone, Map, Bell
 } from 'lucide-react';
+import { InsightsPanel } from './InsightsPanel';
 import { ComunicadoModal } from './ComunicadoModal';
 import { HeatmapScreen } from './HeatmapScreen';
 import {
@@ -36,7 +37,7 @@ function exportCSV(rows: Record<string, unknown>[], filename: string) {
 
 export function AdminScreen({ user, electors, users, canExport }: Props) {
   const showDashboard = user.role === 'lideranca' || user.role === 'coordenador_geral';
-  const [activeTab, setActiveTab] = useState<'users' | 'dashboard' | 'mapa' | 'settings'>(
+  const [activeTab, setActiveTab] = useState<'users' | 'dashboard' | 'mapa' | 'alertas' | 'settings'>(
     showDashboard ? 'dashboard' : 'users'
   );
   const [showComunicado, setShowComunicado] = useState(false);
@@ -212,6 +213,17 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             >
               <Map className="w-4 h-4 inline mr-1" />
               Mapa
+            </button>
+          )}
+          {showDashboard && (
+            <button
+              onClick={() => setActiveTab('alertas')}
+              className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors ${
+                activeTab === 'alertas' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              }`}
+            >
+              <Bell className="w-4 h-4 inline mr-1" />
+              Alertas
             </button>
           )}
           <button
@@ -445,6 +457,11 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
           <div className="h-[calc(100vh-180px)]">
             <HeatmapScreen electors={electors} users={users} />
           </div>
+        )}
+
+        {/* ── Tab Alertas ── */}
+        {activeTab === 'alertas' && showDashboard && (
+          <InsightsPanel electors={electors} users={users} />
         )}
 
         {/* ── Tab Configurações ── */}

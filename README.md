@@ -78,8 +78,9 @@ politiqui/
 │   │   │   ├── ElectorProfile.tsx      # Perfil + QR Code + score de engajamento
 │   │   │   ├── QrScannerModal.tsx      # Leitura de QR via câmera
 │   │   │   ├── CoordinationScreen.tsx  # Coordenação + heatmap + comparativo
-│   │   │   ├── AdminScreen.tsx         # Dashboard Liderança + heatmap + comunicados
+│   │   │   ├── AdminScreen.tsx         # Dashboard Liderança + heatmap + alertas IA
 │   │   │   ├── HeatmapScreen.tsx       # Mapa de calor eleitoral (Leaflet)
+│   │   │   ├── InsightsPanel.tsx       # Painel de alertas inteligentes (IA)
 │   │   │   ├── AgendaScreen.tsx        # Agenda integrada ao Supabase
 │   │   │   ├── PollsScreen.tsx         # Enquetes integradas ao Supabase
 │   │   │   ├── CaptadorResultsScreen.tsx # Resultados e ranking do captador
@@ -94,6 +95,7 @@ politiqui/
 │   │       ├── useSync.ts          # Hook: isOnline, pendingCount, syncedAt
 │   │       ├── supabase.ts         # Cliente Supabase singleton
 │   │       ├── score.ts            # Score de engajamento eleitoral (0–100)
+│   │       ├── insights.ts         # Motor de alertas inteligentes (IA de campanha)
 │   │       ├── gamification.ts     # Ranking, medalhas e streak do captador
 │   │       └── __tests__/
 │   │           ├── rbac.test.ts
@@ -272,6 +274,19 @@ Permissões adicionais (`rbac.ts`): `canCreateElector`, `canDeleteElector`, `can
 - Filtro por faixa de score na lista de contatos (Todos / Alto / Médio / Baixo)
 - Score médio da equipe exibido na barra de estatísticas
 
+### IA de Campanha — Alertas Inteligentes (`insights.ts` + `InsightsPanel.tsx`)
+- Motor de análise 100% client-side, sem chamadas externas
+- **6 tipos de alerta** gerados automaticamente:
+  - Captador sem atividade ≥3 dias (⚠️) ou ≥7 dias (🚨)
+  - Queda de cadastros por bairro (últimos 7d vs semana anterior, mín. 30%)
+  - Tendência geral da semana: crescimento ou queda >20%
+  - Oportunidade: bairro com ≥30% de eleitores indecisos
+  - Alta concentração de oposição ≥25% em um bairro
+  - Captador destaque da semana (≥3 cadastros, mais produtivo)
+- **Score de risco por região**: ponderação de fracos (0.5×), indecisos (0.3×) e oposição (1.0×) → 0–100
+- **Redistribuição sugerida**: captadores inativos 5+ dias redirecionados à região com mais indecisos
+- Aba **Alertas** no AdminScreen (Liderança e Coord. Geral) com resumo Críticos / Atenção / Positivos
+
 ### Heatmap Eleitoral (`HeatmapScreen.tsx`)
 - Mapa interativo (Leaflet) com eleitores como círculos coloridos por nível de voto
 - Verde = forte · Amarelo = médio · Vermelho = fraco · Cinza = indeciso · Roxo = oposição
@@ -382,6 +397,7 @@ npx serve dist -l 3000
 - [x] **Offline total:** fechar app → modo avião → reabrir → dados exibidos
 - [ ] **Push notification:** enviar comunicado → notificação chega no dispositivo bloqueado
 - [ ] **Heatmap:** logar como Liderança → Admin → Mapa → marcadores visíveis no mapa
+- [ ] **Alertas IA:** Admin → Alertas → painel exibe cards com insights e score de risco por região
 
 ---
 
@@ -701,3 +717,6 @@ Acesse `http://<IP-local>:3000` no celular (mesma rede Wi-Fi).
 - [X] **Sync:** desativar modo avião → badge some → eleitor visível no Supabase Dashboard
 - [X] **Permissões de papel:** logar como `marcos@politiqui.com` (Eleitor) → aba Contatos não aparece
 - [X] **Offline total:** fechar app → modo avião → reabrir → dados anteriores exibidos
+- [ ] **Push notification:** enviar comunicado → notificação chega no dispositivo bloqueado
+- [ ] **Heatmap:** logar como Liderança → Admin → Mapa → marcadores visíveis no mapa
+- [ ] **Alertas IA:** Admin → Alertas → painel exibe cards com insights e score de risco por região

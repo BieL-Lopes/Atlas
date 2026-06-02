@@ -258,15 +258,19 @@
 
 ---
 
-#### 9.10 — IA de Campanha (Alertas Inteligentes) 🔲 ⭐
+#### 9.10 — IA de Campanha (Alertas Inteligentes) ✅ ⭐
 **Complexidade: Alta** — análise de padrões e geração de alertas automáticos.
 
-- [ ] Alertas automáticos no dashboard da Liderança, por exemplo:
-  - "Bairro Jardim Europa caiu 18% nos últimos 7 dias"
-  - "Coordenador João está sem atividade há 3 dias"
-  - "Captadores da Zona Norte convertem 32% mais"
-- [ ] Score de risco por região
-- [ ] Sugestão de redistribuição de equipe baseada em dados históricos
+- [x] Alertas automáticos no dashboard da Liderança:
+  - Captador sem atividade ≥3 dias (warning) / ≥7 dias (danger)
+  - Queda de cadastros por bairro (últimos 7d vs semana anterior)
+  - Tendência geral semanal (crescendo / caindo)
+  - Oportunidade: bairro com ≥30% indecisos
+  - Alta concentração de oposição ≥25%
+  - Captador destaque da semana
+- [x] Score de risco por região (ponderação fraco/indeciso/oposição, barra colorida 0–100)
+- [x] Sugestão de redistribuição de captadores inativos para regiões com mais indecisos
+- [x] Aba **Alertas** no AdminScreen (Liderança e Coord. Geral) com resumo Críticos/Atenção/Positivos
 
 ---
 
@@ -291,4 +295,4 @@
 
 ---
 
-*Última atualização: Mai/2026*
+*Última atualização: Jun/2026*
