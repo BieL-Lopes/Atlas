@@ -1,4 +1,4 @@
-Análise da Estrutura do App Politiqui
+Análise da Estrutura do App Atlas
 Pelas telas fornecidas (login, Início, Contatos, Agenda, Enquetes) é possível mapear as principais entidades e fluxos de dados do app. Há usuários (ex.: “Victor” na tela inicial) com perfil e roles (eleitores, captadores, lideranças, etc.), e um banco local que armazena dados de eleitores cadastrados (nome, endereço, CPF/E-mail), atividades de agenda (reuniões, visitas com data e horário, vinculadas a eleitores), e enquetes (pesquisas com perguntas e contagem de respostas). A tela “Meus Contatos” indica que cada eleitor cadastrado possui nome e endereço (ex.: “João da Silva, Rua das Flores, 123”). A tela “Enquetes” sugere que há registros de pesquisas (perguntas, status “Ativa/Encerrada” e respostas totais). Na arquitetura, provavelmente há um repositório local (SQLite ou similar) que guarda essas entidades, e uma API para sincronizar quando online.
 
 Requisitos Funcionais das Mudanças Solicitadas

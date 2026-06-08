@@ -109,7 +109,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             <div className="w-20 h-20 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
               <UserIcon className="w-10 h-10 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">POLITIQUI</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">ATLAS</h1>
             <p className="text-gray-600">Sistema de Captação de Eleitores</p>
           </div>
 

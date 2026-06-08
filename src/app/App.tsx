@@ -70,7 +70,7 @@ export default function App() {
   // Carrega dados do IndexedDB na inicialização (com migração do localStorage)
   useEffect(() => {
     const loadData = async () => {
-      const savedUser = localStorage.getItem('politiqui_user');
+      const savedUser = localStorage.getItem('atlas_user');
       if (savedUser) {
         // Valida que existe uma sessão Supabase ativa para o projeto atual
         let sessionValid = true;
@@ -78,7 +78,7 @@ export default function App() {
           const { data: { session } } = await supabase.auth.getSession();
           if (!session) {
             // Sessão expirada ou de projeto diferente — força novo login
-            localStorage.removeItem('politiqui_user');
+            localStorage.removeItem('atlas_user');
             sessionValid = false;
           }
         }
@@ -89,7 +89,7 @@ export default function App() {
       }
 
       // Migração one-time: move dados do localStorage para IndexedDB
-      const lsElectors = localStorage.getItem('politiqui_electors');
+      const lsElectors = localStorage.getItem('atlas_electors');
       if (lsElectors) {
         const parsed: ElectorData[] = JSON.parse(lsElectors);
         const migrated = parsed.map(e => ({
@@ -98,7 +98,7 @@ export default function App() {
           ...e,
         }));
         await db.electors.bulkPut(migrated);
-        localStorage.removeItem('politiqui_electors');
+        localStorage.removeItem('atlas_electors');
       }
 
       const all = await db.electors.orderBy('dataCadastro').reverse().toArray();
@@ -141,7 +141,7 @@ export default function App() {
 
   const handleLogin = async (userData: User) => {
     setUser(userData);
-    localStorage.setItem('politiqui_user', JSON.stringify(userData));
+    localStorage.setItem('atlas_user', JSON.stringify(userData));
     resetLastSync(); // força pull completo na próxima sincronização
     setCurrentScreen('home');
     subscribeToPush(userData.id); // solicita permissão push (fire-and-forget)
@@ -296,7 +296,7 @@ export default function App() {
   const handleLogout = async () => {
     if (user) unsubscribeFromPush(user.id);
     setUser(null);
-    localStorage.removeItem('politiqui_user');
+    localStorage.removeItem('atlas_user');
     await signOut();
     setCurrentScreen('login');
     toast.info('Até logo!');

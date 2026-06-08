@@ -1,4 +1,4 @@
-# Plano de Ação — Politiqui
+# Plano de Ação — Atlas
 
 > App de gestão eleitoral com 5 perfis: **Liderança**, **Coordenador Geral**, **Coordenador Regional**, **Captador** e **Eleitor**.
 
@@ -117,7 +117,7 @@
 > Conectar o app a um servidor real para persistência multi-dispositivo.
 
 - [x] Banco de dados Supabase com tabelas `profiles` e `electors` + triggers de `updated_at`
-- [x] Autenticação real — CPF vira email virtual `{digits}@cpf.politiqui`, fallback para mock
+- [x] Autenticação real — CPF vira email virtual `{digits}@cpf.atlas`, fallback para mock
 - [x] Sincronização bidirecional — push (last-write-wins por `entityId`) + pull (diff desde `lastSyncAt`)
 - [x] Permissões no servidor (RLS Supabase) espelhando o RBAC do cliente
 

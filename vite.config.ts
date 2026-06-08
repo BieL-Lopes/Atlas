@@ -33,8 +33,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icon.svg'],
       manifest: {
-        name: 'Politiqui',
-        short_name: 'Politiqui',
+        name: 'Atlas',
+        short_name: 'Atlas',
         description: 'Sistema de Captação de Eleitores',
         theme_color: '#2563eb',
         background_color: '#2563eb',

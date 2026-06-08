@@ -388,7 +388,7 @@ onde há mais apoio
 quem converte mais
 quais bairros crescem
 onde insistir campanha
-O QUE FARIA O POLITIQUI VIRAR DIFERENCIADO
+O QUE FARIA O ATLAS VIRAR DIFERENCIADO
 Score eleitoral automático
 
 O sistema calcula:

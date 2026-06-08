@@ -9,12 +9,12 @@ export interface PendingChange {
   timestamp: string;
 }
 
-class PolitiquiDB extends Dexie {
+class AtlasDB extends Dexie {
   electors!: Table<ElectorData, string>;
   pendingChanges!: Table<PendingChange, number>;
 
   constructor() {
-    super('politiqui');
+    super('atlas');
     this.version(1).stores({
       electors: 'id, createdBy, dataCadastro',
       pendingChanges: '++id, entityId, timestamp',
@@ -26,4 +26,4 @@ class PolitiquiDB extends Dexie {
   }
 }
 
-export const db = new PolitiquiDB();
+export const db = new AtlasDB();

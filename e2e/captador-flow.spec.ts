@@ -4,11 +4,11 @@ import { test, expect, type Page } from '@playwright/test';
 
 async function loginAsCaptador(page: Page) {
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: /politiqui/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /atlas/i })).toBeVisible();
 
   // Aceita login por e-mail ou por CPF
   const loginInput = page.getByLabel(/cpf|e-mail|login/i).first();
-  await loginInput.fill('rafael@politiqui.com');
+  await loginInput.fill('rafael@atlas.com');
 
   const passwordInput = page.getByLabel(/senha/i).first();
   await passwordInput.fill('1234');
@@ -28,7 +28,7 @@ test.describe('Fluxo do Captador', () => {
   test('tela de login é exibida ao abrir o app', async ({ page }) => {
     await page.goto('/');
     // Deve conter algum elemento de autenticação
-    await expect(page.getByRole('heading', { name: /politiqui/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /atlas/i })).toBeVisible();
     await expect(page.getByLabel(/cpf|e-mail|login/i).first()).toBeVisible();
     await expect(page.getByLabel(/senha/i).first()).toBeVisible();
   });

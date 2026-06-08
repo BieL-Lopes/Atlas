@@ -1,5 +1,5 @@
 
-# POLITIQUI
+# ATLAS
 
 Sistema de captação e gestão eleitoral para campanhas brasileiras — Progressive Web App com suporte offline-first, sincronização com Supabase, notificações push e controle de acesso por papel (RBAC).
 
@@ -23,7 +23,7 @@ Sistema de captação e gestão eleitoral para campanhas brasileiras — Progres
 
 ## 1. Visão Geral
 
-O Politiqui permite que equipes de campanha cadastrem e gerenciem eleitores diretamente pelo celular, mesmo sem conexão à internet. Os dados são salvos localmente via IndexedDB e sincronizados automaticamente com o Supabase quando a conexão é restabelecida.
+O Atlas permite que equipes de campanha cadastrem e gerenciem eleitores diretamente pelo celular, mesmo sem conexão à internet. Os dados são salvos localmente via IndexedDB e sincronizados automaticamente com o Supabase quando a conexão é restabelecida.
 
 **Fluxo resumido:**
 
@@ -60,7 +60,7 @@ Liderança → Envia comunicado → Push notification para equipe
 ## 3. Estrutura do Projeto
 
 ```
-politiqui/
+atlas/
 ├── e2e/                        # Testes E2E Playwright
 │   └── captador-flow.spec.ts
 ├── supabase/
@@ -123,7 +123,7 @@ politiqui/
 
 ```bash
 git clone <repo>
-cd politiqui
+cd atlas
 npm install
 ```
 
@@ -187,7 +187,7 @@ supabase functions deploy send-push
 # Configurar variáveis da função
 supabase secrets set VAPID_PUBLIC_KEY=<chave-publica>
 supabase secrets set VAPID_PRIVATE_KEY=<chave-privada>
-supabase secrets set VAPID_SUBJECT=mailto:contato@politiqui.com
+supabase secrets set VAPID_SUBJECT=mailto:contato@atlas.com
 ```
 
 ---
@@ -223,13 +223,13 @@ Criados pelo `seed.sql`. Senha de todos: **`1234`**
 
 | E-mail | CPF (login alternativo) | Papel |
 |---|---|---|
-| `victor@politiqui.com` | `000.000.000-01` | Liderança |
-| `ana@politiqui.com` | `000.000.000-02` | Coordenador Geral |
-| `carlos@politiqui.com` | `000.000.000-03` | Coordenador Regional |
-| `fernanda@politiqui.com` | `000.000.000-04` | Coordenador Regional |
-| `rafael@politiqui.com` | `000.000.000-05` | Captador de Votos |
-| `juliana@politiqui.com` | `000.000.000-06` | Captador de Votos |
-| `marcos@politiqui.com` | `000.000.000-07` | Eleitor |
+| `victor@atlas.com` | `000.000.000-01` | Liderança |
+| `ana@atlas.com` | `000.000.000-02` | Coordenador Geral |
+| `carlos@atlas.com` | `000.000.000-03` | Coordenador Regional |
+| `fernanda@atlas.com` | `000.000.000-04` | Coordenador Regional |
+| `rafael@atlas.com` | `000.000.000-05` | Captador de Votos |
+| `juliana@atlas.com` | `000.000.000-06` | Captador de Votos |
+| `marcos@atlas.com` | `000.000.000-07` | Eleitor |
 
 > O login aceita tanto o **e-mail** quanto o **CPF** (com ou sem formatação).
 
@@ -399,7 +399,7 @@ npx serve dist -l 3000
 
 - [x] **Instalação:** Chrome exibe "Adicionar à tela inicial" → ícone aparece na home
 - [x] **Login por CPF:** `00000000005`, senha `1234` → login bem-sucedido
-- [x] **Login por e-mail:** `rafael@politiqui.com`, senha `1234` → login bem-sucedido
+- [x] **Login por e-mail:** `rafael@atlas.com`, senha `1234` → login bem-sucedido
 - [x] **Cadastro de eleitor:** preencher todos os campos → salvar → aparece na lista
 - [x] **Escaneamento QR:** abre câmera → lê QR → preenche título
 - [x] **Modo avião:** cadastrar → badge de pendentes aparece
@@ -418,7 +418,7 @@ npx serve dist -l 3000
 
 ## 1. Visão Geral
 
-O Politiqui permite que equipes de campanha cadastrem e gerenciem eleitores diretamente pelo celular, mesmo sem conexão à internet. Os dados são salvos localmente via IndexedDB e sincronizados automaticamente com o Supabase quando a conexão é restabelecida.
+O Atlas permite que equipes de campanha cadastrem e gerenciem eleitores diretamente pelo celular, mesmo sem conexão à internet. Os dados são salvos localmente via IndexedDB e sincronizados automaticamente com o Supabase quando a conexão é restabelecida.
 
 **Fluxo resumido:**
 
@@ -451,7 +451,7 @@ Coordenador / Liderança → Vê dados agregados em tempo real
 ## 3. Estrutura do Projeto
 
 ```
-politiqui/
+atlas/
 ├── e2e/                        # Testes E2E Playwright
 │   └── captador-flow.spec.ts
 ├── supabase/
@@ -503,7 +503,7 @@ politiqui/
 
 ```bash
 git clone <repo>
-cd politiqui
+cd atlas
 npm install
 ```
 
@@ -579,13 +579,13 @@ Criados pelo `seed.sql`. Senha de todos: **`1234`**
 
 | E-mail | CPF (login alternativo) | Papel |
 |---|---|---|
-| `victor@politiqui.com` | `000.000.000-01` | Liderança |
-| `ana@politiqui.com` | `000.000.000-02` | Coordenador Geral |
-| `carlos@politiqui.com` | `000.000.000-03` | Coordenador Regional |
-| `fernanda@politiqui.com` | `000.000.000-04` | Coordenador Regional |
-| `rafael@politiqui.com` | `000.000.000-05` | Captador de Votos |
-| `juliana@politiqui.com` | `000.000.000-06` | Captador de Votos |
-| `marcos@politiqui.com` | `000.000.000-07` | Eleitor |
+| `victor@atlas.com` | `000.000.000-01` | Liderança |
+| `ana@atlas.com` | `000.000.000-02` | Coordenador Geral |
+| `carlos@atlas.com` | `000.000.000-03` | Coordenador Regional |
+| `fernanda@atlas.com` | `000.000.000-04` | Coordenador Regional |
+| `rafael@atlas.com` | `000.000.000-05` | Captador de Votos |
+| `juliana@atlas.com` | `000.000.000-06` | Captador de Votos |
+| `marcos@atlas.com` | `000.000.000-07` | Eleitor |
 
 > O login aceita tanto o **e-mail** quanto o **CPF** (com ou sem formatação).
 
@@ -721,12 +721,12 @@ Acesse `http://<IP-local>:3000` no celular (mesma rede Wi-Fi).
 - [X] **Instalação:** Chrome exibe banner "Adicionar à tela inicial" → ícone aparece na home
 - [ ] **Splash screen:** abre com tela de carregamento estilizada
 - [X] **Login por CPF:** digitar `00000000005`, senha `1234` → login bem-sucedido
-- [X] **Login por e-mail:** digitar `rafael@politiqui.com`, senha `1234` → login bem-sucedido
+- [X] **Login por e-mail:** digitar `rafael@atlas.com`, senha `1234` → login bem-sucedido
 - [X] **Cadastro de eleitor:** preencher todos os campos → salvar → aparece na lista
 - [X] **Escaneamento QR:** abre câmera → lê QR de outro dispositivo → preenche título
 - [X] **Modo avião:** ativar no celular → cadastrar eleitor → badge de pendentes aparece
 - [X] **Sync:** desativar modo avião → badge some → eleitor visível no Supabase Dashboard
-- [X] **Permissões de papel:** logar como `marcos@politiqui.com` (Eleitor) → aba Contatos não aparece
+- [X] **Permissões de papel:** logar como `marcos@atlas.com` (Eleitor) → aba Contatos não aparece
 - [X] **Offline total:** fechar app → modo avião → reabrir → dados anteriores exibidos
 - [ ] **Push notification:** enviar comunicado → notificação chega no dispositivo bloqueado
 - [ ] **Heatmap:** logar como Liderança → Admin → Mapa → marcadores visíveis no mapa

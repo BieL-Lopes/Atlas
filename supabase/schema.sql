@@ -1,5 +1,5 @@
 -- =============================================
--- Schema Politiqui para Supabase
+-- Schema Atlas para Supabase
 -- Execute no SQL Editor do dashboard do Supabase
 -- =============================================
 

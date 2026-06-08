@@ -2,7 +2,7 @@ import { supabase, isSupabaseConfigured } from './supabase';
 import { db } from './db';
 import type { ElectorData } from '../components/CaptureForm';
 
-const LAST_SYNC_KEY = 'politiqui_last_sync';
+const LAST_SYNC_KEY = 'atlas_last_sync';
 
 /** Limpa o timestamp de sincronia — use no login para forçar pull completo. */
 export function resetLastSync() {

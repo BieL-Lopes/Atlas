@@ -1,4 +1,4 @@
-# AGENT.md — Politiqui
+# AGENT.md — Atlas
 
 > Este arquivo é a fonte da verdade para qualquer agente de IA ou desenvolvedor trabalhando neste projeto.
 > **Nunca assuma, invente ou extrapole** informações que não estejam documentadas aqui.
@@ -8,7 +8,7 @@
 
 ## 1. Visão Geral do Projeto
 
-**Nome:** Politiqui  
+**Nome:** Atlas  
 **Descrição:** Sistema de captação de eleitores para campanhas políticas.  
 **Estágio atual:** PWA funcional com autenticação real via Supabase, IndexedDB (Dexie) offline-first e sincronização bidirecional. Telas de Agenda, Enquetes e ElectorHome integradas ao Supabase.  
 **Plataforma:** Web (React PWA) — futura versão mobile (a definir).
@@ -31,14 +31,14 @@
 - **QR Code (leitura):** `html5-qrcode` → `Html5Qrcode`
 - **Persistência local:** IndexedDB via Dexie (`src/app/lib/db.ts`) — tabelas `electors` e `pendingChanges`; migração one-time do `localStorage` na inicialização
 - **Supabase client:** `src/app/lib/supabase.ts` — usado diretamente nos componentes de tela (AgendaScreen, PollsScreen, ElectorHomeScreen) e no syncService
-- **Legacy:** `localStorage` apenas para sessão do usuário (`politiqui_user`)
+- **Legacy:** `localStorage` apenas para sessão do usuário (`atlas_user`)
 - **Pacotes:** pnpm workspace (mas usar `npm` no terminal — pnpm não disponível no ambiente)
 - **Dev server:** `npm run dev`
 
 ### Backend (implementado)
 - **Plataforma:** Supabase
 - **Banco de dados:** PostgreSQL (via Supabase)
-- **Autenticação:** Supabase Auth — CPF vira email virtual `{digits}@cpf.politiqui`; fallback para mock em desenvolvimento
+- **Autenticação:** Supabase Auth — CPF vira email virtual `{digits}@cpf.atlas`; fallback para mock em desenvolvimento
 - **API:** REST gerada automaticamente pelo Supabase
 - **Controle de acesso:** Row Level Security (RLS) no PostgreSQL
 - **Schema:** `supabase/schema.sql` — tabelas: `perfis`, `eleitores`, `agenda_itens`, `eventos`, `evento_confirmacoes`, `enquetes`, `enquete_votos`
@@ -174,7 +174,7 @@ Implementado em `src/app/lib/auth.ts`.
 // Tenta Supabase Auth; se VITE_SUPABASE_URL não estiver configurada, usa mock
 authenticate(login: string, password: string): Promise<User | null>
 
-// CPF é convertido para email virtual: '123.456.789-00' → '12345678900@cpf.politiqui'
+// CPF é convertido para email virtual: '123.456.789-00' → '12345678900@cpf.atlas'
 authenticateMock(login: string, password: string): User | null  // fallback
 
 // Usuários mock disponíveis (usado quando Supabase não está configurado)
@@ -186,7 +186,7 @@ getUserLabel(user: User): string
 
 - O login aceita CPF **ou** e-mail — sem seletor de papel visível.
 - Em produção com Supabase configurado, `authenticate()` é assíncrona e usa Supabase Auth.
-- Sessão persistida em `localStorage` na chave `politiqui_user`.
+- Sessão persistida em `localStorage` na chave `atlas_user`.
 
 ---
 
@@ -269,7 +269,7 @@ import { QRCodeSVG } from 'qrcode.react'
 ```ts
 // src/app/lib/db.ts
 import Dexie from 'dexie'
-export const db = new Dexie('politiqui')
+export const db = new Dexie('atlas')
 db.version(1).stores({
   electors: '++id, createdBy, regiao, updatedAt',
   pendingChanges: '++id, entityId, operation, timestamp',
@@ -278,12 +278,12 @@ db.version(1).stores({
 
 ### localStorage — apenas sessão de usuário
 ```ts
-localStorage.setItem('politiqui_user', JSON.stringify(user))
-const user = JSON.parse(localStorage.getItem('politiqui_user') ?? 'null')
+localStorage.setItem('atlas_user', JSON.stringify(user))
+const user = JSON.parse(localStorage.getItem('atlas_user') ?? 'null')
 ```
 
 ### Migração one-time (App.tsx)
-- Na inicialização, leitores do `localStorage` (`politiqui_electors`) são migrados para Dexie uma única vez.
+- Na inicialização, leitores do `localStorage` (`atlas_electors`) são migrados para Dexie uma única vez.
 - Após migração, `localStorage` de eleitores é removido.
 - Ao adicionar novos campos à `ElectorData`, adicionar migração com valor padrão no `useEffect` inicial.
 

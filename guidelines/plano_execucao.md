@@ -61,7 +61,7 @@
 
 ### Nível 7 — Backend + sync
 20. ~~Definir API (REST/Supabase/Firebase) com endpoints de electors, users, polls, agenda.~~ ✅ (Supabase: `supabase/schema.sql` com tabelas `profiles` + `electors`, índices, triggers de `updated_at` e criação automática de perfil)
-21. ~~Autenticação com detecção CPF/e-mail, máscara e validação no LoginScreen.~~ ✅ (`authenticate()` async tenta Supabase Auth, CPF vira email virtual `{digits}@cpf.politiqui`, fallback para mock)
+21. ~~Autenticação com detecção CPF/e-mail, máscara e validação no LoginScreen.~~ ✅ (`authenticate()` async tenta Supabase Auth, CPF vira email virtual `{digits}@cpf.atlas`, fallback para mock)
 22. ~~Sincronização bidirecional com resolução de conflitos.~~ ✅ (`syncService.ts`: push last-write-wins por entityId → pull diff desde `lastSyncAt`; `updatedAt` em cada eleitor)
 23. ~~Permissões no servidor refletindo o RBAC do cliente.~~ ✅ (RLS no Supabase: captador vê só os próprios; coord_regional vê equipe; coord_geral/liderança vêm tudo)
 

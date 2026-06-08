@@ -22,7 +22,7 @@ self.addEventListener('push', (event) => {
   try {
     payload = event.data.json() as PushPayload;
   } catch {
-    payload = { title: 'Politiqui', body: event.data.text() };
+    payload = { title: 'Atlas', body: event.data.text() };
   }
 
   event.waitUntil(

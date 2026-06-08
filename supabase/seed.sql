@@ -2,7 +2,7 @@
 -- Seed: Usuários de demonstração
 -- Execute no SQL Editor do Supabase APÓS o schema.sql
 -- Senha de todos os usuários: 1234
--- Login: e-mail real (victor@politiqui.com) OU CPF (000.000.000-01)
+-- Login: e-mail real (victor@atlas.com) OU CPF (000.000.000-01)
 -- =============================================
 
 -- UUIDs fixos para manter referências entre usuários
@@ -39,7 +39,7 @@ VALUES
     '00000000-0000-0000-0000-000000000000',
     '00000000-0000-0000-0000-000000000001',
     'authenticated', 'authenticated',
-    'victor@politiqui.com',
+    'victor@atlas.com',
     crypt('1234', gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"name":"Victor Costa","role":"lideranca"}',
@@ -49,7 +49,7 @@ VALUES
     '00000000-0000-0000-0000-000000000000',
     '00000000-0000-0000-0000-000000000002',
     'authenticated', 'authenticated',
-    'ana@politiqui.com',
+    'ana@atlas.com',
     crypt('1234', gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"name":"Ana Oliveira","role":"coordenador_geral"}',
@@ -59,7 +59,7 @@ VALUES
     '00000000-0000-0000-0000-000000000000',
     '00000000-0000-0000-0000-000000000003',
     'authenticated', 'authenticated',
-    'carlos@politiqui.com',
+    'carlos@atlas.com',
     crypt('1234', gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"name":"Carlos Mendes","role":"coordenador_regional"}',
@@ -69,7 +69,7 @@ VALUES
     '00000000-0000-0000-0000-000000000000',
     '00000000-0000-0000-0000-000000000004',
     'authenticated', 'authenticated',
-    'fernanda@politiqui.com',
+    'fernanda@atlas.com',
     crypt('1234', gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"name":"Fernanda Lima","role":"coordenador_regional"}',
@@ -79,7 +79,7 @@ VALUES
     '00000000-0000-0000-0000-000000000000',
     '00000000-0000-0000-0000-000000000005',
     'authenticated', 'authenticated',
-    'rafael@politiqui.com',
+    'rafael@atlas.com',
     crypt('1234', gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"name":"Rafael Souza","role":"captador_votos"}',
@@ -89,7 +89,7 @@ VALUES
     '00000000-0000-0000-0000-000000000000',
     '00000000-0000-0000-0000-000000000006',
     'authenticated', 'authenticated',
-    'juliana@politiqui.com',
+    'juliana@atlas.com',
     crypt('1234', gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"name":"Juliana Santos","role":"captador_votos"}',
@@ -99,7 +99,7 @@ VALUES
     '00000000-0000-0000-0000-000000000000',
     '00000000-0000-0000-0000-000000000007',
     'authenticated', 'authenticated',
-    'marcos@politiqui.com',
+    'marcos@atlas.com',
     crypt('1234', gen_salt('bf')),
     NOW(), NOW(), NOW(),
     '{"name":"Marcos Eleitor","role":"eleitor"}',
@@ -116,39 +116,39 @@ INSERT INTO public.perfis (id, nome, email, cpf, role, regiao, deputado_id, coor
 VALUES
   (
     '00000000-0000-0000-0000-000000000001',
-    'Victor Costa', 'victor@politiqui.com', '00000000001', 'lideranca',
+    'Victor Costa', 'victor@atlas.com', '00000000001', 'lideranca',
     NULL, NULL, NULL
   ),
   (
     '00000000-0000-0000-0000-000000000002',
-    'Ana Oliveira', 'ana@politiqui.com', '00000000002', 'coordenador_geral',
+    'Ana Oliveira', 'ana@atlas.com', '00000000002', 'coordenador_geral',
     NULL, 'dep1', NULL
   ),
   (
     '00000000-0000-0000-0000-000000000003',
-    'Carlos Mendes', 'carlos@politiqui.com', '00000000003', 'coordenador_regional',
+    'Carlos Mendes', 'carlos@atlas.com', '00000000003', 'coordenador_regional',
     'Centro', 'dep1', NULL
   ),
   (
     '00000000-0000-0000-0000-000000000004',
-    'Fernanda Lima', 'fernanda@politiqui.com', '00000000004', 'coordenador_regional',
+    'Fernanda Lima', 'fernanda@atlas.com', '00000000004', 'coordenador_regional',
     'Zona Norte', 'dep1', NULL
   ),
   (
     '00000000-0000-0000-0000-000000000005',
-    'Rafael Souza', 'rafael@politiqui.com', '00000000005', 'captador_votos',
+    'Rafael Souza', 'rafael@atlas.com', '00000000005', 'captador_votos',
     'Centro', NULL,
     '00000000-0000-0000-0000-000000000003'
   ),
   (
     '00000000-0000-0000-0000-000000000006',
-    'Juliana Santos', 'juliana@politiqui.com', '00000000006', 'captador_votos',
+    'Juliana Santos', 'juliana@atlas.com', '00000000006', 'captador_votos',
     'Zona Norte', NULL,
     '00000000-0000-0000-0000-000000000004'
   ),
   (
     '00000000-0000-0000-0000-000000000007',
-    'Marcos Eleitor', 'marcos@politiqui.com', '00000000007', 'eleitor',
+    'Marcos Eleitor', 'marcos@atlas.com', '00000000007', 'eleitor',
     NULL, NULL, NULL
   )
 ON CONFLICT (id) DO UPDATE SET
