@@ -71,6 +71,8 @@ atlas/
 │   ├── app/
 │   │   ├── components/
 │   │   │   ├── LoginScreen.tsx
+│   │   │   ├── InviteModal.tsx         # Modal para onboarding: validação de convite (6 chars)
+│   │   │   ├── SignupForm.tsx          # Formulário de cadastro: nome, CPF, email, senha
 │   │   │   ├── HomeScreen.tsx          # Home com agenda real + Top 3 regiões reais
 │   │   │   ├── ElectorHomeScreen.tsx   # Tela exclusiva do eleitor
 │   │   │   ├── CaptureForm.tsx         # Cadastro / edição de eleitor
@@ -97,6 +99,7 @@ atlas/
 │   │       ├── supabase.ts         # Cliente Supabase singleton
 │   │       ├── score.ts            # Score de engajamento eleitoral (0–100)
 │   │       ├── insights.ts         # Motor de alertas inteligentes (IA de campanha)
+│   │       ├── notificationScheduler.ts # Local Push Notifications para agenda
 │   │       ├── gamification.ts     # Ranking, medalhas e streak do captador
 │   │       └── __tests__/
 │   │           ├── rbac.test.ts
@@ -321,6 +324,22 @@ Permissões adicionais (`rbac.ts`): `canCreateElector`, `canDeleteElector`, `can
 - Configuração: `VITE_WHATSAPP_CONFIGURED=true` + secrets `EVOLUTION_API_URL`, `EVOLUTION_API_KEY`, `EVOLUTION_INSTANCE` no Supabase
 - Notificação push quando app está em segundo plano (Web Push API + Edge Function)
 - Clique na notificação navega automaticamente para a tela de comunicados
+
+### Onboarding Seguro (Chave de Acesso)
+- **Tabela `invites`**: chave única de 6 caracteres, role associada (Liderança/Coord./Captador), marca como usada após signup
+- **Modal de Convite**: UI step-by-step — pede código, valida contra BD, exibe role confirmado
+- **SignupForm**: cria usuário em Supabase Auth + perfil com role automático — injeção segura sem poder ao user
+- **Botão "Primeiro Acesso"** na LoginScreen para disparar fluxo de onboarding
+- RLS policies: público pode ler invites não-usadas (validação) + service_role gerencia criação/atualização
+- Ideal para campanhas: coordenador gera convites e distribui códigos — novo user não precisa de acesso manual ao admin
+
+### Notificações Inteligentes de Agenda
+- **Notification API** (nativa do navegador/Android): agendamento local **sem hits ao banco**
+- **Reminders automáticos**: 30 minutos antes de cada atividade agendada (reunião/visita) — apenas para hoje
+- **Permissão smart**: request automático ao abrir aba Agenda; aviso visual se negada
+- **Integração AgendaScreen**: ao carregar atividades, agenda notificações; ao desmontar, cancela todas
+- Disparos mesmo com app em background (Web Workers + Local Notifications)
+- Clique na notificação traz app para frente + abre aba Agenda
 
 ### Coordenação
 - **Coord. Regional**: vê só os captadores da sua equipe e seus eleitores

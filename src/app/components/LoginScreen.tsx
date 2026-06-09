@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { User as UserIcon, Lock, Eye, EyeOff, AtSign, CreditCard } from 'lucide-react';
 import { User, authenticate } from '../lib/auth';
+import { InviteModal } from './InviteModal';
+import { SignupForm } from './SignupForm';
 
 interface LoginScreenProps {
   onLogin: (user: User) => void;
@@ -43,6 +45,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [error, setError] = useState('');
   const [fieldError, setFieldError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [signupData, setSignupData] = useState<{ role: string; inviteKey: string } | null>(null);
 
   const inputType = detectInputType(login);
 
@@ -197,19 +201,54 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               {loading ? 'Entrando...' : 'Entrar'}
             </button>
 
-            {/* Link Esqueci Senha */}
-            <div className="text-center">
+            {/* Link Esqueci Senha + Primeiro Acesso */}
+            <div className="flex flex-col gap-2 text-center text-sm">
               <button
                 type="button"
-                className="text-blue-600 hover:text-blue-700 font-medium text-sm"
+                className="text-blue-600 hover:text-blue-700 font-medium"
                 onClick={() => alert('Em produção, enviaria e-mail de recuperação')}
               >
                 Esqueci minha senha
+              </button>
+              <button
+                type="button"
+                className="text-green-600 hover:text-green-700 font-medium"
+                onClick={() => setShowInviteModal(true)}
+              >
+                Primeiro Acesso? Usar Chave de Convite
               </button>
             </div>
           </form>
         </div>
       </div>
+
+      {/* Modal de Convite */}
+      {showInviteModal && (
+        <InviteModal
+          onClose={() => setShowInviteModal(false)}
+          onInviteValidated={(role, inviteKey) => {
+            setSignupData({ role, inviteKey });
+            setShowInviteModal(false);
+          }}
+        />
+      )}
+
+      {/* Modal de Signup */}
+      {signupData && (
+        <SignupForm
+          role={signupData.role}
+          inviteKey={signupData.inviteKey}
+          onSignupComplete={(success, message) => {
+            if (success) {
+              setError(message || '');
+              setSignupData(null);
+              setLogin('');
+              setPassword('');
+            }
+          }}
+          onCancel={() => setSignupData(null)}
+        />
+      )}
     </div>
   );
 }

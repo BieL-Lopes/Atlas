@@ -421,3 +421,38 @@ CREATE POLICY "disparo_insert" ON public.disparos_whatsapp
 DROP POLICY IF EXISTS "disparo_service_update" ON public.disparos_whatsapp;
 CREATE POLICY "disparo_service_update" ON public.disparos_whatsapp
   FOR UPDATE USING (auth.role() = 'service_role');
+
+-- ─────────────────────────────────────────────
+-- Tabela de Convites para Onboarding Seguro
+-- ─────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS public.invites (
+  id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  chave_unica           TEXT NOT NULL UNIQUE CHECK (length(chave_unica) = 6),
+  role                  TEXT NOT NULL
+    CONSTRAINT invites_role_check
+      CHECK (role IN ('lideranca', 'coordenador_geral', 'coordenador_regional', 'captador_votos', 'eleitor')),
+  usado                 BOOLEAN NOT NULL DEFAULT FALSE,
+  usado_por             UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
+  usado_em              TIMESTAMPTZ,
+  criado_em             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  criado_por            UUID REFERENCES public.perfis(id) ON DELETE SET NULL
+);
+
+CREATE INDEX IF NOT EXISTS invites_chave_unica_idx ON public.invites (chave_unica);
+CREATE INDEX IF NOT EXISTS invites_usado_idx ON public.invites (usado);
+
+ALTER TABLE public.invites ENABLE ROW LEVEL SECURITY;
+
+-- Público pode ler invites não usadas (apenas para validar)
+DROP POLICY IF EXISTS "invite_read_public" ON public.invites;
+CREATE POLICY "invite_read_public" ON public.invites
+  FOR SELECT USING (NOT usado);
+
+-- Service role pode criar/atualizar (Edge Function ou seed)
+DROP POLICY IF EXISTS "invite_insert_service" ON public.invites;
+CREATE POLICY "invite_insert_service" ON public.invites
+  FOR INSERT WITH CHECK (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "invite_update_service" ON public.invites;
+CREATE POLICY "invite_update_service" ON public.invites
+  FOR UPDATE USING (auth.role() = 'service_role');

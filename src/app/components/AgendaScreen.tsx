@@ -1,7 +1,11 @@
 ﻿import { useState, useEffect } from 'react';
-import { Plus, Calendar, Clock, MapPin, Users, Trash2, Loader2 } from 'lucide-react';
+import { Plus, Calendar, Clock, MapPin, Users, Trash2, Loader2, Bell } from 'lucide-react';
 import { User } from '../lib/auth';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import {
+  scheduleNotificationsForActivities,
+  cancelAllScheduledNotifications
+} from '../lib/notificationScheduler';
 
 interface Activity {
   id: string;
@@ -22,6 +26,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [notificationPermissionDenied, setNotificationPermissionDenied] = useState(false);
 
   // Form state
   const [formType, setFormType] = useState<'reuniao' | 'visita'>('reuniao');
@@ -30,7 +35,34 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
   const [formDate, setFormDate] = useState(new Date().toISOString().split('T')[0]);
   const [formTime, setFormTime] = useState('');
 
-  useEffect(() => { fetchActivities(); }, []);
+  useEffect(() => {
+    fetchActivities();
+  }, []);
+
+  // Re-agenda notificações quando atividades mudam
+  useEffect(() => {
+    const scheduleNotifs = async () => {
+      try {
+        // Cancela notificações anteriores
+        cancelAllScheduledNotifications();
+
+        // Agenda novas para atividades de hoje
+        await scheduleNotificationsForActivities(activities, 30);
+      } catch (err) {
+        console.warn('Erro ao agendar notificações:', err);
+        setNotificationPermissionDenied(true);
+      }
+    };
+
+    if (activities.length > 0) {
+      scheduleNotifs();
+    }
+
+    return () => {
+      // Limpa ao desmontar
+      cancelAllScheduledNotifications();
+    };
+  }, [activities]);
 
   const fetchActivities = async () => {
     setLoading(true);
@@ -124,8 +156,15 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
       <div className="bg-blue-600 text-white p-6">
-        <h1 className="text-2xl font-bold mb-1">Minha Agenda</h1>
-        <p className="text-sm text-blue-100">Controle de visitas e reuniões</p>
+        <div className="flex items-center justify-between mb-1">
+          <h1 className="text-2xl font-bold">Minha Agenda</h1>
+          <Bell className="w-5 h-5" />
+        </div>
+        <p className="text-sm text-blue-100">
+          {notificationPermissionDenied
+            ? 'Notificações desativadas — verifique as permissões do navegador'
+            : 'Você receberá alertas 30 minutos antes de cada atividade'}
+        </p>
       </div>
 
       <div className="p-4 space-y-4">
