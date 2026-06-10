@@ -448,6 +448,16 @@ DROP POLICY IF EXISTS "invite_read_public" ON public.invites;
 CREATE POLICY "invite_read_public" ON public.invites
   FOR SELECT USING (NOT usado);
 
+-- Liderança e coordenadores gerais podem criar convites
+DROP POLICY IF EXISTS "invite_insert_gestores" ON public.invites;
+CREATE POLICY "invite_insert_gestores" ON public.invites
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.perfis
+      WHERE id = auth.uid() AND role IN ('lideranca', 'coordenador_geral')
+    )
+  );
+
 -- Service role pode criar/atualizar (Edge Function ou seed)
 DROP POLICY IF EXISTS "invite_insert_service" ON public.invites;
 CREATE POLICY "invite_insert_service" ON public.invites

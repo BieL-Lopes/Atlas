@@ -57,15 +57,15 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
     const hoje = new Date().toISOString().split('T')[0];
     supabase
       .from('agenda_itens')
-      .select('id, titulo, hora, local, tipo')
+      .select('id, titulo, horario, local, tipo')
       .eq('criado_por', user.id)
       .eq('data', hoje)
-      .order('hora', { ascending: true })
+      .order('horario', { ascending: true })
       .then(({ data }) => {
         if (data) {
           setAgendaHoje(data.map((a: Record<string, string>) => ({
             id: a.id,
-            time: a.hora?.slice(0, 5) ?? '',
+            time: a.horario?.slice(0, 5) ?? '',
             title: a.titulo,
             location: a.local ?? '',
             type: a.tipo ?? 'outro',

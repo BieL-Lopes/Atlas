@@ -118,6 +118,7 @@ export function SignupForm({
           data: {
             cpf: cpf.replace(/\D/g, ''),
             nome,
+            name: nome, // Trigger looks for 'name'
             role
           }
         }
@@ -127,19 +128,7 @@ export function SignupForm({
         throw new Error(authError?.message || 'Erro ao criar conta');
       }
 
-      // Atualiza perfil (trigger do BD já criou com nome e role)
-      const { error: profileError } = await supabase
-        .from('perfis')
-        .update({
-          email,
-          cpf: cpf.replace(/\D/g, ''),
-          nome
-        })
-        .eq('id', authData.user.id);
 
-      if (profileError) {
-        throw new Error(profileError.message || 'Erro ao atualizar perfil');
-      }
 
       // Marca o convite como usado
       const { error: inviteError } = await supabase
@@ -159,8 +148,9 @@ export function SignupForm({
       setTimeout(() => {
         onSignupComplete(true, 'Conta criada com sucesso! Faça login com seu CPF e senha.');
       }, 2000);
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao criar conta';
+    } catch (err: any) {
+      console.error('Signup error:', err);
+      const message = err instanceof Error ? err.message : (err?.message || 'Erro ao criar conta');
       setErrorMessage(message);
       setStep('error');
     }

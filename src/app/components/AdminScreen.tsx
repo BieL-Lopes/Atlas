@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import {
   Users, Shield, Settings, ChevronRight, UserPlus, Trash2, Edit2,
-  Download, BarChart2, TrendingUp, Target, Megaphone, Map, Bell, MessageCircle
+  Download, BarChart2, TrendingUp, Target, Megaphone, Map, Bell, MessageCircle, Camera
 } from 'lucide-react';
 import { InsightsPanel } from './InsightsPanel';
 import { WhatsAppModal } from './WhatsAppModal';
 import { ComunicadoModal } from './ComunicadoModal';
+import { GenerateInviteModal } from './GenerateInviteModal';
+import { CheckinPortariaModal } from './CheckinPortariaModal';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { HeatmapScreen } from './HeatmapScreen';
 import {
@@ -43,6 +45,8 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
     showDashboard ? 'dashboard' : 'users'
   );
   const [showComunicado, setShowComunicado] = useState(false);
+  const [showGenerateInvite, setShowGenerateInvite] = useState(false);
+  const [showPortariaModal, setShowPortariaModal] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
   const [disparosHistory, setDisparosHistory] = useState<{
     id: string; mensagem: string; template_tipo: string;
@@ -181,6 +185,12 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
 
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
+      {showGenerateInvite && (
+        <GenerateInviteModal user={user} onClose={() => setShowGenerateInvite(false)} />
+      )}
+      {showPortariaModal && (
+        <CheckinPortariaModal onClose={() => setShowPortariaModal(false)} />
+      )}
       {showComunicado && (
         <ComunicadoModal user={user} onClose={() => setShowComunicado(false)} />
       )}
@@ -284,21 +294,24 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
         {/* ── Tab Usuários ── */}
         {activeTab === 'users' && (
           <div className="space-y-4">
-            <div className="flex gap-2">
-              <button className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold flex items-center justify-center transition-colors">
+            <div className="flex gap-2 mb-4">
+              <button 
+                onClick={() => setShowGenerateInvite(true)}
+                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold flex items-center justify-center transition-colors shadow-lg"
+              >
                 <UserPlus className="w-5 h-5 mr-2" />
                 Adicionar
               </button>
-              {canExport && (
-                <button
-                  onClick={handleExportUsers}
-                  className="flex-1 py-3 px-4 bg-white border-2 border-blue-200 text-blue-700 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-blue-50 transition-colors"
-                >
-                  <Download className="w-5 h-5" />
-                  CSV Usuários
-                </button>
-              )}
             </div>
+
+            {/* Check-in em Eventos */}
+            <button
+              onClick={() => setShowPortariaModal(true)}
+              className="w-full py-3 px-4 bg-white border-2 border-purple-200 text-purple-700 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-purple-50 transition-colors"
+            >
+              <Camera className="w-5 h-5" />
+              Modo Portaria (Check-in de Eventos)
+            </button>
 
             {canExport && (
               <button
