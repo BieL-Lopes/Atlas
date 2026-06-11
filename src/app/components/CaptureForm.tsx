@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, User, Phone, Calendar, MapPin, MessageSquare, Navigation, Tag, Award, Camera } from 'lucide-react';
 import { QrScannerModal } from './QrScannerModal';
+import { getSystemSettings } from '../lib/settings';
 
 export interface Atendimento {
   id: string;
@@ -70,6 +71,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
   const [aceitaWhatsapp, setAceitaWhatsapp] = useState(electorToEdit?.aceitaWhatsapp ?? false);
   const [observacoes, setObservacoes] = useState(electorToEdit?.observacoes ?? '');
   const [capturandoGps, setCapturandoGps] = useState(false);
+  const [systemSettings] = useState(() => getSystemSettings());
 
   // Captura GPS automaticamente apenas no modo criacao
   useEffect(() => {
@@ -347,7 +349,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
                   : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
               }`}
             >
-              ✓ Voto Forte / Garantido
+              ✓ {systemSettings.voteLevels.forte}
             </button>
 
             <button
@@ -359,7 +361,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
                   : 'bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100'
               }`}
             >
-              ~ Voto Médio / Simpatizante
+              ~ {systemSettings.voteLevels.medio}
             </button>
 
             <button
@@ -371,7 +373,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
                   : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
               }`}
             >
-              ✗ Voto Fraco / Em Dúvida
+              ✗ {systemSettings.voteLevels.fraco}
             </button>
 
             <button
@@ -383,7 +385,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
                   : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
               }`}
             >
-              ? Indeciso / Não Sabe
+              ? {systemSettings.voteLevels.indeciso}
             </button>
 
             <button
@@ -395,7 +397,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
                   : 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100'
               }`}
             >
-              ⛔ Oposição
+              ⛔ {systemSettings.voteLevels.oposicao}
             </button>
           </div>
         </div>

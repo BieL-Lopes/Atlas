@@ -10,6 +10,12 @@ import { GenerateInviteModal } from './GenerateInviteModal';
 import { CheckinPortariaModal } from './CheckinPortariaModal';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { HeatmapScreen } from './HeatmapScreen';
+import { SettingsCampaignModal } from './SettingsCampaignModal';
+import { SettingsVoteLevelsModal } from './SettingsVoteLevelsModal';
+import { SettingsRegionsModal } from './SettingsRegionsModal';
+import { SettingsIntegrationsModal } from './SettingsIntegrationsModal';
+import { SettingsBackupModal } from './SettingsBackupModal';
+import { getSystemSettings } from '../lib/settings';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell,
   LineChart, Line, ResponsiveContainer, CartesianGrid, Legend
@@ -48,6 +54,8 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
   const [showGenerateInvite, setShowGenerateInvite] = useState(false);
   const [showPortariaModal, setShowPortariaModal] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [showSettingsModal, setShowSettingsModal] = useState<string | null>(null);
+  const [systemSettings, setSystemSettings] = useState(() => getSystemSettings());
   const [disparosHistory, setDisparosHistory] = useState<{
     id: string; mensagem: string; template_tipo: string;
     total_destinatarios: number; total_enviados: number; total_falhas: number;
@@ -200,6 +208,40 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
           electors={electors}
           onClose={() => setShowWhatsApp(false)}
           onSent={() => { setShowWhatsApp(false); fetchDisparos(); }}
+        />
+      )}
+
+      {showSettingsModal === 'campaign' && (
+        <SettingsCampaignModal
+          settings={systemSettings}
+          onClose={() => setShowSettingsModal(null)}
+          onSave={setSystemSettings}
+        />
+      )}
+      {showSettingsModal === 'voteLevels' && (
+        <SettingsVoteLevelsModal
+          settings={systemSettings}
+          onClose={() => setShowSettingsModal(null)}
+          onSave={setSystemSettings}
+        />
+      )}
+      {showSettingsModal === 'regions' && (
+        <SettingsRegionsModal
+          settings={systemSettings}
+          onClose={() => setShowSettingsModal(null)}
+          onSave={setSystemSettings}
+        />
+      )}
+      {showSettingsModal === 'integrations' && (
+        <SettingsIntegrationsModal
+          settings={systemSettings}
+          onClose={() => setShowSettingsModal(null)}
+          onSave={setSystemSettings}
+        />
+      )}
+      {showSettingsModal === 'backup' && (
+        <SettingsBackupModal
+          onClose={() => setShowSettingsModal(null)}
         />
       )}
 
@@ -601,13 +643,13 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
               </div>
               <div className="divide-y divide-gray-100">
                 {[
-                  { title: 'Dados da Campanha', desc: 'Nome, logo e informações gerais' },
-                  { title: 'Níveis de Voto', desc: 'Personalizar categorias de voto' },
-                  { title: 'Regiões', desc: 'Gerenciar bairros e regiões' },
-                  { title: 'Integrações', desc: 'WhatsApp, SMS e outras APIs' },
-                  { title: 'Backup de Dados', desc: 'Exportar e restaurar dados' },
+                  { id: 'campaign', title: 'Dados da Campanha', desc: 'Nome, logo e informações gerais' },
+                  { id: 'voteLevels', title: 'Níveis de Voto', desc: 'Personalizar categorias de voto' },
+                  { id: 'regions', title: 'Regiões', desc: 'Gerenciar bairros e regiões' },
+                  { id: 'integrations', title: 'Integrações', desc: 'WhatsApp, SMS e outras APIs' },
+                  { id: 'backup', title: 'Backup de Dados', desc: 'Exportar e restaurar dados' },
                 ].map(item => (
-                  <button key={item.title} className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                  <button key={item.title} onClick={() => setShowSettingsModal(item.id)} className="w-full p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
                     <div>
                       <h3 className="font-semibold text-gray-900 text-left">{item.title}</h3>
                       <p className="text-sm text-gray-500">{item.desc}</p>
