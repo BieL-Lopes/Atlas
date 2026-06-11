@@ -1,5 +1,5 @@
 -- =============================================
--- Schema Atlas para Supabase
+-- Schema Atlas para Supabase (MULTI-TENANT)
 -- Execute no SQL Editor do dashboard do Supabase
 -- =============================================
 
@@ -38,6 +38,36 @@ CREATE TABLE IF NOT EXISTS public.perfis (
   created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Funções auxiliares SECURITY DEFINER — bypassam RLS para checar role
+-- sem causar recursão infinita nas policies
+CREATE OR REPLACE FUNCTION public.get_my_role()
+RETURNS TEXT LANGUAGE sql SECURITY DEFINER STABLE AS $$
+  SELECT role FROM public.perfis WHERE id = auth.uid();
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_my_tenant_id()
+RETURNS TEXT LANGUAGE sql SECURITY DEFINER STABLE AS $$
+  SELECT deputado_id FROM public.perfis WHERE id = auth.uid();
+$$;
+
+CREATE OR REPLACE FUNCTION public.set_tenant_id()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  IF NEW.deputado_id IS NULL THEN
+    NEW.deputado_id := public.get_my_tenant_id();
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_coord_regional_of(captador_id UUID)
+RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER STABLE AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.perfis
+    WHERE id = captador_id AND coordenador_regional_id = auth.uid()
+  );
+$$;
+
 -- ─────────────────────────────────────────────
 -- Tabela de eleitores
 -- ─────────────────────────────────────────────
@@ -63,6 +93,7 @@ CREATE TABLE IF NOT EXISTS public.eleitores (
   atendimentos       JSONB    NOT NULL DEFAULT '[]',
   criado_por         UUID REFERENCES auth.users(id),
   criado_por_nome    TEXT,
+  deputado_id        TEXT,
   data_cadastro      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   atualizado_em      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -70,6 +101,12 @@ CREATE TABLE IF NOT EXISTS public.eleitores (
 CREATE INDEX IF NOT EXISTS eleitores_criado_por   ON public.eleitores (criado_por);
 CREATE INDEX IF NOT EXISTS eleitores_atualizado_em ON public.eleitores (atualizado_em);
 CREATE INDEX IF NOT EXISTS eleitores_regiao        ON public.eleitores (regiao);
+CREATE INDEX IF NOT EXISTS eleitores_tenant_idx    ON public.eleitores (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_eleitores_tenant ON public.eleitores;
+CREATE TRIGGER trigger_eleitores_tenant
+  BEFORE INSERT ON public.eleitores
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 -- ─────────────────────────────────────────────
 -- Trigger: atualiza atualizado_em automaticamente
@@ -113,21 +150,6 @@ CREATE TRIGGER on_auth_user_created
 -- Row Level Security (RLS)
 -- ─────────────────────────────────────────────
 
--- Funções auxiliares SECURITY DEFINER — bypassam RLS para checar role
--- sem causar recursão infinita nas policies
-CREATE OR REPLACE FUNCTION public.get_my_role()
-RETURNS TEXT LANGUAGE sql SECURITY DEFINER STABLE AS $$
-  SELECT role FROM public.perfis WHERE id = auth.uid();
-$$;
-
-CREATE OR REPLACE FUNCTION public.is_coord_regional_of(captador_id UUID)
-RETURNS BOOLEAN LANGUAGE sql SECURITY DEFINER STABLE AS $$
-  SELECT EXISTS (
-    SELECT 1 FROM public.perfis
-    WHERE id = captador_id AND coordenador_regional_id = auth.uid()
-  );
-$$;
-
 ALTER TABLE public.perfis    ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.eleitores ENABLE ROW LEVEL SECURITY;
 
@@ -142,12 +164,13 @@ CREATE POLICY "perfis_select_proprio"  ON public.perfis FOR SELECT USING (auth.u
 CREATE POLICY "perfis_update_proprio"  ON public.perfis FOR UPDATE USING (auth.uid() = id);
 CREATE POLICY "perfis_insert_proprio"  ON public.perfis FOR INSERT WITH CHECK (auth.uid() = id);
 
--- Usa get_my_role() para evitar recursão
 CREATE POLICY "perfis_select_gestores" ON public.perfis FOR SELECT USING (
+  deputado_id = public.get_my_tenant_id() AND
   get_my_role() IN ('lideranca', 'coordenador_geral')
 );
 
 CREATE POLICY "perfis_select_equipe_coord" ON public.perfis FOR SELECT USING (
+  deputado_id = public.get_my_tenant_id() AND
   coordenador_regional_id = auth.uid()
 );
 
@@ -160,31 +183,35 @@ DROP POLICY IF EXISTS "eleitores_update"                ON public.eleitores;
 DROP POLICY IF EXISTS "eleitores_delete"                ON public.eleitores;
 
 CREATE POLICY "eleitores_select_proprio" ON public.eleitores FOR SELECT USING (
-  criado_por = auth.uid()
+  deputado_id = public.get_my_tenant_id() AND criado_por = auth.uid()
 );
 
--- Usa get_my_role() para evitar recursão via perfis
 CREATE POLICY "eleitores_select_gestores" ON public.eleitores FOR SELECT USING (
+  deputado_id = public.get_my_tenant_id() AND
   get_my_role() IN ('lideranca', 'coordenador_geral')
 );
 
--- Usa is_coord_regional_of() para evitar recursão via perfis
 CREATE POLICY "eleitores_select_coord_regional" ON public.eleitores FOR SELECT USING (
+  deputado_id = public.get_my_tenant_id() AND
   is_coord_regional_of(criado_por)
 );
 
 CREATE POLICY "eleitores_insert" ON public.eleitores FOR INSERT WITH CHECK (
-  criado_por = auth.uid()
+  deputado_id = public.get_my_tenant_id() AND criado_por = auth.uid()
 );
 
 CREATE POLICY "eleitores_update" ON public.eleitores FOR UPDATE USING (
-  criado_por = auth.uid()
-  OR get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional')
+  deputado_id = public.get_my_tenant_id() AND (
+    criado_por = auth.uid()
+    OR get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional')
+  )
 );
 
 CREATE POLICY "eleitores_delete" ON public.eleitores FOR DELETE USING (
-  criado_por = auth.uid()
-  OR get_my_role() IN ('lideranca', 'coordenador_geral')
+  deputado_id = public.get_my_tenant_id() AND (
+    criado_por = auth.uid()
+    OR get_my_role() IN ('lideranca', 'coordenador_geral')
+  )
 );
 
 -- ─────────────────────────────────────────────
@@ -200,15 +227,23 @@ CREATE TABLE IF NOT EXISTS public.agenda_itens (
     CHECK (tipo IN ('reuniao', 'visita')),
   eleitor_nome TEXT,
   criado_por   UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  deputado_id  TEXT,
   created_at   TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS agenda_tenant_idx ON public.agenda_itens (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_agenda_tenant ON public.agenda_itens;
+CREATE TRIGGER trigger_agenda_tenant
+  BEFORE INSERT ON public.agenda_itens
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 ALTER TABLE public.agenda_itens ENABLE ROW LEVEL SECURITY;
 
 DROP POLICY IF EXISTS "agenda_crud_proprio" ON public.agenda_itens;
 CREATE POLICY "agenda_crud_proprio" ON public.agenda_itens
-  USING (criado_por = auth.uid())
-  WITH CHECK (criado_por = auth.uid());
+  USING (deputado_id = public.get_my_tenant_id() AND criado_por = auth.uid())
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND criado_por = auth.uid());
 
 -- ─────────────────────────────────────────────
 -- Tabela: eventos (eventos públicos para eleitores)
@@ -220,8 +255,16 @@ CREATE TABLE IF NOT EXISTS public.eventos (
   horario    TEXT NOT NULL DEFAULT '',
   local      TEXT NOT NULL DEFAULT '',
   criado_por UUID REFERENCES auth.users(id),
+  deputado_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS eventos_tenant_idx ON public.eventos (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_eventos_tenant ON public.eventos;
+CREATE TRIGGER trigger_eventos_tenant
+  BEFORE INSERT ON public.eventos
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 ALTER TABLE public.eventos ENABLE ROW LEVEL SECURITY;
 
@@ -230,11 +273,11 @@ DROP POLICY IF EXISTS "eventos_insert_gestores" ON public.eventos;
 DROP POLICY IF EXISTS "eventos_delete_gestores" ON public.eventos;
 
 CREATE POLICY "eventos_select_all"      ON public.eventos FOR SELECT
-  USING (auth.role() = 'authenticated');
+  USING (deputado_id = public.get_my_tenant_id() AND auth.role() = 'authenticated');
 CREATE POLICY "eventos_insert_gestores" ON public.eventos FOR INSERT
-  WITH CHECK (get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional'));
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional'));
 CREATE POLICY "eventos_delete_gestores" ON public.eventos FOR DELETE
-  USING (get_my_role() IN ('lideranca', 'coordenador_geral') OR criado_por = auth.uid());
+  USING (deputado_id = public.get_my_tenant_id() AND (get_my_role() IN ('lideranca', 'coordenador_geral') OR criado_por = auth.uid()));
 
 -- ─────────────────────────────────────────────
 -- Tabela: evento_confirmacoes (presença em eventos)
@@ -243,9 +286,17 @@ CREATE TABLE IF NOT EXISTS public.evento_confirmacoes (
   id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   evento_id  UUID NOT NULL REFERENCES public.eventos(id) ON DELETE CASCADE,
   eleitor_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  deputado_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (evento_id, eleitor_id)
 );
+
+CREATE INDEX IF NOT EXISTS conf_tenant_idx ON public.evento_confirmacoes (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_evento_confirmacoes_tenant ON public.evento_confirmacoes;
+CREATE TRIGGER trigger_evento_confirmacoes_tenant
+  BEFORE INSERT ON public.evento_confirmacoes
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 ALTER TABLE public.evento_confirmacoes ENABLE ROW LEVEL SECURITY;
 
@@ -255,13 +306,13 @@ DROP POLICY IF EXISTS "confirmacoes_delete_proprio"  ON public.evento_confirmaco
 DROP POLICY IF EXISTS "confirmacoes_select_gestores" ON public.evento_confirmacoes;
 
 CREATE POLICY "confirmacoes_select_proprio"  ON public.evento_confirmacoes FOR SELECT
-  USING (eleitor_id = auth.uid());
+  USING (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 CREATE POLICY "confirmacoes_select_gestores" ON public.evento_confirmacoes FOR SELECT
-  USING (get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional'));
+  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional'));
 CREATE POLICY "confirmacoes_insert_proprio"  ON public.evento_confirmacoes FOR INSERT
-  WITH CHECK (eleitor_id = auth.uid());
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 CREATE POLICY "confirmacoes_delete_proprio"  ON public.evento_confirmacoes FOR DELETE
-  USING (eleitor_id = auth.uid());
+  USING (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 
 -- ─────────────────────────────────────────────
 -- Tabela: enquetes (pesquisas de opinião)
@@ -273,8 +324,16 @@ CREATE TABLE IF NOT EXISTS public.enquetes (
   status     TEXT NOT NULL DEFAULT 'ativa'
     CHECK (status IN ('ativa', 'encerrada')),
   criado_por UUID REFERENCES auth.users(id),
+  deputado_id TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS enquetes_tenant_idx ON public.enquetes (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_enquetes_tenant ON public.enquetes;
+CREATE TRIGGER trigger_enquetes_tenant
+  BEFORE INSERT ON public.enquetes
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 ALTER TABLE public.enquetes ENABLE ROW LEVEL SECURITY;
 
@@ -283,11 +342,11 @@ DROP POLICY IF EXISTS "enquetes_insert_gestores" ON public.enquetes;
 DROP POLICY IF EXISTS "enquetes_update_gestores" ON public.enquetes;
 
 CREATE POLICY "enquetes_select_all"      ON public.enquetes FOR SELECT
-  USING (auth.role() = 'authenticated');
+  USING (deputado_id = public.get_my_tenant_id() AND auth.role() = 'authenticated');
 CREATE POLICY "enquetes_insert_gestores" ON public.enquetes FOR INSERT
-  WITH CHECK (get_my_role() IN ('lideranca', 'coordenador_geral'));
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral'));
 CREATE POLICY "enquetes_update_gestores" ON public.enquetes FOR UPDATE
-  USING (get_my_role() IN ('lideranca', 'coordenador_geral'));
+  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral'));
 
 -- ─────────────────────────────────────────────
 -- Tabela: enquete_votos (votos por eleitor)
@@ -297,9 +356,17 @@ CREATE TABLE IF NOT EXISTS public.enquete_votos (
   enquete_id      UUID NOT NULL REFERENCES public.enquetes(id) ON DELETE CASCADE,
   eleitor_id      UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
   opcao_escolhida TEXT NOT NULL,
+  deputado_id     TEXT,
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   UNIQUE (enquete_id, eleitor_id)
 );
+
+CREATE INDEX IF NOT EXISTS votos_tenant_idx ON public.enquete_votos (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_enquete_votos_tenant ON public.enquete_votos;
+CREATE TRIGGER trigger_enquete_votos_tenant
+  BEFORE INSERT ON public.enquete_votos
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 ALTER TABLE public.enquete_votos ENABLE ROW LEVEL SECURITY;
 
@@ -308,11 +375,11 @@ DROP POLICY IF EXISTS "votos_insert_proprio"  ON public.enquete_votos;
 DROP POLICY IF EXISTS "votos_select_gestores" ON public.enquete_votos;
 
 CREATE POLICY "votos_select_proprio"  ON public.enquete_votos FOR SELECT
-  USING (eleitor_id = auth.uid());
+  USING (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 CREATE POLICY "votos_select_gestores" ON public.enquete_votos FOR SELECT
-  USING (get_my_role() IN ('lideranca', 'coordenador_geral'));
+  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral'));
 CREATE POLICY "votos_insert_proprio"  ON public.enquete_votos FOR INSERT
-  WITH CHECK (eleitor_id = auth.uid());
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 
 -- ─────────────────────────────────────────────
 -- Tabela: comunicados (mensagens da liderança/coord_geral para os demais)
@@ -324,8 +391,16 @@ CREATE TABLE IF NOT EXISTS public.comunicados (
   remetente_id   UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
   remetente_nome TEXT NOT NULL DEFAULT '',
   destino_roles  TEXT[] NOT NULL DEFAULT '{}',
+  deputado_id    TEXT,
   criado_em      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE INDEX IF NOT EXISTS comunicados_tenant_idx ON public.comunicados (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_comunicados_tenant ON public.comunicados;
+CREATE TRIGGER trigger_comunicados_tenant
+  BEFORE INSERT ON public.comunicados
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 ALTER TABLE public.comunicados ENABLE ROW LEVEL SECURITY;
 
@@ -334,18 +409,20 @@ DROP POLICY IF EXISTS "comunicados_insert" ON public.comunicados;
 
 -- Lê se: é o remetente, ou sua role está na lista de destino, ou destino contém 'todos'
 CREATE POLICY "comunicados_select" ON public.comunicados FOR SELECT USING (
-  remetente_id = auth.uid()
-  OR get_my_role() = ANY(destino_roles)
-  OR 'todos' = ANY(destino_roles)
+  deputado_id = public.get_my_tenant_id() AND (
+    remetente_id = auth.uid()
+    OR get_my_role() = ANY(destino_roles)
+    OR 'todos' = ANY(destino_roles)
+  )
 );
 
 -- Só liderança e coordenador_geral podem enviar
 CREATE POLICY "comunicados_insert" ON public.comunicados FOR INSERT
-  WITH CHECK (get_my_role() IN ('lideranca', 'coordenador_geral'));
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral'));
 
 -- Habilitar Realtime para esta tabela (necessário para atualizações em tempo real no app)
 ALTER TABLE public.comunicados REPLICA IDENTITY FULL;
-ALTER PUBLICATION supabase_realtime ADD TABLE public.comunicados;
+-- PUBLICATION supabase_realtime is managed via Supabase dashboard generally, safe to leave.
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- Tabela: push_subscriptions (assinaturas Web Push por usuário)
@@ -388,11 +465,18 @@ CREATE TABLE IF NOT EXISTS public.disparos_whatsapp (
       CHECK (status IN ('pendente', 'enviando', 'concluido', 'erro')),
   remetente_id         UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
   remetente_nome       TEXT NOT NULL DEFAULT '',
+  deputado_id          TEXT,
   criado_em            TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS disparos_whatsapp_criado_em_idx ON public.disparos_whatsapp (criado_em DESC);
 CREATE INDEX IF NOT EXISTS disparos_whatsapp_remetente_idx ON public.disparos_whatsapp (remetente_id);
+CREATE INDEX IF NOT EXISTS disparos_whatsapp_tenant_idx ON public.disparos_whatsapp (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_disparos_tenant ON public.disparos_whatsapp;
+CREATE TRIGGER trigger_disparos_tenant
+  BEFORE INSERT ON public.disparos_whatsapp
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 ALTER TABLE public.disparos_whatsapp ENABLE ROW LEVEL SECURITY;
 
@@ -400,7 +484,7 @@ ALTER TABLE public.disparos_whatsapp ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "disparo_read" ON public.disparos_whatsapp;
 CREATE POLICY "disparo_read" ON public.disparos_whatsapp
   FOR SELECT USING (
-    EXISTS (
+    deputado_id = public.get_my_tenant_id() AND EXISTS (
       SELECT 1 FROM public.perfis
       WHERE id = auth.uid()
         AND role IN ('lideranca', 'coordenador_geral')
@@ -410,7 +494,7 @@ CREATE POLICY "disparo_read" ON public.disparos_whatsapp
 DROP POLICY IF EXISTS "disparo_insert" ON public.disparos_whatsapp;
 CREATE POLICY "disparo_insert" ON public.disparos_whatsapp
   FOR INSERT WITH CHECK (
-    EXISTS (
+    deputado_id = public.get_my_tenant_id() AND EXISTS (
       SELECT 1 FROM public.perfis
       WHERE id = auth.uid()
         AND role IN ('lideranca', 'coordenador_geral')
@@ -435,13 +519,38 @@ CREATE TABLE IF NOT EXISTS public.invites (
   usado_por             UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
   usado_em              TIMESTAMPTZ,
   criado_em             TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  criado_por            UUID REFERENCES public.perfis(id) ON DELETE SET NULL
+  criado_por            UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
+  deputado_id           TEXT
 );
 
 CREATE INDEX IF NOT EXISTS invites_chave_unica_idx ON public.invites (chave_unica);
 CREATE INDEX IF NOT EXISTS invites_usado_idx ON public.invites (usado);
+CREATE INDEX IF NOT EXISTS invites_tenant_idx ON public.invites (deputado_id);
+
+DROP TRIGGER IF EXISTS trigger_invites_tenant ON public.invites;
+CREATE TRIGGER trigger_invites_tenant
+  BEFORE INSERT ON public.invites
+  FOR EACH ROW EXECUTE FUNCTION public.set_tenant_id();
 
 ALTER TABLE public.invites ENABLE ROW LEVEL SECURITY;
+
+-- Trigger: Quando um convite for marcado como usado, copia o tenant (deputado_id) para o novo perfil
+CREATE OR REPLACE FUNCTION public.handle_invite_used()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  IF NEW.usado = TRUE AND OLD.usado = FALSE AND NEW.usado_por IS NOT NULL AND NEW.deputado_id IS NOT NULL THEN
+    UPDATE public.perfis 
+    SET deputado_id = NEW.deputado_id
+    WHERE id = NEW.usado_por;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trigger_invite_used ON public.invites;
+CREATE TRIGGER trigger_invite_used
+  AFTER UPDATE OF usado_por ON public.invites
+  FOR EACH ROW EXECUTE FUNCTION public.handle_invite_used();
 
 -- Público pode ler invites não usadas (apenas para validar)
 DROP POLICY IF EXISTS "invite_read_public" ON public.invites;
@@ -452,7 +561,7 @@ CREATE POLICY "invite_read_public" ON public.invites
 DROP POLICY IF EXISTS "invite_insert_gestores" ON public.invites;
 CREATE POLICY "invite_insert_gestores" ON public.invites
   FOR INSERT WITH CHECK (
-    EXISTS (
+    deputado_id = public.get_my_tenant_id() AND EXISTS (
       SELECT 1 FROM public.perfis
       WHERE id = auth.uid() AND role IN ('lideranca', 'coordenador_geral')
     )

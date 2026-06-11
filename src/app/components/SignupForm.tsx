@@ -124,11 +124,13 @@ export function SignupForm({
         }
       });
 
+      if (!authError && !authData.user) {
+        throw new Error('Este e-mail já está cadastrado. Tente fazer login ou use outro e-mail.');
+      }
+
       if (authError || !authData.user) {
         throw new Error(authError?.message || 'Erro ao criar conta');
       }
-
-
 
       // Marca o convite como usado
       const { error: inviteError } = await supabase
