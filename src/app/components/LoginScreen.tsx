@@ -212,7 +212,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               </button>
               <button
                 type="button"
-                className="text-green-600 hover:text-green-700 font-medium"
+                className="text-purple-600 hover:text-purple-700 font-medium"
                 onClick={() => setShowInviteModal(true)}
               >
                 Primeiro Acesso? Usar Chave de Convite
