@@ -1,1 +1,3 @@
-{"timestamp":"2026-06-12T03:24:14.334Z","level":"error","message":"readConfig error: Error: ENOENT: no such file or directory, open 'c:\\Users\\Duda\\Documents\\Politiqui\\testsprite_tests\\tmp\\config.json'"}
+{"timestamp":"2026-06-12T03:25:34.329Z","level":"error","message":"readConfig error: Error: ENOENT: no such file or directory, open 'c:\\Users\\Duda\\Documents\\Politiqui\\testsprite_tests\\tmp\\config.json'"}
+{"timestamp":"2026-06-12T03:25:38.327Z","level":"error","message":"readConfig error: Error: ENOENT: no such file or directory, open 'c:\\Users\\Duda\\Documents\\Politiqui\\testsprite_tests\\tmp\\config.json'"}
+{"timestamp":"2026-06-12T03:25:42.338Z","level":"error","message":"readConfig error: Error: ENOENT: no such file or directory, open 'c:\\Users\\Duda\\Documents\\Politiqui\\testsprite_tests\\tmp\\config.json'"}
