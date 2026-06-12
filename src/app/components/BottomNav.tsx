@@ -1,4 +1,4 @@
-import { Home, Users, Calendar, BarChart3, Settings, Map, Trophy } from 'lucide-react';
+import { Home, Users, Calendar, BarChart3, Settings, Map, Trophy, FileText, TrendingUp } from 'lucide-react';
 import { UserRole, canAccessTab, Tab } from '../lib/rbac';
 
 interface BottomNavProps {
@@ -14,7 +14,9 @@ export function BottomNav({ currentTab, onTabChange, userRole }: BottomNavProps)
     { id: 'agenda' as const, icon: Calendar, label: 'Agenda' },
     { id: 'results' as const, icon: Trophy, label: 'Resultados' },
     { id: 'polls' as const, icon: BarChart3, label: 'Enquetes' },
-    { id: 'coordination' as const, icon: Map, label: 'Coordenacao' },
+    { id: 'reports' as const, icon: TrendingUp, label: 'Relatórios' },
+    { id: 'coordination' as const, icon: Map, label: 'Coordenação' },
+    { id: 'logs' as const, icon: FileText, label: 'Logs' },
     { id: 'admin' as const, icon: Settings, label: 'Admin' }
   ];
 
@@ -38,8 +40,8 @@ export function BottomNav({ currentTab, onTabChange, userRole }: BottomNavProps)
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              <Icon className={`w-6 h-6 mb-1 ${isActive ? 'stroke-[2.5]' : ''}`} />
-              <span className={`text-xs ${isActive ? 'font-semibold' : 'font-medium'}`}>
+              <Icon className={`w-5 h-5 mb-0.5 ${isActive ? 'stroke-[2.5]' : ''}`} />
+              <span className={`text-[10px] leading-tight ${isActive ? 'font-semibold' : 'font-medium'}`}>
                 {tab.label}
               </span>
               {isActive && (

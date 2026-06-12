@@ -10,6 +10,19 @@ export interface Atendimento {
   tipo: 'demanda' | 'visita' | 'reuniao' | 'ligacao';
 }
 
+// Status no funil de relacionamento CRM
+export type StatusFunil = 'contato' | 'interessado' | 'simpatizante' | 'apoiador' | 'multiplicador';
+
+export const STATUS_FUNIL_CONFIG: Record<StatusFunil, { label: string; icon: string; color: string; bgColor: string; borderColor: string; bgSelected: string }> = {
+  contato:       { label: 'Contato',       icon: '📋', color: 'text-gray-700',   bgColor: 'bg-gray-50',    borderColor: 'border-gray-200',  bgSelected: 'bg-gray-600' },
+  interessado:   { label: 'Interessado',   icon: '👀', color: 'text-sky-700',    bgColor: 'bg-sky-50',     borderColor: 'border-sky-200',   bgSelected: 'bg-sky-600' },
+  simpatizante:  { label: 'Simpatizante',  icon: '🤝', color: 'text-blue-700',   bgColor: 'bg-blue-50',    borderColor: 'border-blue-200',  bgSelected: 'bg-blue-600' },
+  apoiador:      { label: 'Apoiador',      icon: '💪', color: 'text-emerald-700',bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200',bgSelected: 'bg-emerald-600' },
+  multiplicador: { label: 'Multiplicador', icon: '⭐', color: 'text-amber-700',  bgColor: 'bg-amber-50',   borderColor: 'border-amber-200', bgSelected: 'bg-amber-600' },
+};
+
+export const STATUS_FUNIL_ORDER: StatusFunil[] = ['contato', 'interessado', 'simpatizante', 'apoiador', 'multiplicador'];
+
 export interface ElectorData {
   id: string;
   nome: string;
@@ -20,7 +33,8 @@ export interface ElectorData {
   bairro: string;
   cidade: string;
   nivelVoto: 'forte' | 'medio' | 'fraco' | 'indeciso' | 'oposicao';
-  nivelEngajamento: 'lideranca' | 'cabo_eleitoral' | 'eleitor_comum';
+  nivelEngajamento: 'lideranca' | 'cabo_eleitoral' | 'eleitor_comum'; // Tipo de Contato (perfil)
+  statusFunil: StatusFunil; // CRM — temperatura do relacionamento
   nichos: string[];
   gpsLatitude?: number;
   gpsLongitude?: number;
@@ -64,6 +78,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
   const [cidade, setCidade] = useState(electorToEdit?.cidade ?? '');
   const [nivelVoto, setNivelVoto] = useState<'forte' | 'medio' | 'fraco' | 'indeciso' | 'oposicao' | ''>(electorToEdit?.nivelVoto ?? '');
   const [nivelEngajamento, setNivelEngajamento] = useState<'lideranca' | 'cabo_eleitoral' | 'eleitor_comum' | ''>(electorToEdit?.nivelEngajamento ?? '');
+  const [statusFunil, setStatusFunil] = useState<StatusFunil>(electorToEdit?.statusFunil ?? 'contato');
   const [showQrScanner, setShowQrScanner] = useState(false);
   const [nichos, setNichos] = useState<string[]>(electorToEdit?.nichos ?? []);
   const [gpsLatitude, setGpsLatitude] = useState<number | undefined>(electorToEdit?.gpsLatitude ?? undefined);
@@ -163,6 +178,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
       cidade,
       nivelVoto: nivelVoto as 'forte' | 'medio' | 'fraco' | 'indeciso' | 'oposicao',
       nivelEngajamento: nivelEngajamento as 'lideranca' | 'cabo_eleitoral' | 'eleitor_comum',
+      statusFunil,
       nichos,
       gpsLatitude,
       gpsLongitude,
@@ -184,6 +200,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
       setCidade('');
       setNivelVoto('');
       setNivelEngajamento('');
+      setStatusFunil('contato');
       setNichos([]);
       setAceitaWhatsapp(false);
       setObservacoes('');
@@ -402,11 +419,40 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
           </div>
         </div>
 
-        {/* Nível de Engajamento */}
+        {/* Status no Funil CRM */}
         <div className="bg-white rounded-xl shadow p-4">
           <h2 className="font-bold text-gray-900 flex items-center mb-3">
             <Award className="w-5 h-5 mr-2 text-blue-600" />
-            Nível de Engajamento *
+            Status no Funil *
+          </h2>
+          <div className="grid grid-cols-1 gap-2">
+            {STATUS_FUNIL_ORDER.map(status => {
+              const cfg = STATUS_FUNIL_CONFIG[status];
+              const isSelected = statusFunil === status;
+              return (
+                <button
+                  key={status}
+                  type="button"
+                  onClick={() => setStatusFunil(status)}
+                  className={`py-3 px-5 rounded-lg font-semibold transition-all border-2 flex items-center gap-2 ${
+                    isSelected
+                      ? `${cfg.bgSelected} text-white border-transparent shadow-lg`
+                      : `${cfg.bgColor} ${cfg.color} ${cfg.borderColor} hover:opacity-80`
+                  }`}
+                >
+                  <span className="text-lg">{cfg.icon}</span>
+                  {cfg.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Tipo de Contato (perfil) */}
+        <div className="bg-white rounded-xl shadow p-4">
+          <h2 className="font-bold text-gray-900 flex items-center mb-3">
+            <Award className="w-5 h-5 mr-2 text-blue-600" />
+            Tipo de Contato *
           </h2>
           <div className="grid grid-cols-1 gap-3">
             <button

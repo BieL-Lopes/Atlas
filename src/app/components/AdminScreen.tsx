@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import {
   Users, Shield, Settings, ChevronRight, UserPlus, Trash2, Edit2,
-  Download, BarChart2, TrendingUp, Target, Megaphone, Map, Bell, MessageCircle, Camera
+  Download, BarChart2, TrendingUp, Target, Megaphone, Map, Bell, MessageCircle, Camera, Upload
 } from 'lucide-react';
 import { InsightsPanel } from './InsightsPanel';
 import { WhatsAppModal } from './WhatsAppModal';
@@ -15,6 +15,7 @@ import { SettingsVoteLevelsModal } from './SettingsVoteLevelsModal';
 import { SettingsRegionsModal } from './SettingsRegionsModal';
 import { SettingsIntegrationsModal } from './SettingsIntegrationsModal';
 import { SettingsBackupModal } from './SettingsBackupModal';
+import { MassImportModal } from './MassImportModal';
 import { getSystemSettings } from '../lib/settings';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell,
@@ -55,6 +56,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
   const [showPortariaModal, setShowPortariaModal] = useState(false);
   const [showWhatsApp, setShowWhatsApp] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState<string | null>(null);
+  const [showImport, setShowImport] = useState(false);
   const [systemSettings, setSystemSettings] = useState(() => getSystemSettings());
   const [disparosHistory, setDisparosHistory] = useState<{
     id: string; mensagem: string; template_tipo: string;
@@ -244,6 +246,13 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
           onClose={() => setShowSettingsModal(null)}
         />
       )}
+      {showImport && (
+        <MassImportModal
+          user={user}
+          onClose={() => setShowImport(false)}
+          onImported={() => { /* App.tsx will re-read Dexie */ }}
+        />
+      )}
 
       {/* Header */}
       <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
@@ -362,6 +371,16 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
               >
                 <Download className="w-5 h-5" />
                 CSV Eleitores completo ({electors.length} registros)
+              </button>
+            )}
+
+            {(user.role === 'lideranca' || user.role === 'coordenador_geral') && (
+              <button
+                onClick={() => setShowImport(true)}
+                className="w-full py-3 px-4 bg-white border-2 border-emerald-200 text-emerald-700 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-emerald-50 transition-colors"
+              >
+                <Upload className="w-5 h-5" />
+                Importar Contatos (CSV/Excel)
               </button>
             )}
 

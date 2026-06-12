@@ -7,7 +7,7 @@ export type UserRole =
   | 'eleitor';            // Eleitor - apenas visualizacao basica
 
 // Tabs disponiveis no sistema
-export type Tab = 'home' | 'contacts' | 'agenda' | 'polls' | 'admin' | 'coordination' | 'results';
+export type Tab = 'home' | 'contacts' | 'agenda' | 'polls' | 'admin' | 'coordination' | 'results' | 'logs' | 'reports';
 
 // Labels amigaveis para os papeis
 export const ROLE_LABELS: Record<UserRole, string> = {
@@ -27,33 +27,41 @@ export const ROLE_PERMISSIONS: Record<UserRole, {
   canManagePolls: boolean;
   canViewReports: boolean;
   canManageUsers: boolean;
+  canViewLogs: boolean;
+  canImport: boolean;
 }> = {
   lideranca: {
-    tabs: ['home', 'contacts', 'agenda', 'polls', 'admin', 'coordination'],
+    tabs: ['home', 'contacts', 'agenda', 'polls', 'reports', 'logs', 'admin', 'coordination'],
     canCreateElector: true,
     canDeleteElector: true,
     canExport: true,
     canManagePolls: true,
     canViewReports: true,
-    canManageUsers: true
+    canManageUsers: true,
+    canViewLogs: true,
+    canImport: true
   },
   coordenador_geral: {
-    tabs: ['home', 'contacts', 'agenda', 'polls', 'coordination'],
+    tabs: ['home', 'contacts', 'agenda', 'polls', 'reports', 'logs', 'coordination'],
     canCreateElector: true,
     canDeleteElector: true,
     canExport: true,
     canManagePolls: true,
     canViewReports: true,
-    canManageUsers: false
+    canManageUsers: false,
+    canViewLogs: true,
+    canImport: true
   },
   coordenador_regional: {
-    tabs: ['home', 'contacts', 'agenda', 'polls', 'coordination'],
+    tabs: ['home', 'contacts', 'agenda', 'polls', 'reports', 'coordination'],
     canCreateElector: true,
     canDeleteElector: true,
     canExport: true,
     canManagePolls: false,
     canViewReports: true,
-    canManageUsers: false
+    canManageUsers: false,
+    canViewLogs: false,
+    canImport: false
   },
   captador_votos: {
     tabs: ['home', 'contacts', 'agenda', 'results'],
@@ -62,7 +70,9 @@ export const ROLE_PERMISSIONS: Record<UserRole, {
     canExport: false,
     canManagePolls: false,
     canViewReports: false,
-    canManageUsers: false
+    canManageUsers: false,
+    canViewLogs: false,
+    canImport: false
   },
   eleitor: {
     tabs: ['home', 'agenda'],
@@ -71,7 +81,9 @@ export const ROLE_PERMISSIONS: Record<UserRole, {
     canExport: false,
     canManagePolls: false,
     canViewReports: false,
-    canManageUsers: false
+    canManageUsers: false,
+    canViewLogs: false,
+    canImport: false
   }
 };
 

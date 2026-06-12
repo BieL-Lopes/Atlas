@@ -11,6 +11,8 @@ import { CoordinationScreen } from './components/CoordinationScreen';
 import { AdminScreen } from './components/AdminScreen';
 import { CaptadorResultsScreen } from './components/CaptadorResultsScreen';
 import { CheckinMapScreen } from './components/CheckinMapScreen';
+import { AuditLogsScreen } from './components/AuditLogsScreen';
+import { StrategicReportsScreen } from './components/StrategicReportsScreen';
 import { BottomNav } from './components/BottomNav';
 import { OfflineBanner } from './components/OfflineBanner';
 import { toast } from 'sonner';
@@ -23,8 +25,9 @@ import { pushPendingChanges, resetLastSync, pullChanges } from './lib/syncServic
 import { subscribeToPush, unsubscribeFromPush } from './lib/pushService';
 import { buildRanking, todayCount, computeStreak, MEDALS } from './lib/gamification';
 import { useSync } from './lib/useSync';
+import { logAudit } from './lib/auditService';
 
-type Screen = 'login' | 'home' | 'form' | 'list' | 'profile' | 'agenda' | 'polls' | 'coordination' | 'admin' | 'results' | 'checkin';
+type Screen = 'login' | 'home' | 'form' | 'list' | 'profile' | 'agenda' | 'polls' | 'coordination' | 'admin' | 'results' | 'checkin' | 'logs' | 'reports';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
@@ -95,6 +98,7 @@ export default function App() {
         const migrated = parsed.map(e => ({
           createdBy: 'desconhecido',
           createdByName: 'Desconhecido',
+          statusFunil: 'contato' as const,
           ...e,
         }));
         await db.electors.bulkPut(migrated);
@@ -149,6 +153,8 @@ export default function App() {
     const allowedTabs = getAllowedTabs(userData.role);
     setCurrentTab(allowedTabs[0]);
     toast.success(`Bem-vindo(a), ${userData.name}! (${ROLE_LABELS[userData.role]})`);
+    // Log de auditoria — login
+    logAudit({ userId: userData.id, userName: userData.name, action: 'LOGIN', entity: 'sessao' });
     // Carrega dados imediatamente após login (sem depender do useEffect inicial)
     fetchUsers();
     if (isSupabaseConfigured) {
@@ -182,6 +188,12 @@ export default function App() {
       case 'admin':
         setCurrentScreen('admin');
         break;
+      case 'logs':
+        setCurrentScreen('logs');
+        break;
+      case 'reports':
+        setCurrentScreen('reports');
+        break;
     }
   };
 
@@ -209,7 +221,12 @@ export default function App() {
     await refreshCount();
     setElectors(prev => [newElector, ...prev]);
     setCurrentScreen('home');
-    toast.success('✅ Eleitor cadastrado com sucesso!');
+    toast.success('✅ Contato cadastrado com sucesso!');
+
+    // Log de auditoria — criação
+    if (user) {
+      logAudit({ userId: user.id, userName: user.name, action: 'CREATE', entity: 'eleitores', entityId: newElector.id, details: { nome: newElector.nome } });
+    }
 
     // Background GPS capture — updates the record silently after save
     if (navigator.geolocation) {
@@ -237,6 +254,7 @@ export default function App() {
   };
 
   const handleDeleteElector = async (id: string) => {
+    const elector = electors.find(e => e.id === id);
     await db.electors.delete(id);
     await db.pendingChanges.add({
       operation: 'delete',
@@ -247,6 +265,11 @@ export default function App() {
     await refreshCount();
     setElectors(prev => prev.filter(e => e.id !== id));
     toast.success('Contato excluído');
+
+    // Log de auditoria — exclusão
+    if (user) {
+      logAudit({ userId: user.id, userName: user.name, action: 'DELETE', entity: 'eleitores', entityId: id, details: { nome: elector?.nome } });
+    }
   };
 
   const handleViewProfile = (elector: ElectorData) => {
@@ -268,6 +291,11 @@ export default function App() {
     setElectors(prev => prev.map(e => e.id === updated.id ? updated : e));
     setSelectedElector(updated);
     toast.success('Atendimento registrado!');
+
+    // Log de auditoria — atualização
+    if (user) {
+      logAudit({ userId: user.id, userName: user.name, action: 'UPDATE', entity: 'eleitores', entityId: updated.id, details: { nome: updated.nome } });
+    }
   };
 
   const handleEditElector = (elector: ElectorData) => {
@@ -290,7 +318,12 @@ export default function App() {
     setSelectedElector(updated);
     setElectorToEdit(null);
     setCurrentScreen('profile');
-    toast.success('✅ Eleitor atualizado com sucesso!');
+    toast.success('✅ Contato atualizado com sucesso!');
+
+    // Log de auditoria — edição
+    if (user) {
+      logAudit({ userId: user.id, userName: user.name, action: 'UPDATE', entity: 'eleitores', entityId: updated.id, details: { nome: updated.nome } });
+    }
   };
 
   const handleLogout = async () => {
@@ -439,6 +472,28 @@ export default function App() {
           users={users}
           canExport={userPermissions?.canExport ?? false}
         />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <Toaster position="top-center" richColors />
+      </>
+    );
+  }
+
+  if (currentScreen === 'logs' && user) {
+    return (
+      <>
+        <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
+        <AuditLogsScreen user={user} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <Toaster position="top-center" richColors />
+      </>
+    );
+  }
+
+  if (currentScreen === 'reports' && user) {
+    return (
+      <>
+        <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
+        <StrategicReportsScreen user={user} electors={electors} users={users} />
         <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
         <Toaster position="top-center" richColors />
       </>

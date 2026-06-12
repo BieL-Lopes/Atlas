@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { ArrowLeft, Search, Phone, MapPin, Trash2, Download, FileText, FileSpreadsheet, X, TrendingUp } from 'lucide-react';
-import { ElectorData } from './CaptureForm';
+import { ArrowLeft, Search, Phone, MapPin, Trash2, Download, FileText, FileSpreadsheet, X, TrendingUp, LayoutList, LayoutGrid, Filter } from 'lucide-react';
+import { ElectorData, STATUS_FUNIL_CONFIG, STATUS_FUNIL_ORDER, StatusFunil } from './CaptureForm';
 import { computeScore, avgScore } from '../lib/score';
 
 interface ContactListProps {
@@ -14,6 +14,9 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile }: Conta
   const [searchTerm, setSearchTerm] = useState('');
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [scoreFilter, setScoreFilter] = useState<'todos' | 'alto' | 'medio' | 'baixo'>('todos');
+  const [funilFilter, setFunilFilter] = useState<StatusFunil | 'todos'>('todos');
+  const [viewMode, setViewMode] = useState<'list' | 'funil'>('list');
+  const [showFilters, setShowFilters] = useState(false);
 
   const filteredContacts = contacts.filter(contact => {
     const matchText =
@@ -22,6 +25,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile }: Conta
       contact.bairro.toLowerCase().includes(searchTerm.toLowerCase());
     if (!matchText) return false;
     if (scoreFilter !== 'todos' && computeScore(contact).tier !== scoreFilter) return false;
+    if (funilFilter !== 'todos' && (contact.statusFunil ?? 'contato') !== funilFilter) return false;
     return true;
   });
 
@@ -180,7 +184,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile }: Conta
             </button>
             <div>
               <h1 className="text-xl font-bold">Meus Contatos</h1>
-              <p className="text-sm text-blue-100">{contacts.length} eleitor(es) cadastrado(s)</p>
+              <p className="text-sm text-blue-100">{contacts.length} contato{contacts.length !== 1 ? 's' : ''} cadastrado{contacts.length !== 1 ? 's' : ''}</p>
             </div>
           </div>
 
@@ -231,43 +235,129 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile }: Conta
           )}
         </div>
 
-        {/* Barra de Busca */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
-            placeholder="Buscar por nome, cidade ou bairro..."
-          />
+        {/* Barra de Busca e Botão de Filtros */}
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+              placeholder="Buscar por nome, cidade ou bairro..."
+            />
+          </div>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`px-4 py-3 rounded-lg font-semibold flex items-center justify-center transition-colors ${
+              showFilters || scoreFilter !== 'todos' || funilFilter !== 'todos'
+                ? 'bg-blue-800 text-white shadow-inner'
+                : 'bg-blue-500 text-white hover:bg-blue-400'
+            }`}
+          >
+            <Filter className="w-5 h-5" />
+          </button>
         </div>
 
-        {/* Filtro por score */}
-        <div className="flex gap-2 pt-1">
-          {(['todos', 'alto', 'medio', 'baixo'] as const).map(tier => {
-            const active = scoreFilter === tier;
-            const config = {
-              todos: { label: 'Todos', activeStyle: 'bg-white text-blue-700 font-bold' },
-              alto:  { label: `Alto (${contacts.filter(c => computeScore(c).tier === 'alto').length})`,  activeStyle: 'bg-green-500 text-white font-bold' },
-              medio: { label: `Médio (${contacts.filter(c => computeScore(c).tier === 'medio').length})`, activeStyle: 'bg-yellow-400 text-yellow-900 font-bold' },
-              baixo: { label: `Baixo (${contacts.filter(c => computeScore(c).tier === 'baixo').length})`, activeStyle: 'bg-red-500 text-white font-bold' },
-            };
-            return (
-              <button
-                key={tier}
-                onClick={() => setScoreFilter(tier)}
-                className={`flex-1 text-xs py-1.5 rounded-full transition-colors border ${
-                  active
-                    ? config[tier].activeStyle + ' border-transparent'
-                    : 'bg-blue-500 text-blue-100 border-blue-400 hover:bg-blue-400'
-                }`}
-              >
-                {config[tier].label}
-              </button>
-            );
-          })}
-        </div>
+        {/* Painel de Filtros e Estatísticas Expandível */}
+        {showFilters && (
+          <div className="mt-3 bg-blue-700/50 rounded-xl p-3 space-y-3">
+            {/* Filtro por score */}
+            <div>
+              <p className="text-xs font-semibold text-blue-100 mb-1.5 uppercase tracking-wider">Por Score</p>
+              <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
+                {(['todos', 'alto', 'medio', 'baixo'] as const).map(tier => {
+                  const active = scoreFilter === tier;
+                  const config = {
+                    todos: { label: 'Todos', activeStyle: 'bg-white text-blue-700 font-bold' },
+                    alto:  { label: `Alto (${contacts.filter(c => computeScore(c).tier === 'alto').length})`,  activeStyle: 'bg-green-500 text-white font-bold' },
+                    medio: { label: `Médio (${contacts.filter(c => computeScore(c).tier === 'medio').length})`, activeStyle: 'bg-yellow-400 text-yellow-900 font-bold' },
+                    baixo: { label: `Baixo (${contacts.filter(c => computeScore(c).tier === 'baixo').length})`, activeStyle: 'bg-red-500 text-white font-bold' },
+                  };
+                  return (
+                    <button
+                      key={tier}
+                      onClick={() => setScoreFilter(tier)}
+                      className={`whitespace-nowrap px-3 text-xs py-1.5 rounded-full transition-colors border ${
+                        active
+                          ? config[tier].activeStyle + ' border-transparent'
+                          : 'bg-blue-500 text-blue-100 border-blue-400 hover:bg-blue-400'
+                      }`}
+                    >
+                      {config[tier].label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Filtro por Status do Funil */}
+            <div>
+              <p className="text-xs font-semibold text-blue-100 mb-1.5 uppercase tracking-wider">Por Funil</p>
+              <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
+                <button
+                  onClick={() => setFunilFilter('todos')}
+                  className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition-colors border ${
+                    funilFilter === 'todos'
+                      ? 'bg-white text-blue-700 font-bold border-transparent'
+                      : 'bg-blue-500 text-blue-100 border-blue-400 hover:bg-blue-400'
+                  }`}
+                >
+                  Todos
+                </button>
+                {STATUS_FUNIL_ORDER.map(status => {
+                  const cfg = STATUS_FUNIL_CONFIG[status];
+                  const count = contacts.filter(c => (c.statusFunil ?? 'contato') === status).length;
+                  return (
+                    <button
+                      key={status}
+                      onClick={() => setFunilFilter(funilFilter === status ? 'todos' : status)}
+                      className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition-colors border ${
+                        funilFilter === status
+                          ? 'bg-white text-blue-700 font-bold border-transparent'
+                          : 'bg-blue-500 text-blue-100 border-blue-400 hover:bg-blue-400'
+                      }`}
+                    >
+                      {cfg.icon} {count}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            
+            {/* Estatísticas Rápidas (Movido do bottom nav para cá) */}
+            {contacts.length > 0 && (
+              <div className="pt-2 border-t border-blue-500/30">
+                <div className="grid grid-cols-6 gap-1 text-center">
+                  <div>
+                    <p className="text-green-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'forte').length}</p>
+                    <p className="text-blue-200 text-[10px]">Fortes</p>
+                  </div>
+                  <div>
+                    <p className="text-yellow-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'medio').length}</p>
+                    <p className="text-blue-200 text-[10px]">Médios</p>
+                  </div>
+                  <div>
+                    <p className="text-red-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'fraco').length}</p>
+                    <p className="text-blue-200 text-[10px]">Fracos</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'indeciso').length}</p>
+                    <p className="text-blue-200 text-[10px]">Indecisos</p>
+                  </div>
+                  <div>
+                    <p className="text-purple-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'oposicao').length}</p>
+                    <p className="text-blue-200 text-[10px]">Oposição</p>
+                  </div>
+                  <div>
+                    <p className="text-white font-bold text-sm leading-tight">{avgScore(contacts)}</p>
+                    <p className="text-blue-200 text-[10px]">Score</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Lista de Contatos */}
@@ -278,7 +368,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile }: Conta
               <Search className="w-10 h-10 text-gray-400" />
             </div>
             <p className="text-gray-600">
-              {searchTerm ? 'Nenhum contato encontrado' : 'Nenhum eleitor cadastrado ainda'}
+              {searchTerm ? 'Nenhum contato encontrado' : 'Nenhum contato cadastrado ainda'}
             </p>
           </div>
         ) : (
@@ -308,6 +398,15 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile }: Conta
                   <div className="flex flex-wrap gap-1 mb-2">
                     {getNivelBadge(contact.nivelVoto)}
                     {getNivelEngajamentoBadge(contact.nivelEngajamento)}
+                    {(() => {
+                      const sf = (contact.statusFunil ?? 'contato') as StatusFunil;
+                      const cfg = STATUS_FUNIL_CONFIG[sf];
+                      return (
+                        <span className={`px-3 py-1 rounded-full text-xs font-semibold border-2 ${cfg.bgColor} ${cfg.color} ${cfg.borderColor}`}>
+                          {cfg.icon} {cfg.label}
+                        </span>
+                      );
+                    })()}
                   </div>
                   {contact.nichos && contact.nichos.length > 0 && (
                     <div className="flex flex-wrap gap-1">
@@ -385,51 +484,6 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile }: Conta
           ))
         )}
       </div>
-
-      {/* Estatísticas Rápidas (acima da bottom nav) */}
-      {contacts.length > 0 && (
-        <div className="fixed bottom-16 left-0 right-0 bg-white border-t-2 border-gray-200 p-4 shadow-lg">
-          <div className="grid grid-cols-3 gap-x-2 gap-y-2 text-center text-sm">
-            <div>
-              <p className="text-green-600 font-bold text-lg leading-tight">
-                {contacts.filter(c => c.nivelVoto === 'forte').length}
-              </p>
-              <p className="text-gray-600 text-xs">Fortes</p>
-            </div>
-            <div>
-              <p className="text-yellow-600 font-bold text-lg leading-tight">
-                {contacts.filter(c => c.nivelVoto === 'medio').length}
-              </p>
-              <p className="text-gray-600 text-xs">Médios</p>
-            </div>
-            <div>
-              <p className="text-red-600 font-bold text-lg leading-tight">
-                {contacts.filter(c => c.nivelVoto === 'fraco').length}
-              </p>
-              <p className="text-gray-600 text-xs">Fracos</p>
-            </div>
-            <div>
-              <p className="text-slate-500 font-bold text-lg leading-tight">
-                {contacts.filter(c => c.nivelVoto === 'indeciso').length}
-              </p>
-              <p className="text-gray-600 text-xs">Indecisos</p>
-            </div>
-            <div>
-              <p className="text-purple-600 font-bold text-lg leading-tight">
-                {contacts.filter(c => c.nivelVoto === 'oposicao').length}
-              </p>
-              <p className="text-gray-600 text-xs">Oposição</p>
-            </div>
-            <div>
-              <div className="flex items-center justify-center gap-1">
-                <TrendingUp className="w-3 h-3 text-blue-600" />
-                <p className="text-blue-600 font-bold text-lg leading-tight">{avgScore(contacts)}</p>
-              </div>
-              <p className="text-gray-600 text-xs">Score médio</p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
