@@ -35,7 +35,7 @@ interface HomeScreenProps {
   user?: User;
   userName: string;
   totalCadastros: number;
-  votoStats?: { forte: number; medio: number; fraco: number };
+  votoStats?: { forte: number; medio: number; fraco: number; indeciso?: number; oposicao?: number };
   onNavigate: (screen: 'form' | 'list' | 'agenda') => void;
   onLogout: () => void;
   userRole: UserRole;
@@ -139,9 +139,11 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
   }, [user?.id]);
 
   const votoData = [
-    { name: 'Fortes', value: votoStats?.forte ?? 0, color: '#16a34a' },
-    { name: 'M\u00e9dios', value: votoStats?.medio ?? 0, color: '#eab308' },
-    { name: 'Fracos', value: votoStats?.fraco ?? 0, color: '#dc2626' },
+    { name: 'Fortes', value: votoStats?.forte ?? 0, bgClass: 'bg-green-600', textClass: 'text-green-600' },
+    { name: 'Médios', value: votoStats?.medio ?? 0, bgClass: 'bg-yellow-500', textClass: 'text-yellow-600' },
+    { name: 'Fracos', value: votoStats?.fraco ?? 0, bgClass: 'bg-red-600', textClass: 'text-red-600' },
+    { name: 'Indecisos', value: votoStats?.indeciso ?? 0, bgClass: 'bg-slate-500', textClass: 'text-slate-600' },
+    { name: 'Oposição', value: votoStats?.oposicao ?? 0, bgClass: 'bg-purple-700', textClass: 'text-purple-700' },
   ];
 
   return (
@@ -288,49 +290,28 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
             {/* Barra de Progresso Empilhada */}
             <div className="w-full h-6 bg-gray-100 rounded-full overflow-hidden mb-4">
               <div className="h-full flex">
-                {/* Verde - Votos Fortes */}
-                <div
-                  className="bg-green-600 h-full transition-all"
-                  style={{ width: `${(votoData[0].value / totalCadastros) * 100}%` }}
-                ></div>
-                {/* Amarelo - Votos Médios */}
-                <div
-                  className="bg-yellow-500 h-full transition-all"
-                  style={{ width: `${(votoData[1].value / totalCadastros) * 100}%` }}
-                ></div>
-                {/* Vermelho - Votos Fracos */}
-                <div
-                  className="bg-red-600 h-full transition-all"
-                  style={{ width: `${(votoData[2].value / totalCadastros) * 100}%` }}
-                ></div>
+                {votoData.map((item, idx) => item.value > 0 && (
+                  <div
+                    key={idx}
+                    className={`${item.bgClass} h-full transition-all`}
+                    style={{ width: `${(item.value / totalCadastros) * 100}%` }}
+                    title={`${item.name}: ${item.value}`}
+                  ></div>
+                ))}
               </div>
             </div>
 
             {/* Legenda Horizontal */}
             <div className="flex flex-wrap items-center gap-4 text-xs">
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-green-600 mr-1.5"></div>
-                <span className="text-gray-700">
-                  Fortes: <span className="font-bold text-green-600">{votoData[0].value}</span>
-                  <span className="text-gray-500 ml-1">({totalCadastros > 0 ? Math.round((votoData[0].value / totalCadastros) * 100) : 0}%)</span>
-                </span>
-              </div>
-
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-yellow-500 mr-1.5"></div>
-                <span className="text-gray-700">
-                  Médios: <span className="font-bold text-yellow-600">{votoData[1].value}</span>
-                  <span className="text-gray-500 ml-1">({totalCadastros > 0 ? Math.round((votoData[1].value / totalCadastros) * 100) : 0}%)</span>
-                </span>
-              </div>
-
-              <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-red-600 mr-1.5"></div>
-                <span className="text-gray-700">
-                  Fracos: <span className="font-bold text-red-600">{votoData[2].value}</span>
-                  <span className="text-gray-500 ml-1">({totalCadastros > 0 ? Math.round((votoData[2].value / totalCadastros) * 100) : 0}%)</span>
-                </span>
-              </div>
+              {votoData.map((item, idx) => (
+                <div key={idx} className="flex items-center">
+                  <div className={`w-3 h-3 rounded-full ${item.bgClass} mr-1.5`}></div>
+                  <span className="text-gray-700">
+                    {item.name}: <span className={`font-bold ${item.textClass}`}>{item.value}</span>
+                    <span className="text-gray-500 ml-1">({totalCadastros > 0 ? Math.round((item.value / totalCadastros) * 100) : 0}%)</span>
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         )}

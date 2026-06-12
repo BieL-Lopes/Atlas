@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Save, User, Phone, Calendar, MapPin, MessageSquare, Navigation, Tag, Award, Camera } from 'lucide-react';
+import { ArrowLeft, Save, User, Phone, Calendar, MapPin, MessageSquare, Navigation, Tag, Award, Camera, Upload } from 'lucide-react';
 import { QrScannerModal } from './QrScannerModal';
 import { getSystemSettings } from '../lib/settings';
 
@@ -53,6 +53,7 @@ interface CaptureFormProps {
   onSave: (elector: Omit<ElectorData, 'id' | 'dataCadastro' | 'atendimentos'>) => void;
   electorToEdit?: ElectorData;
   onUpdate?: (elector: ElectorData) => void;
+  onImportClick?: () => void;
 }
 
 const NICHOS_DISPONIVEIS = [
@@ -68,7 +69,7 @@ const NICHOS_DISPONIVEIS = [
   'Assistência Social'
 ];
 
-export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: CaptureFormProps) {
+export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportClick }: CaptureFormProps) {
   const [nome, setNome] = useState(electorToEdit?.nome ?? '');
   const [whatsapp, setWhatsapp] = useState(electorToEdit?.whatsapp ?? '');
   const [email, setEmail] = useState(electorToEdit?.email ?? '');
@@ -212,14 +213,27 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate }: Capture
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-blue-600 text-white p-4 sticky top-0 z-10 shadow-lg">
-        <div className="flex items-center">
-          <button
-            onClick={onBack}
-            className="mr-3 p-2 hover:bg-blue-700 rounded-lg transition-colors"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </button>
-          <h1 className="text-xl font-bold">{electorToEdit ? 'Editar Cadastro' : 'Novo Cadastro'}</h1>
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center">
+            <button
+              onClick={onBack}
+              className="mr-3 p-2 hover:bg-blue-700 rounded-lg transition-colors"
+            >
+              <ArrowLeft className="w-6 h-6" />
+            </button>
+            <h1 className="text-xl font-bold">{electorToEdit ? 'Editar Cadastro' : 'Novo Cadastro'}</h1>
+          </div>
+          {!electorToEdit && onImportClick && (
+            <button
+              type="button"
+              onClick={onImportClick}
+              className="flex items-center gap-2 px-3 py-1.5 bg-blue-700 hover:bg-blue-800 rounded-lg text-sm font-semibold transition-colors shadow-sm"
+              title="Importar em Massa (CSV/Excel)"
+            >
+              <Upload className="w-4 h-4" />
+              <span className="hidden sm:inline">Importar</span>
+            </button>
+          )}
         </div>
       </div>
 

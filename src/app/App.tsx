@@ -15,6 +15,7 @@ import { AuditLogsScreen } from './components/AuditLogsScreen';
 import { StrategicReportsScreen } from './components/StrategicReportsScreen';
 import { BottomNav } from './components/BottomNav';
 import { OfflineBanner } from './components/OfflineBanner';
+import { MassImportModal } from './components/MassImportModal';
 import { toast } from 'sonner';
 import { Toaster } from 'sonner';
 import { Tab, getAllowedTabs, getPermissions, ROLE_LABELS } from './lib/rbac';
@@ -37,6 +38,7 @@ export default function App() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedElector, setSelectedElector] = useState<ElectorData | null>(null);
   const [electorToEdit, setElectorToEdit] = useState<ElectorData | null>(null);
+  const [showImportModal, setShowImportModal] = useState(false);
   const { isOnline, pendingCount, refreshCount, syncedAt } = useSync();
 
   const captadorStats = useMemo(() => {
@@ -366,7 +368,15 @@ export default function App() {
           onSave={handleSaveElector}
           electorToEdit={electorToEdit ?? undefined}
           onUpdate={handleSaveEditedElector}
+          onImportClick={() => setShowImportModal(true)}
         />
+        {showImportModal && user && (
+          <MassImportModal
+            user={user}
+            onClose={() => setShowImportModal(false)}
+            onImported={() => {}}
+          />
+        )}
         <Toaster position="top-center" richColors />
       </>
     );
@@ -538,6 +548,8 @@ export default function App() {
               forte: electors.filter(e => e.nivelVoto === 'forte').length,
               medio: electors.filter(e => e.nivelVoto === 'medio').length,
               fraco: electors.filter(e => e.nivelVoto === 'fraco').length,
+              indeciso: electors.filter(e => e.nivelVoto === 'indeciso').length,
+              oposicao: electors.filter(e => e.nivelVoto === 'oposicao').length,
             }}
             electors={electors}
             onNavigate={setCurrentScreen}

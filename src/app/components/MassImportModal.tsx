@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from 'react';
-import { X, Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, FileText } from 'lucide-react';
+import { X, Upload, FileSpreadsheet, CheckCircle2, AlertCircle, Loader2, FileText, Info } from 'lucide-react';
 import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import type { ElectorData, StatusFunil } from './CaptureForm';
@@ -55,6 +55,11 @@ const COLUMN_MAP: Record<string, keyof ParsedRow> = {
   nichos: 'nichos', interesses: 'nichos', tags: 'nichos',
 };
 
+const normalizeString = (str?: string) => {
+  if (!str) return '';
+  return str.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+};
+
 export function MassImportModal({ user, onClose, onImported }: Props) {
   const [step, setStep] = useState<Step>('upload');
   const [rawData, setRawData] = useState<ParsedRow[]>([]);
@@ -90,10 +95,13 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
       if (!row.nome?.trim()) errors.push('Nome obrigatório');
       if (!row.whatsapp?.trim()) errors.push('WhatsApp obrigatório');
       if (!row.cidade?.trim()) errors.push('Cidade obrigatória');
-      if (row.nivelVoto && !VALID_NIVEL_VOTO.includes(row.nivelVoto.toLowerCase())) {
+      const nv = normalizeString(row.nivelVoto);
+      if (row.nivelVoto && !VALID_NIVEL_VOTO.includes(nv)) {
         errors.push(`Nível de voto inválido: ${row.nivelVoto}`);
       }
-      if (row.statusFunil && !VALID_STATUS_FUNIL.includes(row.statusFunil.toLowerCase() as StatusFunil)) {
+      
+      const sf = normalizeString(row.statusFunil);
+      if (row.statusFunil && !VALID_STATUS_FUNIL.includes(sf as StatusFunil)) {
         errors.push(`Status funil inválido: ${row.statusFunil}`);
       }
       return { row, index: index + 1, errors, isValid: errors.length === 0 };
@@ -175,9 +183,9 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
           dataNascimento: row.dataNascimento?.trim() || '',
           bairro: row.bairro?.trim() || '',
           cidade: row.cidade.trim(),
-          nivelVoto: (VALID_NIVEL_VOTO.includes(row.nivelVoto?.toLowerCase() ?? '') ? row.nivelVoto!.toLowerCase() : 'medio') as ElectorData['nivelVoto'],
+          nivelVoto: (row.nivelVoto && VALID_NIVEL_VOTO.includes(normalizeString(row.nivelVoto)) ? normalizeString(row.nivelVoto) : 'medio') as ElectorData['nivelVoto'],
           nivelEngajamento: 'eleitor_comum',
-          statusFunil: (VALID_STATUS_FUNIL.includes(row.statusFunil?.toLowerCase() as StatusFunil ?? '') ? row.statusFunil!.toLowerCase() : 'contato') as StatusFunil,
+          statusFunil: (row.statusFunil && VALID_STATUS_FUNIL.includes(normalizeString(row.statusFunil) as StatusFunil) ? normalizeString(row.statusFunil) : 'contato') as StatusFunil,
           nichos: row.nichos ? row.nichos.split(/[;,]/).map(n => n.trim()).filter(Boolean) : [],
           aceitaWhatsapp: true,
           observacoes: row.observacoes?.trim() || '',
@@ -241,8 +249,29 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
               <Upload className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="font-bold text-gray-900">Importar Contatos</h2>
-              <p className="text-xs text-gray-500">CSV ou Excel (.xlsx)</p>
+              <div className="flex items-center gap-2">
+                <h2 className="font-bold text-gray-900">Importar Contatos</h2>
+                <div className="relative group">
+                  <Info className="w-4 h-4 text-gray-400 cursor-help transition-colors hover:text-blue-500" />
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 shadow-xl border border-gray-700 pointer-events-none">
+                    <p className="font-semibold mb-2 border-b border-gray-700 pb-1">Colunas esperadas:</p>
+                    <ul className="space-y-1.5 text-gray-300">
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">nome</span> <span className="text-red-400 font-bold">*</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">whatsapp</span> <span className="text-red-400 font-bold">*</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">cidade</span> <span className="text-red-400 font-bold">*</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">bairro</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">email</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">nivel_voto</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">status_funil</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">data_nascimento</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">nichos</span></li>
+                      <li><span className="font-mono text-[10px] bg-gray-700/50 text-white px-1.5 py-0.5 rounded border border-gray-600">observacoes</span></li>
+                    </ul>
+                    <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-gray-800 border-l border-t border-gray-700 rotate-45"></div>
+                  </div>
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-0.5">CSV ou Excel (.xlsx)</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
