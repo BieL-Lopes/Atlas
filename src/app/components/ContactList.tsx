@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Search, Phone, MapPin, Trash2, Download, FileText, FileSpreadsheet, X, TrendingUp, LayoutList, LayoutGrid, Filter } from 'lucide-react';
+import { ArrowLeft, Search, Phone, MapPin, Trash2, Download, FileText, FileSpreadsheet, X, TrendingUp, LayoutList, LayoutGrid, Filter, Plus } from 'lucide-react';
 import { ElectorData, STATUS_FUNIL_CONFIG, STATUS_FUNIL_ORDER, StatusFunil } from './CaptureForm';
 import { computeScore, avgScore } from '../lib/score';
 
@@ -8,9 +8,10 @@ interface ContactListProps {
   onBack: () => void;
   onDelete?: (id: string) => void;
   onViewProfile: (elector: ElectorData) => void;
+  onAdd?: () => void;
 }
 
-export function ContactList({ contacts, onBack, onDelete, onViewProfile }: ContactListProps) {
+export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }: ContactListProps) {
   const [searchTerm, setSearchTerm] = useState('');
   const [showExportMenu, setShowExportMenu] = useState(false);
   const [scoreFilter, setScoreFilter] = useState<'todos' | 'alto' | 'medio' | 'baixo'>('todos');
@@ -484,6 +485,16 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile }: Conta
           ))
         )}
       </div>
+
+      {onAdd && (
+        <button
+          onClick={onAdd}
+          className="fixed bottom-24 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-40"
+          aria-label="Novo Cadastro"
+        >
+          <Plus className="w-7 h-7" strokeWidth={3} />
+        </button>
+      )}
     </div>
   );
 }

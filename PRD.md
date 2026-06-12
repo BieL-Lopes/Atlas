@@ -163,6 +163,19 @@ Uma plataforma unificada que integra:
 
 ---
 
+### 3.7 Fase 7 — Elevação de Maturidade CRM (✅ CONCLUÍDO)
+
+**Escopo:** Refatoração de funil, auditoria, importação e relatórios avançados.
+
+| Função | Descrição | Status |
+|--------|-----------|--------|
+| **Funil de Relacionamento** | Novo campo `statusFunil` (Contato, Interessado, Simpatizante, Apoiador, Multiplicador) para segmentação no Kanban/Listagem | ✅ |
+| **Importação em Massa** | Módulo de Upload CSV/XLSX com preview, validação de colunas e barra de progresso. | ✅ |
+| **Trilha de Auditoria (LGPD)** | Tabela `audit_logs` imutável no Supabase, registrando ações críticas (CREATE, UPDATE, DELETE, EXPORT, IMPORT, LOGIN) | ✅ |
+| **Relatórios Estratégicos** | Visão analítica para Liderança/Coordenadores (Captadores vs Meta, Drill-down da equipe e Conversão de Funil) | ✅ |
+
+---
+
 ### 3.7 Fase 7 — Geolocalização (🔲 PENDENTE)
 
 **Escopo:** Check-in, rota, cobertura.
@@ -344,11 +357,12 @@ pending_changes (id UUID, entity_type, entity_id, operation, data JSON, created_
 - ✅ Automação: WhatsApp + Evolution API
 - ✅ Onboarding Seguro: convite + validação
 - ✅ Notificações: reminders de agenda via Local Push
+- ✅ Elevação CRM: Funil de relacionamento, auditoria LGPD, importação CSV/XLSX, relatórios
 
 ### Q4 2026
 - 🔲 Gamificação: ranking, medalhas, streak
 - 🔲 Geolocalização: check-in, rota, cobertura
-- 🔲 LGPD compliance: direito ao esquecimento, política de retenção
+- 🔲 LGPD compliance: direito ao esquecimento, política de retenção (Trilha de auditoria já concluída)
 
 ### Q1 2027
 - 🔲 BI avançado: análise preditiva (candidato vai ganhar sim/não)

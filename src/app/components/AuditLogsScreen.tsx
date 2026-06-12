@@ -85,6 +85,8 @@ export function AuditLogsScreen({ user }: Props) {
             />
           </div>
           <button
+            type="button"
+            aria-label="Abrir filtros"
             onClick={() => setShowFilters(!showFilters)}
             className={`p-2.5 rounded-lg transition-colors ${
               showFilters ? 'bg-white text-blue-600' : 'bg-white/15 text-white hover:bg-white/25'
@@ -213,7 +215,7 @@ export function AuditLogsScreen({ user }: Props) {
         )}
 
         {/* Pagination */}
-        {totalPages > 1 && (
+        {totalCount > 0 && (
           <div className="flex items-center justify-center gap-3 mt-4">
             <button
               onClick={() => setPage(p => Math.max(0, p - 1))}

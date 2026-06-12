@@ -512,6 +512,10 @@ export default function App() {
           }}
           onDelete={userPermissions?.canDeleteElector ? handleDeleteElector : undefined}
           onViewProfile={handleViewProfile}
+          onAdd={userPermissions?.canCreateElector ? () => {
+            setElectorToEdit(null);
+            setCurrentScreen('form');
+          } : undefined}
         />
         <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
         <Toaster position="top-center" richColors />
