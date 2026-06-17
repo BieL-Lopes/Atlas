@@ -43,8 +43,14 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/icon.jpeg',
-            sizes: 'any',
+            src: '/icon-sem-fundo.jpeg',
+            sizes: '192x192',
+            type: 'image/jpeg',
+            purpose: 'any maskable',
+          },
+          {
+            src: '/icon-sem-fundo.jpeg',
+            sizes: '512x512',
             type: 'image/jpeg',
             purpose: 'any maskable',
           },
