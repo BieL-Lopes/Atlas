@@ -582,3 +582,76 @@ CREATE POLICY "invite_insert_service" ON public.invites
 DROP POLICY IF EXISTS "invite_update_service" ON public.invites;
 CREATE POLICY "invite_update_service" ON public.invites
   FOR UPDATE USING (auth.role() = 'service_role');
+
+-- ─────────────────────────────────────────────
+-- Gamificação: Retorna stats e ranking dos captadores (Ignorando RLS do captador)
+-- ─────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION public.get_gamification_stats(p_tenant_id TEXT)
+RETURNS TABLE (
+  captador_id UUID,
+  captador_nome TEXT,
+  total_cadastros BIGINT,
+  streak INT,
+  rank BIGINT
+)
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  RETURN QUERY
+  WITH user_stats AS (
+    SELECT 
+      e.criado_por as id,
+      MAX(p.nome) as nome,
+      COUNT(e.id) as total_cadastros
+    FROM public.eleitores e
+    JOIN public.perfis p ON e.criado_por = p.id
+    WHERE e.deputado_id = p_tenant_id AND p.role = 'captador_votos'
+    GROUP BY e.criado_por
+  ),
+  ranked_stats AS (
+    SELECT 
+      us.id,
+      us.nome,
+      us.total_cadastros,
+      RANK() OVER (ORDER BY us.total_cadastros DESC) as rank
+    FROM user_stats us
+  ),
+  daily_activity AS (
+    SELECT 
+      criado_por as id,
+      (data_cadastro AT TIME ZONE 'UTC' AT TIME ZONE 'America/Sao_Paulo')::date as active_date
+    FROM public.eleitores
+    WHERE deputado_id = p_tenant_id
+    GROUP BY criado_por, active_date
+  ),
+  streak_groups AS (
+    SELECT 
+      id,
+      active_date,
+      active_date - (DENSE_RANK() OVER (PARTITION BY id ORDER BY active_date))::int as grp
+    FROM daily_activity
+  ),
+  streaks AS (
+    SELECT 
+      id,
+      COUNT(*) as current_streak
+    FROM streak_groups
+    WHERE grp = (
+      SELECT MAX(grp) 
+      FROM streak_groups sg2 
+      WHERE sg2.id = streak_groups.id 
+        AND sg2.active_date >= (CURRENT_DATE AT TIME ZONE 'UTC' AT TIME ZONE 'America/Sao_Paulo')::date - 1
+    )
+    GROUP BY id, grp
+  )
+  SELECT 
+    rs.id,
+    rs.nome,
+    rs.total_cadastros,
+    COALESCE(s.current_streak, 0)::int as streak,
+    rs.rank
+  FROM ranked_stats rs
+  LEFT JOIN streaks s ON rs.id = s.id;
+END;
+$$;

@@ -1,15 +1,15 @@
-import { useMemo } from 'react';
-import { Trophy, Flame, Target, Star, LogOut, ChevronUp, Minus, ChevronDown, MapPin } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Trophy, Flame, Target, Star, LogOut, ChevronUp, MapPin } from 'lucide-react';
 import { User } from '../lib/auth';
 import { ElectorData } from './CaptureForm';
 import {
-  MEDALS, META_DIARIA, buildRanking, computeStreak, todayCount,
+  MEDALS, META_DIARIA, fetchMyStats, RankEntry
 } from '../lib/gamification';
+import { Leaderboard } from './Leaderboard';
 
 interface Props {
   user: User;
   electors: ElectorData[];
-  users: User[];
   onLogout: () => void;
   onViewRoute: () => void;
 }
@@ -17,14 +17,27 @@ interface Props {
 const RANK_COLORS = ['#f59e0b', '#94a3b8', '#cd7f32'];
 const RANK_LABELS = ['1º', '2º', '3º'];
 
-export function CaptadorResultsScreen({ user, electors, users, onLogout, onViewRoute }: Props) {
-  const ranking = useMemo(() => buildRanking(users, electors), [users, electors]);
-  const me = ranking.find(r => r.id === user.id);
+export function CaptadorResultsScreen({ user, electors, onLogout, onViewRoute }: Props) {
+  const [myStats, setMyStats] = useState<RankEntry | null>(null);
 
-  const myTotal = electors.filter(e => e.createdBy === user.id).length;
-  const myToday = todayCount(electors, user.id);
-  const myStreak = computeStreak(electors, user.id);
-  const myRank = me?.rank ?? ranking.length + 1;
+  useEffect(() => {
+    const loadStats = async () => {
+      const isOnline = navigator.onLine;
+      const stats = await fetchMyStats(user.id, user.deputadoId || '', isOnline, electors);
+      setMyStats(stats);
+    };
+    
+    loadStats();
+    
+    const handleOnline = () => loadStats();
+    window.addEventListener('online', handleOnline);
+    return () => window.removeEventListener('online', handleOnline);
+  }, [user.id, user.deputadoId, electors]);
+
+  const myTotal = myStats?.total ?? 0;
+  const myToday = myStats?.today ?? 0;
+  const myStreak = myStats?.streak ?? 0;
+  const myRank = myStats?.rank ?? 999;
 
   const todayPct = Math.min((myToday / META_DIARIA) * 100, 100);
 
@@ -55,14 +68,14 @@ export function CaptadorResultsScreen({ user, electors, users, onLogout, onViewR
             <p className="text-2xl font-bold text-gray-900">
               {myRank <= 3
                 ? <span style={{ color: RANK_COLORS[myRank - 1] }}>{RANK_LABELS[myRank - 1]}</span>
-                : `#${myRank}`}
+                : myRank === 999 ? '-' : `#${myRank}`}
             </p>
             <p className="text-xs text-gray-400 mt-0.5">Ranking</p>
           </div>
 
           {/* Streak */}
           <div className="bg-white rounded-2xl shadow p-4 flex flex-col items-center justify-center">
-            <Flame className={`w-6 h-6 mb-1 ${myStreak > 0 ? 'text-orange-500' : 'text-gray-300'}`} />
+            <Flame className={`w-6 h-6 mb-1 transition-all ${myStreak > 0 ? 'text-orange-500 scale-110 animate-pulse' : 'text-gray-300'}`} />
             <p className="text-2xl font-bold text-gray-900">{myStreak}</p>
             <p className="text-xs text-gray-400 mt-0.5">Dias seguidos</p>
           </div>
@@ -123,8 +136,8 @@ export function CaptadorResultsScreen({ user, electors, users, onLogout, onViewR
                   key={medal.id}
                   className={`flex flex-col items-center p-3 rounded-xl border-2 transition-all ${
                     earned
-                      ? 'border-yellow-300 bg-yellow-50'
-                      : 'border-gray-100 bg-gray-50 opacity-50'
+                      ? 'border-yellow-300 bg-yellow-50 scale-105'
+                      : 'border-gray-100 bg-gray-50 grayscale opacity-50'
                   }`}
                 >
                   <span className="text-2xl mb-1">{medal.icon}</span>
@@ -138,66 +151,8 @@ export function CaptadorResultsScreen({ user, electors, users, onLogout, onViewR
           </div>
         </div>
 
-        {/* Ranking Geral */}
-        <div className="bg-white rounded-2xl shadow p-4">
-          <div className="flex items-center gap-2 mb-3">
-            <Trophy className="w-4 h-4 text-yellow-500" />
-            <h3 className="font-bold text-gray-900">Ranking da Equipe</h3>
-          </div>
-          {ranking.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-4">Nenhum captador cadastrado</p>
-          ) : (
-            <div className="space-y-2">
-              {ranking.map(entry => {
-                const isMe = entry.id === user.id;
-                return (
-                  <div
-                    key={entry.id}
-                    className={`flex items-center gap-3 p-3 rounded-xl ${
-                      isMe ? 'bg-blue-50 border border-blue-200' : 'bg-gray-50'
-                    }`}
-                  >
-                    {/* Position */}
-                    <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                      style={{
-                        background: entry.rank <= 3 ? RANK_COLORS[entry.rank - 1] : '#e5e7eb',
-                        color: entry.rank <= 3 ? '#fff' : '#6b7280',
-                      }}
-                    >
-                      <span className="text-xs font-bold">{entry.rank}</span>
-                    </div>
-
-                    {/* Name + medals */}
-                    <div className="flex-1 min-w-0">
-                      <p className={`text-sm font-semibold truncate ${isMe ? 'text-blue-700' : 'text-gray-900'}`}>
-                        {entry.name}{isMe ? ' (você)' : ''}
-                      </p>
-                      <p className="text-xs text-gray-400">
-                        {entry.earnedMedalIds.map(id => MEDALS.find(m => m.id === id)?.icon).join(' ')}
-                        {entry.streak > 0 && ` 🔥${entry.streak}`}
-                      </p>
-                    </div>
-
-                    {/* Total */}
-                    <div className="text-right shrink-0">
-                      <p className="text-sm font-bold text-gray-900">{entry.total}</p>
-                      <p className="text-xs text-gray-400">cadastros</p>
-                    </div>
-
-                    {/* Trend vs #1 */}
-                    {entry.rank === 1 ? (
-                      <ChevronUp className="w-4 h-4 text-green-500 shrink-0" />
-                    ) : entry.total === 0 ? (
-                      <Minus className="w-4 h-4 text-gray-300 shrink-0" />
-                    ) : (
-                      <ChevronDown className="w-4 h-4 text-gray-400 shrink-0" />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        {/* Leaderboard */}
+        <Leaderboard tenantId={user.deputadoId || ''} currentUserId={user.id} />
       </div>
     </div>
   );

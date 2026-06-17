@@ -1,3 +1,4 @@
+import { supabase, isSupabaseConfigured } from './supabase';
 import { ElectorData } from '../components/CaptureForm';
 import { User } from './auth';
 
@@ -20,7 +21,48 @@ export const MEDALS: Medal[] = [
   { id: 'fivehundred',label: 'Lendário',        desc: '500 cadastros',   icon: '👑', threshold: 500 },
 ];
 
-/** Retorna quantos eleitores o captador cadastrou hoje. */
+export interface RankEntry {
+  id: string;
+  name: string;
+  total: number;
+  today: number;
+  streak: number;
+  earnedMedalIds: string[];
+  rank: number;
+}
+
+const CACHE_KEY = 'atlas_leaderboard_cache';
+
+export async function fetchLeaderboard(tenantId: string, isOnline: boolean): Promise<RankEntry[]> {
+  if (isOnline && isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.rpc('get_gamification_stats', { p_tenant_id: tenantId });
+      if (error) throw error;
+      
+      const entries: RankEntry[] = data.map((row: any) => ({
+        id: row.captador_id,
+        name: row.captador_nome,
+        total: Number(row.total_cadastros),
+        today: 0,
+        streak: Number(row.streak),
+        earnedMedalIds: MEDALS.filter(m => Number(row.total_cadastros) >= m.threshold).map(m => m.id),
+        rank: Number(row.rank),
+      }));
+      
+      localStorage.setItem(CACHE_KEY, JSON.stringify(entries));
+      return entries.slice(0, 10);
+    } catch (e) {
+      console.error('Erro ao buscar leaderboard:', e);
+    }
+  }
+  
+  const cached = localStorage.getItem(CACHE_KEY);
+  if (cached) {
+    return JSON.parse(cached).slice(0, 10);
+  }
+  return [];
+}
+
 export function todayCount(electors: ElectorData[], captadorId: string): number {
   const start = new Date();
   start.setHours(0, 0, 0, 0);
@@ -30,7 +72,6 @@ export function todayCount(electors: ElectorData[], captadorId: string): number 
   }).length;
 }
 
-/** Sequência de dias consecutivos com pelo menos 1 cadastro (streak). */
 export function computeStreak(electors: ElectorData[], captadorId: string): number {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -63,17 +104,6 @@ export function computeStreak(electors: ElectorData[], captadorId: string): numb
   return streak;
 }
 
-export interface RankEntry {
-  id: string;
-  name: string;
-  total: number;
-  today: number;
-  streak: number;
-  earnedMedalIds: string[];
-  rank: number;
-}
-
-/** Gera o ranking de captadores ordenado por total de cadastros. */
 export function buildRanking(users: User[], electors: ElectorData[]): RankEntry[] {
   const captadores = users.filter(u => u.role === 'captador_votos');
   const entries: RankEntry[] = captadores.map(c => {
@@ -92,4 +122,54 @@ export function buildRanking(users: User[], electors: ElectorData[]): RankEntry[
   entries.sort((a, b) => b.total - a.total);
   entries.forEach((e, i) => { e.rank = i + 1; });
   return entries;
+}
+
+export async function fetchMyStats(
+  userId: string, 
+  tenantId: string, 
+  isOnline: boolean, 
+  localElectors: ElectorData[]
+): Promise<RankEntry> {
+  const localToday = todayCount(localElectors, userId);
+  
+  if (isOnline && isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.rpc('get_gamification_stats', { p_tenant_id: tenantId });
+      if (!error && data) {
+        const myRow = data.find((row: any) => row.captador_id === userId);
+        if (myRow) {
+          return {
+            id: myRow.captador_id,
+            name: myRow.captador_nome,
+            total: Number(myRow.total_cadastros),
+            today: localToday,
+            streak: Number(myRow.streak),
+            earnedMedalIds: MEDALS.filter(m => Number(myRow.total_cadastros) >= m.threshold).map(m => m.id),
+            rank: Number(myRow.rank),
+          };
+        }
+      }
+    } catch (e) {
+      console.error('Erro ao buscar stats pessoais:', e);
+    }
+  }
+  
+  const total = localElectors.filter(e => e.createdBy === userId).length;
+  let rank = 0;
+  const cached = localStorage.getItem(CACHE_KEY);
+  if (cached) {
+    const parsed: RankEntry[] = JSON.parse(cached);
+    const myCached = parsed.find(p => p.id === userId);
+    if (myCached) rank = myCached.rank;
+  }
+  
+  return {
+    id: userId,
+    name: 'Eu',
+    total,
+    today: localToday,
+    streak: computeStreak(localElectors, userId),
+    earnedMedalIds: MEDALS.filter(m => total >= m.threshold).map(m => m.id),
+    rank: rank || 999,
+  };
 }

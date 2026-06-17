@@ -28,8 +28,8 @@ self.addEventListener('push', (event) => {
   event.waitUntil(
     self.registration.showNotification(payload.title, {
       body: payload.body,
-      icon: payload.icon ?? '/icon.svg',
-      badge: '/icon.svg',
+      icon: payload.icon ?? '/icon-sem-fundo.jpeg',
+      badge: '/icon-sem-fundo.jpeg',
       tag: 'comunicado',
       renotify: true,
     })

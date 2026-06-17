@@ -362,7 +362,7 @@ pending_changes (id UUID, entity_type, entity_id, operation, data JSON, created_
 - ✅ Elevação CRM: Funil de relacionamento, auditoria LGPD, importação CSV/XLSX, relatórios
 
 ### Q4 2026
-- 🔲 Gamificação: ranking, medalhas, streak
+- ✅ Gamificação: ranking, medalhas, streak
 - 🔲 Geolocalização: check-in, rota, cobertura
 - 🔲 LGPD compliance: direito ao esquecimento, política de retenção (Trilha de auditoria já concluída)
 

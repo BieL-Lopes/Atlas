@@ -445,7 +445,6 @@ export default function App() {
         <CaptadorResultsScreen
           user={user}
           electors={electors}
-          users={users}
           onLogout={handleLogout}
           onViewRoute={() => setCurrentScreen('checkin')}
         />
