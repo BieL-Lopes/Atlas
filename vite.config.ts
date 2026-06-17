@@ -31,7 +31,7 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
       registerType: 'autoUpdate',
-      includeAssets: ['icon.jpeg', 'icon-sem-fundo.jpeg'],
+      includeAssets: ['icon.svg'],
       manifest: {
         name: 'Atlas',
         short_name: 'Atlas',
@@ -43,15 +43,9 @@ export default defineConfig({
         start_url: '/',
         icons: [
           {
-            src: '/icon-sem-fundo.jpeg',
-            sizes: '192x192',
-            type: 'image/jpeg',
-            purpose: 'any maskable',
-          },
-          {
-            src: '/icon-sem-fundo.jpeg',
-            sizes: '512x512',
-            type: 'image/jpeg',
+            src: '/icon.svg',
+            sizes: 'any',
+            type: 'image/svg+xml',
             purpose: 'any maskable',
           },
         ],

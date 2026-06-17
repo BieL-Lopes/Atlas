@@ -61,7 +61,7 @@ serve(async (req) => {
     const payload = JSON.stringify({
       title: titulo,
       body: `${remetente_nome}: ${bodyPreview}`,
-      icon: '/icon-sem-fundo.jpeg',
+      icon: '/icon.svg',
     });
 
     const results = await Promise.allSettled(
