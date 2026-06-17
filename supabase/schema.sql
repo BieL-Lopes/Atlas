@@ -74,6 +74,7 @@ $$;
 CREATE TABLE IF NOT EXISTS public.eleitores (
   id                 TEXT PRIMARY KEY,
   nome               TEXT NOT NULL,
+  cpf                TEXT,
   whatsapp           TEXT,
   email              TEXT,
   titulo_eleitor     TEXT,
@@ -102,6 +103,12 @@ CREATE INDEX IF NOT EXISTS eleitores_criado_por   ON public.eleitores (criado_po
 CREATE INDEX IF NOT EXISTS eleitores_atualizado_em ON public.eleitores (atualizado_em);
 CREATE INDEX IF NOT EXISTS eleitores_regiao        ON public.eleitores (regiao);
 CREATE INDEX IF NOT EXISTS eleitores_tenant_idx    ON public.eleitores (deputado_id);
+
+ALTER TABLE public.eleitores DROP CONSTRAINT IF EXISTS eleitores_cpf_unique;
+ALTER TABLE public.eleitores DROP CONSTRAINT IF EXISTS eleitores_titulo_unique;
+
+CREATE UNIQUE INDEX IF NOT EXISTS eleitores_cpf_unique ON public.eleitores (deputado_id, cpf) WHERE cpf IS NOT NULL AND cpf <> '';
+CREATE UNIQUE INDEX IF NOT EXISTS eleitores_titulo_unique ON public.eleitores (deputado_id, titulo_eleitor) WHERE titulo_eleitor IS NOT NULL AND titulo_eleitor <> '';
 
 DROP TRIGGER IF EXISTS trigger_eleitores_tenant ON public.eleitores;
 CREATE TRIGGER trigger_eleitores_tenant

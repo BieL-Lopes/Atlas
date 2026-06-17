@@ -23,6 +23,10 @@ class AtlasDB extends Dexie {
       electors: 'id, createdBy, dataCadastro, updatedAt',
       pendingChanges: '++id, entityId, timestamp',
     });
+    this.version(3).stores({
+      electors: 'id, createdBy, dataCadastro, updatedAt, cpf, tituloEleitor',
+      pendingChanges: '++id, entityId, timestamp',
+    });
   }
 }
 

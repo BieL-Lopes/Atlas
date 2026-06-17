@@ -17,6 +17,7 @@ function toRow(e: ElectorData): Record<string, unknown> {
   return {
     id: e.id,
     nome: e.nome,
+    cpf: e.cpf ?? null,
     whatsapp: e.whatsapp,
     email: e.email ?? null,
     titulo_eleitor: e.tituloEleitor,
@@ -43,6 +44,7 @@ function fromRow(row: Record<string, unknown>): ElectorData {
   return {
     id: row.id as string,
     nome: row.nome as string,
+    cpf: (row.cpf as string) ?? undefined,
     whatsapp: (row.whatsapp as string) ?? '',
     email: (row.email as string) ?? '',
     tituloEleitor: (row.titulo_eleitor as string) ?? '',

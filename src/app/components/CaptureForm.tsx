@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { ArrowLeft, Save, User, Phone, Calendar, MapPin, MessageSquare, Navigation, Tag, Award, Camera, Upload } from 'lucide-react';
 import { QrScannerModal } from './QrScannerModal';
 import { getSystemSettings } from '../lib/settings';
+import { db } from '../lib/db';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 export interface Atendimento {
   id: string;
@@ -26,6 +28,7 @@ export const STATUS_FUNIL_ORDER: StatusFunil[] = ['contato', 'interessado', 'sim
 export interface ElectorData {
   id: string;
   nome: string;
+  cpf?: string;
   whatsapp: string;
   email?: string;
   tituloEleitor: string;
@@ -71,6 +74,7 @@ const NICHOS_DISPONIVEIS = [
 
 export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportClick }: CaptureFormProps) {
   const [nome, setNome] = useState(electorToEdit?.nome ?? '');
+  const [cpf, setCpf] = useState(electorToEdit?.cpf ?? '');
   const [whatsapp, setWhatsapp] = useState(electorToEdit?.whatsapp ?? '');
   const [email, setEmail] = useState(electorToEdit?.email ?? '');
   const [tituloEleitor, setTituloEleitor] = useState(electorToEdit?.tituloEleitor ?? '');
@@ -143,6 +147,19 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
     setWhatsapp(formatted);
   };
 
+  const handleCpfChange = (value: string) => {
+    const numbers = value.replace(/\D/g, '');
+    let formatted = numbers;
+    if (numbers.length > 9) {
+      formatted = `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`;
+    } else if (numbers.length > 6) {
+      formatted = `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
+    } else if (numbers.length > 3) {
+      formatted = `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
+    }
+    setCpf(formatted);
+  };
+
   const handleTituloEleitorChange = (value: string) => {
     // Remove tudo que não é número
     const numbers = value.replace(/\D/g, '');
@@ -156,11 +173,16 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
     setTituloEleitor(formatted);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!nome || !whatsapp || !nivelVoto || !nivelEngajamento || !cidade) {
       alert('Preencha pelo menos: Nome, WhatsApp, Cidade, Nível de Voto e Nível de Engajamento');
+      return;
+    }
+
+    if (cpf && cpf.replace(/\D/g, '').length !== 11) {
+      alert('CPF inválido. Deve conter 11 dígitos.');
       return;
     }
 
@@ -169,8 +191,42 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
       return;
     }
 
+    // Validação Anti-Fraude (Prevenção de Duplicidade)
+    if (cpf) {
+      const isDuplicateLocal = await db.electors.where('cpf').equals(cpf).count();
+      if (isDuplicateLocal > 0 && (!electorToEdit || electorToEdit.cpf !== cpf)) {
+        alert('Erro Anti-Fraude: Este CPF já está cadastrado localmente.');
+        return;
+      }
+      
+      if (navigator.onLine && isSupabaseConfigured && supabase) {
+        const { data } = await supabase.from('eleitores').select('id').eq('cpf', cpf).limit(1);
+        if (data && data.length > 0 && (!electorToEdit || data[0].id !== electorToEdit.id)) {
+          alert('Erro Anti-Fraude: Este CPF já está cadastrado no servidor por outro captador.');
+          return;
+        }
+      }
+    }
+
+    if (tituloEleitor) {
+      const isDuplicateLocal = await db.electors.where('tituloEleitor').equals(tituloEleitor).count();
+      if (isDuplicateLocal > 0 && (!electorToEdit || electorToEdit.tituloEleitor !== tituloEleitor)) {
+        alert('Erro Anti-Fraude: Este Título de Eleitor já está cadastrado localmente.');
+        return;
+      }
+
+      if (navigator.onLine && isSupabaseConfigured && supabase) {
+        const { data } = await supabase.from('eleitores').select('id').eq('titulo_eleitor', tituloEleitor).limit(1);
+        if (data && data.length > 0 && (!electorToEdit || data[0].id !== electorToEdit.id)) {
+          alert('Erro Anti-Fraude: Este Título de Eleitor já está cadastrado no servidor por outro captador.');
+          return;
+        }
+      }
+    }
+
     const formData = {
       nome,
+      cpf,
       whatsapp,
       email,
       tituloEleitor,
@@ -193,6 +249,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
       onSave(formData);
       // Limpa o formulario apenas no modo criacao
       setNome('');
+      setCpf('');
       setWhatsapp('');
       setEmail('');
       setTituloEleitor('');
@@ -256,6 +313,20 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
               placeholder="Digite o nome completo"
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              CPF
+            </label>
+            <input
+              type="text"
+              value={cpf}
+              onChange={(e) => handleCpfChange(e.target.value)}
+              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+              placeholder="000.000.000-00"
+              maxLength={14}
             />
           </div>
 

@@ -1,6 +1,6 @@
 # Product Requirements Document — ATLAS
 
-**Versão:** 2.0 | **Status:** Em Produção | **Última Atualização:** Jun/2026
+**Versão:** 1.0 | **Status:** Em Produção | **Última Atualização:** Jun/2026
 
 ---
 
@@ -69,6 +69,7 @@ Uma plataforma unificada que integra:
 | **Validação de Campos** | Título eleitoral (12 dígitos), CPF (valid module 11), e-mail, telefone | ✅ |
 | **Armazenamento Local** | IndexedDB via Dexie — funciona totalmente desconectado | ✅ |
 | **Sincronização com Supabase** | Push/pull bidirecional com resolução de conflitos (last-write-wins) | ✅ |
+| **Anti-Fraude (Prevenção de Duplicidade)** | Restrição de chaves únicas (UNIQUE constraint) no banco de dados para CPF e Título Eleitoral. O front-end e o back-end validam em tempo real: se um captador tentar registrar um eleitor já existente, o sistema bloqueia e alerta, impedindo fraudes no batimento de metas diárias. | ✅ |
 
 ---
 
@@ -127,6 +128,7 @@ Uma plataforma unificada que integra:
 | **4 Templates** | Livre (custom), Evento, Mobilização, Confirmação de Presença — auto-preenchimento de textarea | ✅ |
 | **Fluxo Guiado** | Compose → Confirm (preview de destinatários) → Sending (spinner) → Done (toast de sucesso/erro) | ✅ |
 | **Rate Limiting** | 500ms entre envios de números (não sobrecarrega Evolution API nem WhatsApp) | ✅ |
+| **Escala e Lotes de WhatsApp** | O sistema possui uma fila inteligente (Queue) capaz de processar 1.000+ disparos automáticos por lote, sem bloqueios (usando o rate limiting de 500ms). Isso elimina a necessidade de infraestrutura física, call centers ou operadores manuais para disparos. | ✅ |
 | **Log de Disparos** | Tabela `disparos_whatsapp`: ID, mensagem, template, filtros (JSON), total destinatários, enviados, falhas, status, remetente, timestamp | ✅ |
 | **Edge Function** | Deno Edge Function em Supabase: `send-whatsapp` → normaliza números (55XXXXXXXXXX) → loop com delay 500ms → atualiza status | ✅ |
 | **Aba WhatsApp** | AdminScreen com: card de setup (quando não configurada), botão "Novo Disparo", histórico com status badges | ✅ |
