@@ -7,7 +7,7 @@
 const ALLOWED_ORIGINS: string[] = [
   // Produção — TROCAR pelos domínios reais
   'https://atlas.seusite.com.br',
-  'https://politiqui.vercel.app',
+  'https://atlas-eleitoral.vercel.app',
   // Desenvolvimento local
   'http://localhost:5173',
   'http://localhost:3000',
