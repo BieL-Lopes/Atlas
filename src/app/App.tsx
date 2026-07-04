@@ -145,6 +145,24 @@ export default function App() {
     return () => navigator.serviceWorker.removeEventListener('message', handler);
   }, []);
 
+  // Listener: detecta token expirado/revogado e força logout automático
+  useEffect(() => {
+    if (!isSupabaseConfigured || !supabase) return;
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'TOKEN_REFRESHED') {
+        // Token renovado com sucesso — nada a fazer
+        return;
+      }
+      if (event === 'SIGNED_OUT') {
+        // Sessão encerrada (logout ou token revogado)
+        setUser(null);
+        localStorage.removeItem('atlas_user');
+        setCurrentScreen('login');
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
   const handleLogin = async (userData: User) => {
     setUser(userData);
     localStorage.setItem('atlas_user', JSON.stringify(userData));
@@ -257,6 +275,16 @@ export default function App() {
 
   const handleDeleteElector = async (id: string) => {
     const elector = electors.find(e => e.id === id);
+
+    // IDOR defense-in-depth: valida permissão no frontend antes de enviar ao Supabase
+    if (user && elector && elector.createdBy !== user.id) {
+      const { canDeleteElector } = getPermissions(user.role);
+      if (!canDeleteElector) {
+        toast.error('Sem permissão para excluir este contato.');
+        return;
+      }
+    }
+
     await db.electors.delete(id);
     await db.pendingChanges.add({
       operation: 'delete',
@@ -331,8 +359,11 @@ export default function App() {
   const handleLogout = async () => {
     if (user) unsubscribeFromPush(user.id);
     setUser(null);
-    localStorage.removeItem('atlas_user');
+    // signOut() limpa localStorage e sessionStorage internamente
     await signOut();
+    // Limpa pendências de sync local
+    try { await db.pendingChanges.clear(); } catch { /* silencioso */ }
+    setElectors([]);
     setCurrentScreen('login');
     toast.info('Até logo!');
   };

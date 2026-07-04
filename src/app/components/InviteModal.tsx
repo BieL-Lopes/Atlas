@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card } from './ui/card';
+import { inviteLimiter } from '../lib/rateLimiter';
 
 interface InviteModalProps {
   onClose: () => void;
@@ -25,6 +26,14 @@ export function InviteModal({ onClose, onInviteValidated }: InviteModalProps) {
       setError('Código deve ter 6 caracteres');
       return;
     }
+
+    // Rate limit check
+    if (!inviteLimiter.canAttempt()) {
+      const retry = inviteLimiter.getRetryAfterSeconds();
+      setError(`Muitas tentativas. Aguarde ${retry} segundos.`);
+      return;
+    }
+    inviteLimiter.recordAttempt();
 
     setLoading(true);
     try {

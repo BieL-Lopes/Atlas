@@ -60,9 +60,14 @@ export async function authenticate(login: string, password: string): Promise<Use
   return null;
 }
 
-/** Encerra a sessão (Supabase + localStorage). */
+/** Encerra a sessão globalmente (invalida TODAS as sessões ativas). */
 export async function signOut(): Promise<void> {
   if (isSupabaseConfigured && supabase) {
-    await supabase.auth.signOut();
+    // scope: 'global' revoga o refresh token em todas as sessões do usuário
+    await supabase.auth.signOut({ scope: 'global' });
   }
+  // Limpa todos os dados de sessão
+  localStorage.removeItem('atlas_user');
+  localStorage.removeItem('atlas_last_sync');
+  try { sessionStorage.clear(); } catch { /* silencioso */ }
 }

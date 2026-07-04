@@ -10,12 +10,26 @@
 CREATE OR REPLACE FUNCTION public.get_email_by_cpf(cpf_input TEXT)
 RETURNS TEXT LANGUAGE plpgsql SECURITY DEFINER AS $$
 DECLARE
+  clean_cpf TEXT;
   result_email TEXT;
 BEGIN
+  -- Sanitização: remove não-dígitos e valida comprimento
+  clean_cpf := regexp_replace(cpf_input, '\D', '', 'g');
+
+  -- CPF deve ter exatamente 11 dígitos
+  IF length(clean_cpf) <> 11 THEN
+    RETURN NULL;
+  END IF;
+
+  -- Rejeita CPFs com todos os dígitos iguais (ex: 00000000000)
+  IF clean_cpf ~ '^(\d)\1{10}$' THEN
+    RETURN NULL;
+  END IF;
+
   SELECT u.email INTO result_email
   FROM public.perfis p
   JOIN auth.users u ON u.id = p.id
-  WHERE p.cpf = regexp_replace(cpf_input, '\D', '', 'g')
+  WHERE p.cpf = clean_cpf
   LIMIT 1;
   RETURN result_email;
 END;

@@ -5,6 +5,7 @@ import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Card } from './ui/card';
+import { signupLimiter } from '../lib/rateLimiter';
 
 interface SignupFormProps {
   role: string;
@@ -103,6 +104,14 @@ export function SignupForm({
       return;
     }
 
+    // Rate limit check
+    if (!signupLimiter.canAttempt()) {
+      const retry = signupLimiter.getRetryAfterSeconds();
+      setErrorMessage(`Muitas tentativas. Aguarde ${retry} segundos.`);
+      return;
+    }
+    signupLimiter.recordAttempt();
+
     setStep('loading');
 
     try {
@@ -124,12 +133,9 @@ export function SignupForm({
         }
       });
 
-      if (!authError && !authData.user) {
-        throw new Error('Este e-mail já está cadastrado. Tente fazer login ou use outro e-mail.');
-      }
-
+      // Mensagem genérica para TODOS os erros de signup (previne enumeração de usuário)
       if (authError || !authData.user) {
-        throw new Error(authError?.message || 'Erro ao criar conta');
+        throw new Error('Não foi possível criar a conta. Verifique os dados e tente novamente.');
       }
 
       // Marca o convite como usado
@@ -146,13 +152,15 @@ export function SignupForm({
         console.warn('Aviso ao marcar convite como usado:', inviteError);
       }
 
+      signupLimiter.reset();
       setStep('success');
       setTimeout(() => {
         onSignupComplete(true, 'Conta criada com sucesso! Faça login com seu CPF e senha.');
       }, 2000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Signup error:', err);
-      const message = err instanceof Error ? err.message : (err?.message || 'Erro ao criar conta');
+      // Mensagem genérica — nunca revelar detalhes específicos do Supabase Auth
+      const message = err instanceof Error ? err.message : 'Não foi possível criar a conta. Verifique os dados e tente novamente.';
       setErrorMessage(message);
       setStep('error');
     }

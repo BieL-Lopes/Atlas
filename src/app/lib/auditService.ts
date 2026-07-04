@@ -52,7 +52,7 @@ export async function fetchAuditLogs(params: {
 
   let query = supabase
     .from('audit_logs')
-    .select('*', { count: 'exact' })
+    .select('id, user_id, user_name, action, entity, entity_id, details, created_at', { count: 'exact' })
     .order('created_at', { ascending: false })
     .range(from, to);
 

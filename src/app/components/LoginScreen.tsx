@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User as UserIcon, Lock, Eye, EyeOff, AtSign, CreditCard } from 'lucide-react';
 import { User, authenticate } from '../lib/auth';
 import { InviteModal } from './InviteModal';
 import { SignupForm } from './SignupForm';
+import { loginLimiter } from '../lib/rateLimiter';
 
 interface LoginScreenProps {
   onLogin: (user: User) => void;
@@ -47,6 +48,29 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [loading, setLoading] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [signupData, setSignupData] = useState<{ role: string; inviteKey: string } | null>(null);
+  const [cooldown, setCooldown] = useState(0);
+
+  // Countdown timer para cooldown do rate limiter
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown(prev => {
+        if (prev <= 1) { clearInterval(timer); return 0; }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
+
+  const checkRateLimit = useCallback((): boolean => {
+    if (!loginLimiter.canAttempt()) {
+      const retry = loginLimiter.getRetryAfterSeconds();
+      setCooldown(retry);
+      setError(`Muitas tentativas. Aguarde ${retry}s.`);
+      return false;
+    }
+    return true;
+  }, []);
 
   const inputType = detectInputType(login);
 
@@ -89,13 +113,18 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       if (err) { setFieldError(err); return; }
     }
 
+    // Rate limit check
+    if (!checkRateLimit()) return;
+    loginLimiter.recordAttempt();
+
     setLoading(true);
     try {
       const user = await authenticate(login, password);
       if (!user) {
-        setError('CPF/e-mail ou senha incorretos');
+        setError('Credenciais inválidas. Verifique e tente novamente.');
         return;
       }
+      loginLimiter.reset();
       onLogin(user);
     } catch {
       setError('Erro ao conectar. Tente novamente.');
@@ -195,10 +224,10 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             {/* Botão Entrar */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || cooldown > 0}
               className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all active:scale-98"
             >
-              {loading ? 'Entrando...' : 'Entrar'}
+              {loading ? 'Entrando...' : cooldown > 0 ? `Aguarde ${cooldown}s` : 'Entrar'}
             </button>
 
             {/* Link Esqueci Senha + Primeiro Acesso */}

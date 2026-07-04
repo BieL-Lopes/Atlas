@@ -1,6 +1,8 @@
 // @ts-nocheck — Deno Edge Function (executa no Supabase, não no Node.js)
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
+import { isRateLimited } from '../_shared/rateLimiter.ts';
 
 const EVOLUTION_API_URL      = Deno.env.get('EVOLUTION_API_URL') ?? '';
 const EVOLUTION_API_KEY      = Deno.env.get('EVOLUTION_API_KEY') ?? '';
@@ -8,16 +10,12 @@ const EVOLUTION_INSTANCE     = Deno.env.get('EVOLUTION_INSTANCE') ?? '';
 const SUPABASE_URL           = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-
 serve(async (req) => {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return handleCorsOptions(req);
   }
   if (req.method !== 'POST') {
     return new Response('Method not allowed', { status: 405, headers: corsHeaders });
@@ -31,6 +29,7 @@ serve(async (req) => {
   }
 
   const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   try {
     const { disparo_id, mensagem, numeros } = await req.json();
@@ -39,6 +38,15 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Parâmetros inválidos: disparo_id, mensagem e numeros são obrigatórios.' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Rate limit: máx 10 disparos por hora por remetente
+    const rateLimitKey = `whatsapp:${disparo_id}`;
+    if (await isRateLimited(rateLimitKey, 10, 3600)) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit excedido. Aguarde antes de enviar novos disparos.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
