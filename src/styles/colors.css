@@ -1,0 +1,69 @@
+/*
+ * ═══════════════════════════════════════════════════════════════════
+ *  POLITIQUI — Paleta de Cores Premium (Gold + Dark)
+ * ═══════════════════════════════════════════════════════════════════
+ *
+ *  Arquivo centralizado de cores do sistema.
+ *  Importe este arquivo onde precisar via: @import './colors.css';
+ *
+ *  Estrutura:
+ *    🟡 Cores de Destaque (Dourado / Gold)
+ *    🌑 Cores de Fundo (Background / Superfícies)
+ *    ⚪ Cores de Texto (Tipografia)
+ *    🔘 Cores Secundárias e de Apoio
+ *    ✨ Gradientes e Efeitos
+ */
+
+:root {
+  /* ─── 🟡 Cores de Destaque (Dourado / Gold) ─────────────────── */
+  --gold:              oklch(0.82 0.14 82);
+  --gold-soft:         oklch(0.9 0.08 85);
+  --gold-deep:         oklch(0.58 0.12 65);
+
+  /* ─── 🌑 Cores de Fundo ─────────────────────────────────────── */
+  --bg-main:           oklch(0.08 0.005 60);
+  --bg-card:           oklch(0.11 0.008 60);
+
+  /* ─── ⚪ Cores de Texto ─────────────────────────────────────── */
+  --text-primary:      oklch(0.97 0.01 80);
+  --text-on-gold:      oklch(0.08 0.005 60);
+  --text-muted:        oklch(0.68 0.02 80);
+
+  /* ─── 🔘 Cores Secundárias e de Apoio ───────────────────────── */
+  --surface-secondary: oklch(0.16 0.01 60);
+  --surface-input:     oklch(0.2 0.01 60);
+  --color-destructive: oklch(0.6 0.22 25);
+  --border-gold:       oklch(0.78 0.13 80 / 0.18);
+
+  /* ─── ✨ Gradientes e Efeitos ───────────────────────────────── */
+  --gradient-gold:     linear-gradient(
+    135deg,
+    oklch(0.58 0.12 65) 0%,
+    oklch(0.82 0.14 82) 50%,
+    oklch(0.92 0.08 85) 100%
+  );
+
+  --gradient-gold-subtle: linear-gradient(
+    135deg,
+    oklch(0.78 0.13 80 / 0.15) 0%,
+    oklch(0.82 0.14 82 / 0.08) 100%
+  );
+
+  --gradient-gold-text: linear-gradient(
+    90deg,
+    oklch(0.9 0.08 85) 0%,
+    oklch(0.82 0.14 82) 40%,
+    oklch(0.9 0.08 85) 100%
+  );
+
+  /* Sombra dourada para elementos em destaque */
+  --shadow-gold:       0 4px 24px oklch(0.82 0.14 82 / 0.2),
+                       0 1px 4px oklch(0.82 0.14 82 / 0.1);
+
+  --shadow-gold-lg:    0 8px 40px oklch(0.82 0.14 82 / 0.25),
+                       0 2px 8px oklch(0.82 0.14 82 / 0.15);
+
+  /* Glow dourado para hover e foco */
+  --glow-gold:         0 0 20px oklch(0.82 0.14 82 / 0.3),
+                       0 0 60px oklch(0.82 0.14 82 / 0.1);
+}

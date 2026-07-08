@@ -53,7 +53,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
   const pct = (count: number) => Math.min(Math.round((count / META_POR_CAPTADOR) * 100), 100);
 
   const barColor = (p: number) =>
-    p >= 80 ? 'bg-green-500' : p >= 50 ? 'bg-yellow-500' : 'bg-red-400';
+    p >= 80 ? 'bg-emerald-500' : p >= 50 ? 'bg-yellow-500' : 'bg-red-400';
 
   // ── Coordenador Regional: mostra seus próprios captadores ──
   if (user.role === 'coordenador_regional') {
@@ -75,16 +75,16 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
 
     return (
       <div className="min-h-screen bg-gray-100 pb-24">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+        <div className="bg-gold-deep text-white p-6">
           <h1 className="text-2xl font-bold mb-1">Minha Equipe</h1>
-          <p className="text-sm text-blue-100">{user.regiao} • {total} eleitor{total !== 1 ? 'es' : ''} cadastrado{total !== 1 ? 's' : ''}</p>
+          <p className="text-sm text-gold-soft">{user.regiao} • {total} eleitor{total !== 1 ? 'es' : ''} cadastrado{total !== 1 ? 's' : ''}</p>
         </div>
 
         <div className="p-4 space-y-4">
           {canExport && (
             <button
               onClick={handleExport}
-              className="w-full py-3 px-4 bg-white border-2 border-blue-200 text-blue-700 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-blue-50 transition-colors"
+              className="w-full py-3 px-4 bg-white border-2 border-gold-deep text-gold-deep rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gold transition-colors"
             >
               <Download className="w-5 h-5" />
               Exportar CSV da equipe
@@ -99,7 +99,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
           ) : (
             <div className="bg-white rounded-xl shadow overflow-hidden">
               <div className="p-4 border-b border-gray-100 flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600" />
+                <Users className="w-5 h-5 text-gold-deep" />
                 <h2 className="font-bold text-gray-900">Captadores</h2>
                 <span className="ml-auto text-sm text-gray-500">Meta: {META_POR_CAPTADOR} cada</span>
               </div>
@@ -123,7 +123,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                           )}
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-blue-600 text-lg">{count}</p>
+                          <p className="font-bold text-gold-deep text-lg">{count}</p>
                           <p className="text-xs text-gray-400">{p}% da meta</p>
                         </div>
                       </div>
@@ -175,11 +175,11 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
         <ComunicadoModal user={user} onClose={() => setShowComunicado(false)} />
       )}
 
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+      <div className="bg-gold-deep text-white p-6">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-1">Coordenação</h1>
-            <p className="text-sm text-blue-100">Visão geral da equipe</p>
+            <p className="text-sm text-gold-soft">Visão geral da equipe</p>
           </div>
           {(user.role === 'lideranca' || user.role === 'coordenador_geral') && (
             <button
@@ -199,7 +199,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
           <button
             onClick={() => setCoordTab('equipe')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${
-              coordTab === 'equipe' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              coordTab === 'equipe' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -208,7 +208,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
           <button
             onClick={() => setCoordTab('ranking')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${
-              coordTab === 'ranking' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              coordTab === 'ranking' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <Trophy className="w-4 h-4" />
@@ -217,7 +217,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
           <button
             onClick={() => setCoordTab('mapa')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${
-              coordTab === 'mapa' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              coordTab === 'mapa' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <MapPin className="w-4 h-4" />
@@ -227,7 +227,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
             <button
               onClick={() => setCoordTab('heatmap')}
               className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${
-                coordTab === 'heatmap' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+                coordTab === 'heatmap' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
               }`}
             >
               <Map className="w-4 h-4" />
@@ -237,7 +237,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
           <button
             onClick={() => setCoordTab('comparar')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${
-              coordTab === 'comparar' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              coordTab === 'comparar' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <GitCompare className="w-4 h-4" />
@@ -286,7 +286,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="font-bold text-blue-600">{entry.total}</p>
+                        <p className="font-bold text-gold-deep">{entry.total}</p>
                         <p className="text-xs text-gray-400">hoje: {entry.today}</p>
                       </div>
                     </div>
@@ -330,7 +330,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-white rounded-xl shadow p-4">
             <div className="flex items-center gap-2 mb-1">
-              <Users className="w-4 h-4 text-blue-600" />
+              <Users className="w-4 h-4 text-gold-deep" />
               <p className="text-sm text-gray-500">Total Eleitores</p>
             </div>
             <p className="text-2xl font-bold text-gray-900">{grandTotal}</p>
@@ -338,10 +338,10 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
           </div>
           <div className="bg-white rounded-xl shadow p-4">
             <div className="flex items-center gap-2 mb-1">
-              <Target className="w-4 h-4 text-green-600" />
+              <Target className="w-4 h-4 text-emerald-600" />
               <p className="text-sm text-gray-500">Progresso</p>
             </div>
-            <p className="text-2xl font-bold text-green-600">
+            <p className="text-2xl font-bold text-emerald-600">
               {grandTarget > 0 ? Math.round((grandTotal / grandTarget) * 100) : 0}%
             </p>
             <p className="text-xs text-gray-400">da meta geral</p>
@@ -371,7 +371,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
         {canExport && (
           <button
             onClick={handleExportGeral}
-            className="w-full py-3 px-4 bg-white border-2 border-blue-200 text-blue-700 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-blue-50 transition-colors"
+            className="w-full py-3 px-4 bg-white border-2 border-gold-deep text-gold-deep rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gold transition-colors"
           >
             <Download className="w-5 h-5" />
             Exportar relatório completo (CSV)
@@ -402,7 +402,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="text-right">
-                      <p className="font-bold text-blue-600">{regionTotal}</p>
+                      <p className="font-bold text-gold-deep">{regionTotal}</p>
                       <p className="text-xs text-gray-400">{regionPct}%</p>
                     </div>
                     {isOpen
@@ -442,7 +442,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                                 )}
                               </div>
                               <div className="text-right">
-                                <p className="font-bold text-blue-600">{count}</p>
+                                <p className="font-bold text-gold-deep">{count}</p>
                                 <p className="text-xs text-gray-400">{p}%</p>
                               </div>
                             </div>

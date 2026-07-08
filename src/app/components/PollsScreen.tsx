@@ -159,16 +159,16 @@ export function PollsScreen({ user }: PollsScreenProps) {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+      <div className="bg-gold-deep text-white p-6">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-1">Enquetes</h1>
-            <p className="text-sm text-blue-100">Pesquisas de opinião</p>
+            <p className="text-sm text-gold-soft">Pesquisas de opinião</p>
           </div>
           <div className="relative">
             <button
               onClick={() => setShowExportMenu(!showExportMenu)}
-              className="p-2 hover:bg-blue-500 rounded-lg transition-colors"
+              className="p-2 hover:bg-gold-deep rounded-lg transition-colors"
             >
               <Download className="w-5 h-5" />
             </button>
@@ -180,11 +180,11 @@ export function PollsScreen({ user }: PollsScreenProps) {
                     <X className="w-4 h-4 text-gray-500" />
                   </button>
                 </div>
-                <button onClick={exportToCSV} className="w-full px-4 py-3 text-left hover:bg-blue-50 flex items-center text-gray-700 transition-colors">
-                  <FileSpreadsheet className="w-5 h-5 mr-3 text-green-600" />
+                <button onClick={exportToCSV} className="w-full px-4 py-3 text-left hover:bg-gold flex items-center text-gray-700 transition-colors">
+                  <FileSpreadsheet className="w-5 h-5 mr-3 text-emerald-600" />
                   <div><p className="font-medium text-sm">CSV / Excel</p><p className="text-xs text-gray-500">Planilha completa</p></div>
                 </button>
-                <button onClick={exportToPDF} className="w-full px-4 py-3 text-left hover:bg-blue-50 flex items-center text-gray-700 border-t border-gray-100 transition-colors">
+                <button onClick={exportToPDF} className="w-full px-4 py-3 text-left hover:bg-gold flex items-center text-gray-700 border-t border-gray-100 transition-colors">
                   <FileText className="w-5 h-5 mr-3 text-red-600" />
                   <div><p className="font-medium text-sm">PDF / Imprimir</p><p className="text-xs text-gray-500">Relatório formatado</p></div>
                 </button>
@@ -199,7 +199,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
         {canManage && (
           <button
             onClick={() => setShowForm(!showForm)}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-semibold shadow-lg flex items-center justify-center transition-all"
+            className="w-full bg-gold-deep hover:bg-gold-deep text-white py-4 px-6 rounded-xl font-semibold shadow-lg flex items-center justify-center transition-all"
           >
             <Plus className="w-5 h-5 mr-2" />
             Criar Nova Enquete
@@ -208,7 +208,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
 
         {/* Formulário */}
         {showForm && canManage && (
-          <div className="bg-white rounded-xl shadow-lg p-5 border-2 border-blue-200">
+          <div className="bg-white rounded-xl shadow-lg p-5 border-2 border-gold-deep">
             <h3 className="font-bold text-gray-900 mb-4">Nova Enquete</h3>
             <div className="space-y-3">
               <input
@@ -216,7 +216,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
                 placeholder="Pergunta da enquete"
                 value={formTitulo}
                 onChange={e => setFormTitulo(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               />
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Opções de resposta</p>
               {formOpcoes.map((op, i) => (
@@ -230,7 +230,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
                       next[i] = e.target.value;
                       setFormOpcoes(next);
                     }}
-                    className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                    className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
                   />
                   {formOpcoes.length > 2 && (
                     <button
@@ -244,7 +244,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
               ))}
               <button
                 onClick={() => setFormOpcoes(prev => [...prev, ''])}
-                className="text-sm text-blue-600 hover:underline font-medium"
+                className="text-sm text-gold-deep hover:underline font-medium"
               >
                 + Adicionar opção
               </button>
@@ -252,7 +252,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
                 <button
                   onClick={handleCreate}
                   disabled={saving}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
+                  className="flex-1 bg-gold-deep hover:bg-gold-deep disabled:opacity-50 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
                 >
                   {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                   Publicar Enquete
@@ -271,7 +271,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
         {/* Stats */}
         <div className="bg-white rounded-xl shadow p-5">
           <h3 className="font-bold text-gray-900 mb-4 flex items-center">
-            <TrendingUp className="w-5 h-5 mr-2 text-blue-600" />
+            <TrendingUp className="w-5 h-5 mr-2 text-gold-deep" />
             Resumo
           </h3>
           <div className="grid grid-cols-3 gap-4">
@@ -280,7 +280,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
               <p className="text-sm text-gray-600">Respostas</p>
             </div>
             <div className="text-center">
-              <p className="text-3xl font-bold text-blue-600">{totalAtivas}</p>
+              <p className="text-3xl font-bold text-gold-deep">{totalAtivas}</p>
               <p className="text-sm text-gray-600">Ativas</p>
             </div>
             <div className="text-center">
@@ -295,7 +295,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
           <h3 className="font-bold text-gray-900 mb-3">Enquetes</h3>
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+              <Loader2 className="w-8 h-8 animate-spin text-gold-soft" />
             </div>
           ) : polls.length === 0 ? (
             <div className="text-center py-12 bg-white rounded-xl">
@@ -310,7 +310,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
                     <h4 className="font-semibold text-gray-900 flex-1 mr-3">{poll.titulo}</h4>
                     <span className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold ${
                       poll.status === 'ativa'
-                        ? 'bg-green-100 text-green-700'
+                        ? 'bg-emerald-100 text-emerald-700'
                         : 'bg-gray-100 text-gray-600'
                     }`}>
                       {poll.status === 'ativa' ? '✓ Ativa' : 'Encerrada'}
@@ -329,7 +329,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1">
                         <Users className="w-4 h-4" />
-                        <span className="font-semibold text-blue-600">{poll.respostas} respostas</span>
+                        <span className="font-semibold text-gold-deep">{poll.respostas} respostas</span>
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="w-4 h-4" />
@@ -342,7 +342,7 @@ export function PollsScreen({ user }: PollsScreenProps) {
                         className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1.5 rounded-lg transition-colors ${
                           poll.status === 'ativa'
                             ? 'text-red-600 bg-red-50 hover:bg-red-100'
-                            : 'text-green-600 bg-green-50 hover:bg-green-100'
+                            : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'
                         }`}
                       >
                         {poll.status === 'ativa'
@@ -359,9 +359,9 @@ export function PollsScreen({ user }: PollsScreenProps) {
         </div>
 
         {/* Info */}
-        <div className="bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl p-5 border-2 border-blue-200">
+        <div className="bg-gold-deep rounded-xl p-5 border-2 border-gold-deep">
           <div className="flex items-start">
-            <BarChart3 className="w-6 h-6 text-blue-600 mr-3 shrink-0 mt-1" />
+            <BarChart3 className="w-6 h-6 text-gold-deep mr-3 shrink-0 mt-1" />
             <div>
               <h4 className="font-bold text-gray-900 mb-1">Enquetes via WhatsApp</h4>
               <p className="text-sm text-gray-700">

@@ -90,8 +90,8 @@ export function ComunicadoModal({ user, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Megaphone className="w-5 h-5 text-blue-600" />
+            <div className="w-9 h-9 bg-gold/10 rounded-xl flex items-center justify-center">
+              <Megaphone className="w-5 h-5 text-gold-deep" />
             </div>
             <div>
               <h2 className="font-bold text-gray-900">Enviar Comunicado</h2>
@@ -116,7 +116,7 @@ export function ComunicadoModal({ user, onClose }: Props) {
             <select
               value={destinoIdx}
               onChange={e => setDestinoIdx(Number(e.target.value))}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gold-deep focus:border-transparent"
             >
               {options.map((opt, i) => (
                 <option key={i} value={i}>{opt.label}</option>
@@ -135,7 +135,7 @@ export function ComunicadoModal({ user, onClose }: Props) {
               onChange={e => setTitulo(e.target.value)}
               placeholder="Ex: Reunião amanhã às 19h"
               maxLength={100}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gold-deep focus:border-transparent placeholder-gray-400"
             />
           </div>
 
@@ -150,7 +150,7 @@ export function ComunicadoModal({ user, onClose }: Props) {
               placeholder="Escreva o comunicado aqui..."
               rows={4}
               maxLength={1000}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400 resize-none"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gold-deep focus:border-transparent placeholder-gray-400 resize-none"
             />
             <p className="text-xs text-gray-400 text-right mt-1">{mensagem.length}/1000</p>
           </div>
@@ -167,7 +167,7 @@ export function ComunicadoModal({ user, onClose }: Props) {
           <button
             onClick={handleSend}
             disabled={sending || !titulo.trim() || !mensagem.trim()}
-            className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+            className="flex-1 py-2.5 bg-gold-deep hover:bg-gold-deep disabled:opacity-50 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
           >
             <Send className="w-4 h-4" />
             {sending ? 'Enviando...' : 'Enviar'}

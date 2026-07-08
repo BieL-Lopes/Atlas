@@ -134,41 +134,41 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-600 to-blue-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-bg-main flex items-center justify-center p-4 text-text-primary">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-3xl shadow-2xl p-8">
+        <div className="bg-bg-card rounded-3xl shadow-2xl border border-border-gold p-8">
           {/* Logo/Título */}
           <div className="text-center mb-8">
-            <div className="w-20 h-20 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <UserIcon className="w-10 h-10 text-white" />
+            <div className="w-20 h-20 bg-gradient-gold rounded-full mx-auto mb-4 flex items-center justify-center shadow-gold">
+              <UserIcon className="w-10 h-10 text-text-on-gold" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">ATLAS</h1>
-            <p className="text-gray-600">Sistema de Captação de Eleitores</p>
+            <h1 className="text-3xl font-bold text-gradient-gold mb-2">ATLAS</h1>
+            <p className="text-text-muted">Sistema de Captação de Eleitores</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Campo CPF/Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-muted mb-2">
                 CPF ou E-mail
               </label>
               <div className="relative">
                 {inputType === 'email' ? (
-                  <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-500" />
+                  <AtSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gold" />
                 ) : inputType === 'cpf' ? (
-                  <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-blue-500" />
+                  <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gold" />
                 ) : (
-                  <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
                 )}
                 <input
                   type="text"
                   value={login}
                   onChange={handleLoginChange}
                   onBlur={handleLoginBlur}
-                  className={`w-full pl-12 pr-24 py-4 text-lg border-2 rounded-xl focus:outline-none transition-colors ${
+                  className={`w-full pl-12 pr-24 py-4 text-lg border bg-surface-input text-text-primary rounded-xl focus:outline-none transition-all ${
                     fieldError
-                      ? 'border-red-400 focus:border-red-500'
-                      : 'border-gray-300 focus:border-blue-600'
+                      ? 'border-destructive focus:border-destructive focus:ring-1 focus:ring-destructive'
+                      : 'border-border-gold focus:border-gold focus:ring-1 focus:ring-gold focus:shadow-gold'
                   }`}
                   placeholder="CPF ou e-mail"
                   autoComplete="username"
@@ -178,37 +178,37 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 {inputType !== 'unknown' && (
                   <span className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold px-2 py-1 rounded-lg ${
                     inputType === 'cpf'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-purple-100 text-purple-700'
+                      ? 'bg-gold/10 text-gold-soft'
+                      : 'bg-gold/10 text-gold-soft'
                   }`}>
                     {inputType === 'cpf' ? 'CPF' : 'E-mail'}
                   </span>
                 )}
               </div>
               {fieldError && (
-                <p className="mt-1 text-xs text-red-600 pl-1">{fieldError}</p>
+                <p className="mt-1 text-xs text-destructive pl-1">{fieldError}</p>
               )}
             </div>
 
             {/* Campo Senha */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-text-muted mb-2">
                 Senha
               </label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-12 pr-12 py-4 text-lg border-2 border-gray-300 rounded-xl focus:border-blue-600 focus:outline-none transition-colors"
+                  className="w-full pl-12 pr-12 py-4 text-lg border bg-surface-input text-text-primary border-border-gold rounded-xl focus:border-gold focus:ring-1 focus:ring-gold focus:shadow-gold focus:outline-none transition-all"
                   placeholder="Senha"
                   autoComplete="current-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-text-muted hover:text-gold transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -216,7 +216,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             </div>
 
             {error && (
-              <div className="bg-red-50 border-2 border-red-200 rounded-xl p-3 text-red-700 text-sm">
+              <div className="bg-destructive/10 border border-destructive rounded-xl p-3 text-destructive text-sm">
                 {error}
               </div>
             )}
@@ -225,7 +225,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             <button
               type="submit"
               disabled={loading || cooldown > 0}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white py-4 rounded-xl text-lg font-semibold shadow-lg hover:shadow-xl transition-all active:scale-98"
+              className="w-full bg-gradient-gold hover:shadow-gold-lg disabled:opacity-60 text-text-on-gold py-4 rounded-xl text-lg font-bold shadow-lg transition-all active:scale-95"
             >
               {loading ? 'Entrando...' : cooldown > 0 ? `Aguarde ${cooldown}s` : 'Entrar'}
             </button>
@@ -234,14 +234,14 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             <div className="flex flex-col gap-2 text-center text-sm">
               <button
                 type="button"
-                className="text-blue-600 hover:text-blue-700 font-medium"
+                className="text-text-muted hover:text-gold font-medium transition-colors"
                 onClick={() => alert('Em produção, enviaria e-mail de recuperação')}
               >
                 Esqueci minha senha
               </button>
               <button
                 type="button"
-                className="text-purple-600 hover:text-purple-700 font-medium"
+                className="text-gold-soft hover:text-gold font-medium transition-colors"
                 onClick={() => setShowInviteModal(true)}
               >
                 Primeiro Acesso? Usar Chave de Convite

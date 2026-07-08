@@ -110,20 +110,20 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
   const FUNIL_COLORS = ['#6b7280', '#0ea5e9', '#3b82f6', '#10b981', '#f59e0b'];
 
   const barColor = (p: number) =>
-    p >= 80 ? 'text-green-600 bg-green-50' : p >= 50 ? 'text-yellow-600 bg-yellow-50' : 'text-red-600 bg-red-50';
+    p >= 80 ? 'text-emerald-600 bg-emerald-50' : p >= 50 ? 'text-yellow-600 bg-yellow-50' : 'text-red-600 bg-red-50';
 
   const progressBarColor = (p: number) =>
-    p >= 80 ? 'bg-green-500' : p >= 50 ? 'bg-yellow-500' : 'bg-red-400';
+    p >= 80 ? 'bg-emerald-500' : p >= 50 ? 'bg-yellow-500' : 'bg-red-400';
 
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+      <div className="bg-gold-deep text-white p-6">
         <div className="flex items-center gap-3">
           <TrendingUp className="w-7 h-7" />
           <div>
             <h1 className="text-2xl font-bold">Relatórios Estratégicos</h1>
-            <p className="text-sm text-blue-100">Indicadores de produtividade e conversão</p>
+            <p className="text-sm text-gold-soft">Indicadores de produtividade e conversão</p>
           </div>
         </div>
       </div>
@@ -134,7 +134,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
           <button
             onClick={() => setActiveTab('captador')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${
-              activeTab === 'captador' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              activeTab === 'captador' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <Users className="w-4 h-4" />
@@ -143,7 +143,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
           <button
             onClick={() => setActiveTab('coordenador')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${
-              activeTab === 'coordenador' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              activeTab === 'coordenador' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <Target className="w-4 h-4" />
@@ -152,7 +152,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
           <button
             onClick={() => setActiveTab('conversao')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${
-              activeTab === 'conversao' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              activeTab === 'conversao' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <Award className="w-4 h-4" />
@@ -172,13 +172,13 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                 <p className="text-xs text-gray-500">Captadores</p>
               </div>
               <div className="bg-white rounded-xl shadow p-3 text-center">
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-gold-deep">
                   {captadorData.reduce((s, c) => s + c.today, 0)}
                 </p>
                 <p className="text-xs text-gray-500">Hoje</p>
               </div>
               <div className="bg-white rounded-xl shadow p-3 text-center">
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-2xl font-bold text-emerald-600">
                   {captadorData.filter(c => c.pctDiaria >= 100).length}
                 </p>
                 <p className="text-xs text-gray-500">Bateram meta</p>
@@ -188,7 +188,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
             {/* Table */}
             <div className="bg-white rounded-xl shadow overflow-hidden">
               <div className="p-4 border-b border-gray-100 flex items-center gap-2">
-                <Users className="w-5 h-5 text-blue-600" />
+                <Users className="w-5 h-5 text-gold-deep" />
                 <h2 className="font-bold text-gray-900">Produtividade por Captador</h2>
                 <span className="text-xs text-gray-400 ml-auto">Meta diária: {META_DIARIA}</span>
               </div>
@@ -205,7 +205,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="text-right">
-                            <p className="text-sm font-bold text-blue-600">{c.today}/{c.metaDiaria}</p>
+                            <p className="text-sm font-bold text-gold-deep">{c.today}/{c.metaDiaria}</p>
                             <p className="text-xs text-gray-400">hoje</p>
                           </div>
                           <div className={`px-2 py-1 rounded-lg text-xs font-bold ${barColor(c.pctDiaria)}`}>
@@ -248,7 +248,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                 <p className="text-xs text-gray-500">Coordenadores</p>
               </div>
               <div className="bg-white rounded-xl shadow p-3 text-center">
-                <p className="text-2xl font-bold text-blue-600">
+                <p className="text-2xl font-bold text-gold-deep">
                   {coordData.reduce((s, c) => s + c.somaContatos, 0)}
                 </p>
                 <p className="text-xs text-gray-500">Total contatos</p>
@@ -276,7 +276,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="text-right">
-                            <p className="font-bold text-blue-600">{rc.somaContatos}</p>
+                            <p className="font-bold text-gold-deep">{rc.somaContatos}</p>
                             <p className="text-xs text-gray-400">{rc.pctEquipe}%</p>
                           </div>
                           {isOpen ? <ChevronDown className="w-5 h-5 text-gray-400" /> : <ChevronRight className="w-5 h-5 text-gray-400" />}
@@ -299,7 +299,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                                   <p className="text-xs text-gray-400">Hoje: {c.today}</p>
                                 </div>
                                 <div className="text-right">
-                                  <p className="font-bold text-blue-600">{c.total}</p>
+                                  <p className="font-bold text-gold-deep">{c.total}</p>
                                   <p className="text-xs text-gray-400">{Math.round((c.total / META_TOTAL_CAPTADOR) * 100)}%</p>
                                 </div>
                               </div>
@@ -321,7 +321,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
             {/* Funnel visualization */}
             <div className="bg-white rounded-xl shadow p-4">
               <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <Award className="w-5 h-5 text-blue-600" />
+                <Award className="w-5 h-5 text-gold-deep" />
                 Funil de Relacionamento
               </h2>
               <div className="space-y-2">
@@ -395,7 +395,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                         <span>{f.icon} {f.label}</span>
                       </div>
                       <div className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                        f.conversionRate >= 50 ? 'text-green-600 bg-green-50' :
+                        f.conversionRate >= 50 ? 'text-emerald-600 bg-emerald-50' :
                         f.conversionRate >= 25 ? 'text-yellow-600 bg-yellow-50' :
                         'text-red-600 bg-red-50'
                       }`}>

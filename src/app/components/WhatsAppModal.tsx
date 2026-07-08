@@ -42,7 +42,7 @@ const NIVEL_LABELS: Record<NivelVoto, string> = {
 };
 
 const NIVEL_COLORS: Record<NivelVoto, string> = {
-  forte:    'bg-green-100 text-green-800 border-green-300',
+  forte:    'bg-emerald-100 text-emerald-800 border-emerald-300',
   medio:    'bg-yellow-100 text-yellow-800 border-yellow-300',
   fraco:    'bg-red-100   text-red-800   border-red-300',
   indeciso: 'bg-gray-100  text-gray-700  border-gray-300',
@@ -182,7 +182,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+            <div className="w-8 h-8 bg-emerald-500 rounded-full flex items-center justify-center">
               <MessageCircle className="w-4 h-4 text-white" />
             </div>
             <div>
@@ -209,8 +209,8 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                     onClick={() => setTemplate(t)}
                     className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
                       template === t
-                        ? 'bg-green-600 text-white border-green-600'
-                        : 'bg-white text-gray-600 border-gray-300 hover:border-green-400'
+                        ? 'bg-emerald-600 text-white border-emerald-600'
+                        : 'bg-white text-gray-600 border-gray-300 hover:border-emerald-400'
                     }`}
                   >
                     {TEMPLATE_LABELS[t]}
@@ -250,7 +250,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                 <select
                   value={filtros.bairro}
                   onChange={e => setFiltros(f => ({ ...f, bairro: e.target.value }))}
-                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
                 >
                   <option value="">Todos</option>
                   {bairros.map(b => <option key={b} value={b}>{b}</option>)}
@@ -261,7 +261,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                 <select
                   value={filtros.regiao}
                   onChange={e => setFiltros(f => ({ ...f, regiao: e.target.value }))}
-                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-400"
+                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
                 >
                   <option value="">Todas</option>
                   {regioes.map(r => <option key={r} value={r}>{r}</option>)}
@@ -272,12 +272,12 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
             {/* Preview de destinatários */}
             <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
               destinatarios.length > 0
-                ? 'bg-green-50 border-green-200'
+                ? 'bg-emerald-50 border-emerald-200'
                 : 'bg-gray-50 border-gray-200'
             }`}>
-              <Users className={`w-5 h-5 flex-shrink-0 ${destinatarios.length > 0 ? 'text-green-600' : 'text-gray-400'}`} />
+              <Users className={`w-5 h-5 flex-shrink-0 ${destinatarios.length > 0 ? 'text-emerald-600' : 'text-gray-400'}`} />
               <div>
-                <p className={`font-bold text-sm ${destinatarios.length > 0 ? 'text-green-800' : 'text-gray-500'}`}>
+                <p className={`font-bold text-sm ${destinatarios.length > 0 ? 'text-emerald-800' : 'text-gray-500'}`}>
                   {destinatarios.length} destinatário{destinatarios.length !== 1 ? 's' : ''}
                 </p>
                 <p className="text-xs text-gray-500">com WhatsApp opt-in ativo e filtros aplicados</p>
@@ -297,7 +297,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                 onChange={e => setMensagem(e.target.value.slice(0, 1000))}
                 placeholder="Digite a mensagem..."
                 rows={5}
-                className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-green-400"
+                className="w-full text-sm border border-gray-300 rounded-xl px-3 py-2.5 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-400"
               />
             </div>
 
@@ -321,7 +321,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
         {/* ── Step: Sending ── */}
         {step === 'sending' && (
           <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8 text-center">
-            <Loader2 className="w-12 h-12 text-green-500 animate-spin" />
+            <Loader2 className="w-12 h-12 text-emerald-500 animate-spin" />
             <div>
               <p className="font-bold text-gray-800">Enviando mensagens...</p>
               <p className="text-sm text-gray-500 mt-1">
@@ -334,7 +334,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
         {/* ── Step: Done ── */}
         {step === 'done' && (
           <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8 text-center">
-            <CheckCircle className="w-12 h-12 text-green-500" />
+            <CheckCircle className="w-12 h-12 text-emerald-500" />
             <div>
               <p className="font-bold text-gray-800">Disparo enviado!</p>
               <p className="text-sm text-gray-500 mt-1">
@@ -343,7 +343,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
             </div>
             <button
               onClick={onClose}
-              className="mt-2 px-6 py-2.5 bg-green-600 text-white rounded-xl font-semibold text-sm hover:bg-green-700 transition-colors"
+              className="mt-2 px-6 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm hover:bg-emerald-700 transition-colors"
             >
               Fechar
             </button>
@@ -364,7 +364,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                 <button
                   onClick={handleEnviar}
                   disabled={destinatarios.length === 0 || !mensagem.trim()}
-                  className="flex-1 py-2.5 bg-green-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
                   Continuar
@@ -380,7 +380,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                 </button>
                 <button
                   onClick={handleConfirmar}
-                  className="flex-1 py-2.5 bg-green-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-green-700 transition-colors"
+                  className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-emerald-700 transition-colors"
                 >
                   <Send className="w-4 h-4" />
                   Enviar agora

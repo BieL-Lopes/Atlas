@@ -18,7 +18,7 @@ export type StatusFunil = 'contato' | 'interessado' | 'simpatizante' | 'apoiador
 export const STATUS_FUNIL_CONFIG: Record<StatusFunil, { label: string; icon: string; color: string; bgColor: string; borderColor: string; bgSelected: string }> = {
   contato:       { label: 'Contato',       icon: '📋', color: 'text-gray-700',   bgColor: 'bg-gray-50',    borderColor: 'border-gray-200',  bgSelected: 'bg-gray-600' },
   interessado:   { label: 'Interessado',   icon: '👀', color: 'text-sky-700',    bgColor: 'bg-sky-50',     borderColor: 'border-sky-200',   bgSelected: 'bg-sky-600' },
-  simpatizante:  { label: 'Simpatizante',  icon: '🤝', color: 'text-blue-700',   bgColor: 'bg-blue-50',    borderColor: 'border-blue-200',  bgSelected: 'bg-blue-600' },
+  simpatizante:  { label: 'Simpatizante',  icon: '🤝', color: 'text-gold-deep',   bgColor: 'bg-blue-50',    borderColor: 'border-gold-deep',  bgSelected: 'bg-gold-deep' },
   apoiador:      { label: 'Apoiador',      icon: '💪', color: 'text-emerald-700',bgColor: 'bg-emerald-50', borderColor: 'border-emerald-200',bgSelected: 'bg-emerald-600' },
   multiplicador: { label: 'Multiplicador', icon: '⭐', color: 'text-amber-700',  bgColor: 'bg-amber-50',   borderColor: 'border-amber-200', bgSelected: 'bg-amber-600' },
 };
@@ -269,12 +269,12 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 sticky top-0 z-10 shadow-lg">
+      <div className="bg-gold-deep text-white p-4 sticky top-0 z-10 shadow-lg">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center">
             <button
               onClick={onBack}
-              className="mr-3 p-2 hover:bg-blue-700 rounded-lg transition-colors"
+              className="mr-3 p-2 hover:bg-gold-deep rounded-lg transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
@@ -284,7 +284,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
             <button
               type="button"
               onClick={onImportClick}
-              className="flex items-center gap-2 px-3 py-1.5 bg-blue-700 hover:bg-blue-800 rounded-lg text-sm font-semibold transition-colors shadow-sm"
+              className="flex items-center gap-2 px-3 py-1.5 bg-gold-deep hover:bg-gold-deep rounded-lg text-sm font-semibold transition-colors shadow-sm"
               title="Importar em Massa (CSV/Excel)"
             >
               <Upload className="w-4 h-4" />
@@ -298,7 +298,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         {/* Dados Pessoais */}
         <div className="bg-white rounded-xl shadow p-4 space-y-4">
           <h2 className="font-bold text-gray-900 flex items-center mb-2">
-            <User className="w-5 h-5 mr-2 text-blue-600" />
+            <User className="w-5 h-5 mr-2 text-gold-deep" />
             Dados Pessoais
           </h2>
 
@@ -310,7 +310,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               type="text"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               placeholder="Digite o nome completo"
               required
             />
@@ -324,7 +324,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               type="text"
               value={cpf}
               onChange={(e) => handleCpfChange(e.target.value)}
-              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               placeholder="000.000.000-00"
               maxLength={14}
             />
@@ -340,7 +340,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
                 type="tel"
                 value={whatsapp}
                 onChange={(e) => handleWhatsappChange(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                className="w-full pl-11 pr-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
                 placeholder="(00) 00000-0000"
                 maxLength={15}
                 required
@@ -356,7 +356,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               placeholder="exemplo@email.com"
             />
           </div>
@@ -371,7 +371,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
                 type="date"
                 value={dataNascimento}
                 onChange={(e) => setDataNascimento(e.target.value)}
-                className="w-full pl-11 pr-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                className="w-full pl-11 pr-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               />
             </div>
           </div>
@@ -385,14 +385,14 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
                 type="text"
                 value={tituloEleitor}
                 onChange={(e) => handleTituloEleitorChange(e.target.value)}
-                className="flex-1 px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                className="flex-1 px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
                 placeholder="0000 0000 0000"
                 maxLength={14}
               />
               <button
                 type="button"
                 onClick={() => setShowQrScanner(true)}
-                className="px-4 py-3 bg-blue-50 border-2 border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-1.5"
+                className="px-4 py-3 bg-blue-50 border-2 border-gold-deep text-gold-deep rounded-lg hover:bg-gold/10 transition-colors flex items-center gap-1.5"
                 title="Escanear QR Code do título"
               >
                 <Camera className="w-5 h-5" />
@@ -404,7 +404,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         {/* Localização */}
         <div className="bg-white rounded-xl shadow p-4 space-y-4">
           <h2 className="font-bold text-gray-900 flex items-center mb-2">
-            <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+            <MapPin className="w-5 h-5 mr-2 text-gold-deep" />
             Localização
           </h2>
 
@@ -416,7 +416,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               type="text"
               value={cidade}
               onChange={(e) => setCidade(e.target.value)}
-              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               placeholder="Digite a cidade"
               required
             />
@@ -430,7 +430,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               type="text"
               value={bairro}
               onChange={(e) => setBairro(e.target.value)}
-              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               placeholder="Digite o bairro"
             />
           </div>
@@ -447,8 +447,8 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               onClick={() => setNivelVoto('forte')}
               className={`py-4 px-6 rounded-xl text-lg font-semibold transition-all border-3 ${
                 nivelVoto === 'forte'
-                  ? 'bg-green-600 text-white border-green-700 shadow-lg scale-105'
-                  : 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100'
+                  ? 'bg-emerald-600 text-white border-emerald-700 shadow-lg scale-105'
+                  : 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100'
               }`}
             >
               ✓ {systemSettings.voteLevels.forte}
@@ -507,7 +507,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         {/* Status no Funil CRM */}
         <div className="bg-white rounded-xl shadow p-4">
           <h2 className="font-bold text-gray-900 flex items-center mb-3">
-            <Award className="w-5 h-5 mr-2 text-blue-600" />
+            <Award className="w-5 h-5 mr-2 text-gold-deep" />
             Status no Funil *
           </h2>
           <div className="grid grid-cols-1 gap-2">
@@ -536,7 +536,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         {/* Tipo de Contato (perfil) */}
         <div className="bg-white rounded-xl shadow p-4">
           <h2 className="font-bold text-gray-900 flex items-center mb-3">
-            <Award className="w-5 h-5 mr-2 text-blue-600" />
+            <Award className="w-5 h-5 mr-2 text-gold-deep" />
             Tipo de Contato *
           </h2>
           <div className="grid grid-cols-1 gap-3">
@@ -557,8 +557,8 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               onClick={() => setNivelEngajamento('cabo_eleitoral')}
               className={`py-3 px-5 rounded-lg font-semibold transition-all border-2 ${
                 nivelEngajamento === 'cabo_eleitoral'
-                  ? 'bg-blue-600 text-white border-blue-700 shadow-lg'
-                  : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
+                  ? 'bg-gold-deep text-white border-gold-deep shadow-lg'
+                  : 'bg-blue-50 text-gold-deep border-gold-deep hover:bg-gold/10'
               }`}
             >
               👥 Cabo Eleitoral
@@ -581,7 +581,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         {/* Nichos e Interesses */}
         <div className="bg-white rounded-xl shadow p-4">
           <h2 className="font-bold text-gray-900 flex items-center mb-3">
-            <Tag className="w-5 h-5 mr-2 text-blue-600" />
+            <Tag className="w-5 h-5 mr-2 text-gold-deep" />
             Nichos e Interesses
           </h2>
           <div className="grid grid-cols-2 gap-2">
@@ -592,7 +592,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
                 onClick={() => toggleNicho(nicho)}
                 className={`py-2 px-3 rounded-lg text-sm font-medium transition-all border-2 ${
                   nichos.includes(nicho)
-                    ? 'bg-blue-600 text-white border-blue-700'
+                    ? 'bg-gold-deep text-white border-gold-deep'
                     : 'bg-gray-50 text-gray-700 border-gray-200 hover:bg-gray-100'
                 }`}
               >
@@ -605,13 +605,13 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         {/* GPS e Localização */}
         <div className="bg-white rounded-xl shadow p-4">
           <h2 className="font-bold text-gray-900 flex items-center mb-3">
-            <Navigation className="w-5 h-5 mr-2 text-blue-600" />
+            <Navigation className="w-5 h-5 mr-2 text-gold-deep" />
             Geolocalização
           </h2>
           {gpsLatitude && gpsLongitude ? (
-            <div className="bg-green-50 border-2 border-green-200 rounded-lg p-3">
-              <p className="text-sm text-green-800 font-medium mb-1">✓ Localização capturada</p>
-              <p className="text-xs text-green-700">
+            <div className="bg-emerald-50 border-2 border-emerald-200 rounded-lg p-3">
+              <p className="text-sm text-emerald-800 font-medium mb-1">✓ Localização capturada</p>
+              <p className="text-xs text-emerald-700">
                 Lat: {gpsLatitude.toFixed(6)} / Long: {gpsLongitude.toFixed(6)}
               </p>
             </div>
@@ -623,7 +623,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               <button
                 type="button"
                 onClick={captureGPS}
-                className="px-3 py-1 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700"
+                className="px-3 py-1 bg-gold-deep text-white text-sm rounded-lg hover:bg-gold-deep"
               >
                 Tentar novamente
               </button>
@@ -638,7 +638,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               type="checkbox"
               checked={aceitaWhatsapp}
               onChange={(e) => setAceitaWhatsapp(e.target.checked)}
-              className="w-6 h-6 mt-1 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+              className="w-6 h-6 mt-1 text-gold-deep border-gray-300 rounded focus:ring-gold-deep"
             />
             <div>
               <p className="font-medium text-gray-900">Aceita mensagens automáticas</p>
@@ -652,13 +652,13 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         {/* Observações */}
         <div className="bg-white rounded-xl shadow p-4">
           <h2 className="font-bold text-gray-900 flex items-center mb-3">
-            <MessageSquare className="w-5 h-5 mr-2 text-blue-600" />
+            <MessageSquare className="w-5 h-5 mr-2 text-gold-deep" />
             Observações
           </h2>
           <textarea
             value={observacoes}
             onChange={(e) => setObservacoes(e.target.value)}
-            className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none resize-none"
+            className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none resize-none"
             rows={4}
             placeholder="Ex: Morador pediu asfalto na Rua João Silva..."
           />
@@ -668,7 +668,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t-2 border-gray-200 shadow-lg">
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-xl text-lg font-bold shadow-lg flex items-center justify-center transition-all active:scale-95"
+            className="w-full bg-gold-deep hover:bg-gold-deep text-white py-4 rounded-xl text-lg font-bold shadow-lg flex items-center justify-center transition-all active:scale-95"
           >
             <Save className="w-6 h-6 mr-2" />
             {electorToEdit ? 'Salvar Alterações' : 'Salvar Cadastro'}

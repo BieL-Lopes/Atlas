@@ -28,8 +28,8 @@ export function SettingsVoteLevelsModal({ settings, onClose, onSave }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center">
-              <BarChart className="w-5 h-5 text-blue-600" />
+            <div className="w-9 h-9 bg-gold/10 rounded-xl flex items-center justify-center">
+              <BarChart className="w-5 h-5 text-gold-deep" />
             </div>
             <div>
               <h2 className="font-bold text-gray-900">Níveis de Voto</h2>
@@ -49,7 +49,7 @@ export function SettingsVoteLevelsModal({ settings, onClose, onSave }: Props) {
               type="text"
               value={levels.forte}
               onChange={e => handleChange('forte', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
             />
           </div>
           <div>
@@ -95,7 +95,7 @@ export function SettingsVoteLevelsModal({ settings, onClose, onSave }: Props) {
           <button onClick={onClose} className="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors">
             Cancelar
           </button>
-          <button onClick={handleSave} className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors">
+          <button onClick={handleSave} className="flex-1 py-2.5 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors">
             <Save className="w-4 h-4" />
             Salvar
           </button>

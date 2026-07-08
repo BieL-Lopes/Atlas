@@ -41,13 +41,13 @@ export function Leaderboard({ tenantId, currentUserId }: LeaderboardProps) {
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white flex justify-between items-center">
+      <div className="p-4 bg-gold-deep text-white flex justify-between items-center">
         <h3 className="font-semibold text-lg flex items-center gap-2">
           <Trophy className="w-5 h-5 text-yellow-300" />
           Top 10 Captadores
         </h3>
         {isOffline && (
-          <div className="flex items-center gap-1 text-xs bg-blue-800/50 px-2 py-1 rounded-full text-blue-100">
+          <div className="flex items-center gap-1 text-xs bg-gold-deep/50 px-2 py-1 rounded-full text-gold-soft">
             <CloudOff className="w-3 h-3" />
             Em Cache
           </div>
@@ -92,7 +92,7 @@ export function Leaderboard({ tenantId, currentUserId }: LeaderboardProps) {
                   <div className="font-medium text-gray-900 flex items-center gap-2">
                     {entry.name}
                     {isMe && (
-                      <span className="text-[10px] uppercase tracking-wider font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                      <span className="text-[10px] uppercase tracking-wider font-bold bg-gold/10 text-gold-deep px-2 py-0.5 rounded-full">
                         Você
                       </span>
                     )}

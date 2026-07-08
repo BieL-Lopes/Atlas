@@ -33,8 +33,8 @@ export function SettingsCampaignModal({ settings, onClose, onSave }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Settings className="w-5 h-5 text-blue-600" />
+            <div className="w-9 h-9 bg-gold/10 rounded-xl flex items-center justify-center">
+              <Settings className="w-5 h-5 text-gold-deep" />
             </div>
             <div>
               <h2 className="font-bold text-gray-900">Dados da Campanha</h2>
@@ -57,7 +57,7 @@ export function SettingsCampaignModal({ settings, onClose, onSave }: Props) {
               value={name}
               onChange={e => setName(e.target.value)}
               placeholder="Ex: João para Prefeito 2024"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gold-deep"
             />
           </div>
 
@@ -70,7 +70,7 @@ export function SettingsCampaignModal({ settings, onClose, onSave }: Props) {
               value={logoUrl}
               onChange={e => setLogoUrl(e.target.value)}
               placeholder="https://exemplo.com/logo.png"
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gold-deep"
             />
           </div>
 
@@ -83,7 +83,7 @@ export function SettingsCampaignModal({ settings, onClose, onSave }: Props) {
               onChange={e => setGeneralInfo(e.target.value)}
               placeholder="Informações adicionais da campanha..."
               rows={3}
-              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+              className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gold-deep resize-none"
             />
           </div>
         </div>
@@ -93,7 +93,7 @@ export function SettingsCampaignModal({ settings, onClose, onSave }: Props) {
           <button onClick={onClose} className="flex-1 py-2.5 border border-gray-200 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors">
             Cancelar
           </button>
-          <button onClick={handleSave} className="flex-1 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors">
+          <button onClick={handleSave} className="flex-1 py-2.5 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-colors">
             <Save className="w-4 h-4" />
             Salvar
           </button>

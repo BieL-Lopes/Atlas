@@ -60,7 +60,7 @@ export function QrScannerModal({ onScan, onClose }: Props) {
       <div className="bg-white rounded-2xl w-full max-w-sm overflow-hidden shadow-2xl">
         <div className="flex items-center justify-between p-4 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <Camera className="w-5 h-5 text-blue-600" />
+            <Camera className="w-5 h-5 text-gold-deep" />
             <h2 className="font-bold text-gray-900">Escanear Título de Eleitor</h2>
           </div>
           <button

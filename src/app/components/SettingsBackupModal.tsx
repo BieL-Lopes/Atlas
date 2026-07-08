@@ -73,8 +73,8 @@ export function SettingsBackupModal({ onClose }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-blue-100 rounded-xl flex items-center justify-center">
-              <Database className="w-5 h-5 text-blue-600" />
+            <div className="w-9 h-9 bg-gold/10 rounded-xl flex items-center justify-center">
+              <Database className="w-5 h-5 text-gold-deep" />
             </div>
             <div>
               <h2 className="font-bold text-gray-900">Backup de Dados</h2>
@@ -88,14 +88,14 @@ export function SettingsBackupModal({ onClose }: Props) {
 
         {/* Content */}
         <div className="p-5 space-y-6">
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-            <p className="text-sm text-blue-800 font-medium mb-1">Exportar Base de Dados</p>
-            <p className="text-xs text-blue-700 mb-3">
+          <div className="bg-blue-50 border border-gold-deep rounded-xl p-4">
+            <p className="text-sm text-gold-deep font-medium mb-1">Exportar Base de Dados</p>
+            <p className="text-xs text-gold-deep mb-3">
               Gera um arquivo .json com todos os eleitores, usuários e configurações salvas no dispositivo atual.
             </p>
             <button
               onClick={handleExport}
-              className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-2.5 bg-gold-deep hover:bg-gold-deep text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
             >
               <Download className="w-4 h-4" />
               Baixar Backup

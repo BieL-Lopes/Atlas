@@ -245,14 +245,14 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-              <Upload className="w-5 h-5 text-blue-600" />
+            <div className="w-10 h-10 rounded-xl bg-gold/10 flex items-center justify-center">
+              <Upload className="w-5 h-5 text-gold-deep" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="font-bold text-gray-900">Importar Contatos</h2>
                 <div className="relative group">
-                  <Info className="w-4 h-4 text-gray-400 cursor-help transition-colors hover:text-blue-500" />
+                  <Info className="w-4 h-4 text-gray-400 cursor-help transition-colors hover:text-gold" />
                   <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 shadow-xl border border-gray-700 pointer-events-none">
                     <p className="font-semibold mb-2 border-b border-gray-700 pb-1">Colunas esperadas:</p>
                     <ul className="space-y-1.5 text-gray-300">
@@ -290,11 +290,11 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
               onClick={() => fileInputRef.current?.click()}
               className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-all ${
                 isDragging
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-300 hover:border-blue-400 hover:bg-gray-50'
+                  ? 'border-gold-deep bg-blue-50'
+                  : 'border-gray-300 hover:border-gold-deep hover:bg-gray-50'
               }`}
             >
-              <FileSpreadsheet className={`w-14 h-14 mx-auto mb-4 ${isDragging ? 'text-blue-500' : 'text-gray-400'}`} />
+              <FileSpreadsheet className={`w-14 h-14 mx-auto mb-4 ${isDragging ? 'text-gold-deep' : 'text-gray-400'}`} />
               <p className="text-lg font-semibold text-gray-700 mb-1">
                 {isDragging ? 'Solte o arquivo aqui' : 'Arraste o arquivo ou clique para selecionar'}
               </p>
@@ -334,8 +334,8 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
                   <p className="text-xl font-bold text-gray-900">{rawData.length}</p>
                   <p className="text-xs text-gray-500">Total de linhas</p>
                 </div>
-                <div className="bg-green-50 rounded-lg p-3 text-center">
-                  <p className="text-xl font-bold text-green-600">{validCount}</p>
+                <div className="bg-emerald-50 rounded-lg p-3 text-center">
+                  <p className="text-xl font-bold text-emerald-600">{validCount}</p>
                   <p className="text-xs text-gray-500">Válidos</p>
                 </div>
                 <div className={`rounded-lg p-3 text-center ${invalidCount > 0 ? 'bg-red-50' : 'bg-gray-50'}`}>
@@ -369,7 +369,7 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
                           <td className="px-3 py-2 text-gray-600 max-w-[100px] truncate">{v.row.cidade || '—'}</td>
                           <td className="px-3 py-2">
                             {v.isValid ? (
-                              <CheckCircle2 className="w-4 h-4 text-green-500" />
+                              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                             ) : (
                               <div className="flex items-center gap-1">
                                 <AlertCircle className="w-4 h-4 text-red-500 flex-shrink-0" />
@@ -401,11 +401,11 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
           {/* Step 3 — Importing */}
           {step === 'importing' && (
             <div className="text-center py-8">
-              <Loader2 className="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4" />
+              <Loader2 className="w-12 h-12 text-gold-deep animate-spin mx-auto mb-4" />
               <p className="text-lg font-semibold text-gray-900 mb-2">Importando contatos...</p>
               <div className="w-full bg-gray-200 rounded-full h-3 mb-2">
                 <div
-                  className="bg-blue-600 h-3 rounded-full transition-all"
+                  className="bg-gold-deep h-3 rounded-full transition-all"
                   style={{ width: `${progress.total > 0 ? (progress.current / progress.total) * 100 : 0}%` }}
                 />
               </div>
@@ -416,11 +416,11 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
           {/* Step 4 — Done */}
           {step === 'done' && (
             <div className="text-center py-8">
-              <CheckCircle2 className="w-16 h-16 text-green-500 mx-auto mb-4" />
+              <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
               <p className="text-xl font-bold text-gray-900 mb-2">Importação concluída!</p>
               <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-green-50 rounded-lg p-3">
-                  <p className="text-2xl font-bold text-green-600">{importedCount}</p>
+                <div className="bg-emerald-50 rounded-lg p-3">
+                  <p className="text-2xl font-bold text-emerald-600">{importedCount}</p>
                   <p className="text-xs text-gray-600">Importados com sucesso</p>
                 </div>
                 <div className="bg-red-50 rounded-lg p-3">
@@ -448,7 +448,7 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
               <button
                 onClick={handleImport}
                 disabled={validCount === 0}
-                className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-4 bg-gold-deep hover:bg-gold-deep disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-semibold transition-colors flex items-center justify-center gap-2"
               >
                 <Upload className="w-4 h-4" />
                 Importar {validCount} contato{validCount !== 1 ? 's' : ''}
@@ -458,7 +458,7 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
           {step === 'done' && (
             <button
               onClick={() => { onImported(); onClose(); }}
-              className="flex-1 py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors"
+              className="flex-1 py-3 px-4 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold transition-colors"
             >
               Concluir
             </button>

@@ -36,7 +36,7 @@ export function BottomNav({ currentTab, onTabChange, userRole }: BottomNavProps)
               onClick={() => onTabChange(tab.id)}
               className={`flex flex-col items-center justify-center py-3 transition-all ${
                 isActive
-                  ? 'text-blue-600'
+                  ? 'text-gold-deep'
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -45,7 +45,7 @@ export function BottomNav({ currentTab, onTabChange, userRole }: BottomNavProps)
                 {tab.label}
               </span>
               {isActive && (
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600" />
+                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gold-deep" />
               )}
             </button>
           );

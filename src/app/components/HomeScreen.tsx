@@ -139,7 +139,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
   }, [user?.id]);
 
   const votoData = [
-    { name: 'Fortes', value: votoStats?.forte ?? 0, bgClass: 'bg-green-600', textClass: 'text-green-600' },
+    { name: 'Fortes', value: votoStats?.forte ?? 0, bgClass: 'bg-emerald-600', textClass: 'text-emerald-600' },
     { name: 'Médios', value: votoStats?.medio ?? 0, bgClass: 'bg-yellow-500', textClass: 'text-yellow-600' },
     { name: 'Fracos', value: votoStats?.fraco ?? 0, bgClass: 'bg-red-600', textClass: 'text-red-600' },
     { name: 'Indecisos', value: votoStats?.indeciso ?? 0, bgClass: 'bg-slate-500', textClass: 'text-slate-600' },
@@ -149,18 +149,18 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 pb-24">
+      <div className="bg-gold-deep text-white p-6 pb-24">
         <div className="flex justify-between items-start mb-2">
           <div>
             <h2 className="text-sm opacity-90 mb-1">Bem-vindo(a),</h2>
             <h1 className="text-2xl font-bold">{userName}</h1>
-            <span className="text-xs bg-blue-500 px-2 py-0.5 rounded-full mt-1 inline-block">
+            <span className="text-xs bg-gold-deep px-2 py-0.5 rounded-full mt-1 inline-block">
               {ROLE_LABELS[userRole]}
             </span>
           </div>
           <button
             onClick={onLogout}
-            className="p-2 hover:bg-blue-800 rounded-lg transition-colors"
+            className="p-2 hover:bg-gold-deep rounded-lg transition-colors"
             aria-label="Sair"
           >
             <LogOut className="w-6 h-6" />
@@ -179,15 +179,15 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
               <p className="text-gray-600 text-sm mb-1">
                 {captadorStats ? 'Meus cadastros' : 'Eleitores cadastrados'}
               </p>
-              <p className="text-4xl font-bold text-blue-600">
+              <p className="text-4xl font-bold text-gold-deep">
                 {captadorStats ? captadorStats.total : totalCadastros}
               </p>
             </div>
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <Users className="w-8 h-8 text-blue-600" />
+            <div className="w-16 h-16 bg-gold/10 rounded-full flex items-center justify-center">
+              <Users className="w-8 h-8 text-gold-deep" />
             </div>
           </div>
-          <div className="flex items-center text-green-600 text-sm">
+          <div className="flex items-center text-emerald-600 text-sm">
             <TrendingUp className="w-4 h-4 mr-1" />
             <span>+{thisWeekCount} esta semana</span>
           </div>
@@ -200,23 +200,23 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
             <div className="bg-white rounded-2xl shadow p-4">
               <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2">
-                  <Target className="w-4 h-4 text-blue-600" />
+                  <Target className="w-4 h-4 text-gold-deep" />
                   <span className="text-sm font-semibold text-gray-900">Meta de hoje</span>
                 </div>
-                <span className="text-sm font-bold text-blue-600">
+                <span className="text-sm font-bold text-gold-deep">
                   {captadorStats.today}/{META_DIARIA}
                 </span>
               </div>
               <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
                 <div
                   className={`h-3 rounded-full transition-all ${
-                    captadorStats.today >= META_DIARIA ? 'bg-green-500' : 'bg-blue-500'
+                    captadorStats.today >= META_DIARIA ? 'bg-emerald-500' : 'bg-gold-deep'
                   }`}
                   style={{ width: `${Math.min((captadorStats.today / META_DIARIA) * 100, 100)}%` }}
                 />
               </div>
               {captadorStats.today >= META_DIARIA && (
-                <p className="text-xs text-green-600 font-medium mt-1">✅ Meta atingida hoje!</p>
+                <p className="text-xs text-emerald-600 font-medium mt-1">✅ Meta atingida hoje!</p>
               )}
             </div>
 
@@ -258,7 +258,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
               <div className="flex items-center justify-between mb-2">
                 <p className="text-gray-600 text-sm">Votos Fortes</p>
               </div>
-              <p className="text-2xl font-bold text-green-600">{votoData[0].value}</p>
+              <p className="text-2xl font-bold text-emerald-600">{votoData[0].value}</p>
             </div>
 
             <div className="bg-white rounded-xl shadow p-4">
@@ -266,8 +266,8 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
                 <p className="text-gray-600 text-sm">Regiões</p>
               </div>
               <div className="flex items-center">
-                <MapPin className="w-4 h-4 text-blue-600 mr-1" />
-                <p className="text-2xl font-bold text-blue-600">{totalRegioes}</p>
+                <MapPin className="w-4 h-4 text-gold-deep mr-1" />
+                <p className="text-2xl font-bold text-gold-deep">{totalRegioes}</p>
               </div>
             </div>
           </div>
@@ -279,7 +279,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
             {/* Cabeçalho */}
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-bold text-gray-900 flex items-center">
-                <PieChart className="w-5 h-5 mr-2 text-blue-600" />
+                <PieChart className="w-5 h-5 mr-2 text-gold-deep" />
                 Termômetro de Votos
               </h3>
               <span className="text-sm font-semibold text-gray-600">
@@ -319,7 +319,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
         {/* Top 3 Regiões */}
         <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">
           <div className="flex items-center mb-4">
-            <MapPin className="w-5 h-5 mr-2 text-blue-600" />
+            <MapPin className="w-5 h-5 mr-2 text-gold-deep" />
             <h3 className="font-bold text-gray-900">Top 3 Regiões</h3>
           </div>
           {top3Regioes.length === 0 ? (
@@ -330,11 +330,11 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
                 <div key={nome}>
                   <div className="flex items-center justify-between mb-1.5">
                     <span className="text-sm font-medium text-gray-700">{nome}</span>
-                    <span className="text-sm font-semibold text-blue-600">{count} eleitor{count !== 1 ? 'es' : ''}</span>
+                    <span className="text-sm font-semibold text-gold-deep">{count} eleitor{count !== 1 ? 'es' : ''}</span>
                   </div>
                   <div className="w-full h-2.5 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-blue-600 rounded-full transition-all"
+                      className="h-full bg-gold-deep rounded-full transition-all"
                       style={{ width: `${(count / maxRegiao) * 100}%` }}
                     />
                   </div>
@@ -348,7 +348,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <h3 className="font-bold text-gray-900 flex items-center">
-              <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+              <Calendar className="w-5 h-5 mr-2 text-gold-deep" />
               Agenda do Dia
             </h3>
             <span className="text-sm text-gray-600">
@@ -365,20 +365,20 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
               agendaHoje.map(activity => (
                 <div
                   key={activity.id}
-                  className="bg-white rounded-xl shadow p-4 border-l-4 border-blue-600"
+                  className="bg-white rounded-xl shadow p-4 border-l-4 border-gold-deep"
                 >
                   <div className="flex items-start">
-                    <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mr-3 flex-shrink-0">
-                      <Clock className="w-6 h-6 text-blue-600" />
+                    <div className="flex items-center justify-center w-12 h-12 bg-gold/10 rounded-lg mr-3 flex-shrink-0">
+                      <Clock className="w-6 h-6 text-gold-deep" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center mb-1">
-                        <span className="font-bold text-blue-600 mr-2">{activity.time}</span>
+                        <span className="font-bold text-gold-deep mr-2">{activity.time}</span>
                         <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
                           activity.type === 'reuniao'
                             ? 'bg-purple-100 text-purple-700'
                             : activity.type === 'visita'
-                            ? 'bg-green-100 text-green-700'
+                            ? 'bg-emerald-100 text-emerald-700'
                             : 'bg-gray-100 text-gray-700'
                         }`}>
                           {activity.type === 'reuniao' ? '🤝 Reunião' : activity.type === 'visita' ? '🏠 Visita' : activity.type}
@@ -399,7 +399,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
 
             <button
               onClick={() => onNavigate('agenda')}
-              className="w-full bg-blue-50 border-2 border-blue-200 border-dashed hover:bg-blue-100 text-blue-600 py-3 px-4 rounded-xl text-sm font-semibold transition-all"
+              className="w-full bg-blue-50 border-2 border-gold-deep border-dashed hover:bg-gold/10 text-gold-deep py-3 px-4 rounded-xl text-sm font-semibold transition-all"
             >
               + Adicionar Nova Atividade
             </button>
@@ -410,9 +410,9 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
         {comunicados.length > 0 && (
           <div className="mb-6">
             <div className="flex items-center gap-2 mb-3">
-              <Megaphone className="w-5 h-5 text-blue-600" />
+              <Megaphone className="w-5 h-5 text-gold-deep" />
               <h3 className="font-bold text-gray-900">Comunicados</h3>
-              <span className="ml-auto text-xs bg-blue-100 text-blue-700 font-semibold px-2 py-0.5 rounded-full">
+              <span className="ml-auto text-xs bg-gold/10 text-gold-deep font-semibold px-2 py-0.5 rounded-full">
                 {comunicados.length}
               </span>
             </div>
@@ -454,7 +454,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
       {permissions.canCreateElector && (
         <button
           onClick={() => onNavigate('form')}
-          className="fixed bottom-24 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-40"
+          className="fixed bottom-24 right-6 w-14 h-14 bg-gold-deep hover:bg-gold-deep text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-40"
           aria-label="Novo Cadastro"
         >
           <Plus className="w-7 h-7" strokeWidth={3} />

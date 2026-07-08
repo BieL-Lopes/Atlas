@@ -302,15 +302,15 @@ export function SignupForm({
 
         {step === 'loading' && (
           <div className="flex flex-col items-center justify-center py-12 gap-4">
-            <Loader2 className="w-8 h-8 text-blue-600 animate-spin" />
+            <Loader2 className="w-8 h-8 text-gold-deep animate-spin" />
             <p className="text-gray-600">Criando sua conta...</p>
           </div>
         )}
 
         {step === 'success' && (
           <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle className="w-8 h-8 text-green-600" />
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
+              <CheckCircle className="w-8 h-8 text-emerald-600" />
             </div>
             <h3 className="text-lg font-bold text-gray-900">Sucesso!</h3>
             <p className="text-sm text-gray-600">

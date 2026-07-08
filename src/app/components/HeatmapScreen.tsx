@@ -97,7 +97,7 @@ export function HeatmapScreen({ electors, users }: Props) {
       {/* ── Cabeçalho + Filtros ── */}
       <div className="bg-white border-b border-gray-200 px-4 pt-3 pb-2 space-y-2">
         <div className="flex items-center gap-2">
-          <Map className="w-5 h-5 text-blue-600" />
+          <Map className="w-5 h-5 text-gold-deep" />
           <span className="font-semibold text-gray-900">Heatmap Eleitoral</span>
           <span className="ml-auto text-xs text-gray-500">
             {filtered.length} ponto{filtered.length !== 1 ? 's' : ''}

@@ -61,7 +61,7 @@ export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps)
       <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-xl">
         <div className="p-4 border-b border-gray-100 flex items-center justify-between">
           <h2 className="font-bold text-gray-900 flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-blue-600" />
+            <UserPlus className="w-5 h-5 text-gold-deep" />
             Gerar Convite
           </h2>
           <button onClick={onClose} className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors">
@@ -79,7 +79,7 @@ export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps)
                 <select
                   value={role}
                   onChange={(e) => setRole(e.target.value as UserRole)}
-                  className="w-full border-gray-300 rounded-xl shadow-sm py-2.5 px-3 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full border-gray-300 rounded-xl shadow-sm py-2.5 px-3 focus:ring-gold-deep focus:border-gold-deep"
                 >
                   {Object.entries(ROLE_LABELS).map(([key, label]) => (
                     <option key={key} value={key}>{label}</option>
@@ -99,7 +99,7 @@ export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps)
               <button
                 onClick={handleGenerate}
                 disabled={loading}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors disabled:opacity-50"
+                className="w-full py-3 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold transition-colors disabled:opacity-50"
               >
                 {loading ? 'Gerando...' : 'Gerar Código de Convite'}
               </button>
@@ -119,13 +119,13 @@ export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps)
                 onClick={handleCopy}
                 className="w-full py-3 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-semibold transition-colors"
               >
-                {copied ? <Check className="w-5 h-5 text-green-600" /> : <Copy className="w-5 h-5" />}
+                {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5" />}
                 {copied ? 'Copiado!' : 'Copiar Código'}
               </button>
 
               <button
                 onClick={onClose}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold transition-colors"
+                className="w-full py-3 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold transition-colors"
               >
                 Concluir
               </button>

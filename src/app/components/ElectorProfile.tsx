@@ -62,7 +62,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
 
   const getNivelVotoBadge = (nivel: 'forte' | 'medio' | 'fraco' | 'indeciso' | 'oposicao') => {
     const styles = {
-      forte:    'bg-green-100 text-green-800 border-green-300',
+      forte:    'bg-emerald-100 text-emerald-800 border-emerald-300',
       medio:    'bg-yellow-100 text-yellow-800 border-yellow-300',
       fraco:    'bg-red-100 text-red-800 border-red-300',
       indeciso: 'bg-slate-100 text-slate-700 border-slate-300',
@@ -85,7 +85,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
   const getNivelEngajamentoBadge = (nivel: 'lideranca' | 'cabo_eleitoral' | 'eleitor_comum') => {
     const styles = {
       lideranca: 'bg-purple-100 text-purple-800 border-purple-300',
-      cabo_eleitoral: 'bg-blue-100 text-blue-800 border-blue-300',
+      cabo_eleitoral: 'bg-gold/10 text-gold-deep border-gold-deep',
       eleitor_comum: 'bg-gray-100 text-gray-800 border-gray-300'
     };
     const labels = {
@@ -113,12 +113,12 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 sticky top-0 z-10 shadow-lg">
+      <div className="bg-gold-deep text-white p-4 sticky top-0 z-10 shadow-lg">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
             <button
               onClick={onBack}
-              className="mr-3 p-2 hover:bg-blue-700 rounded-lg transition-colors"
+              className="mr-3 p-2 hover:bg-gold-deep rounded-lg transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
@@ -127,7 +127,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
           {onEdit && (
             <button
               onClick={() => onEdit(elector)}
-              className="p-2 hover:bg-blue-700 rounded-lg transition-colors"
+              className="p-2 hover:bg-gold-deep rounded-lg transition-colors"
               title="Editar eleitor"
             >
               <Edit2 className="w-5 h-5" />
@@ -174,44 +174,44 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
 
           <div className="space-y-3 text-sm">
             <div className="flex items-center text-gray-700">
-              <Phone className="w-4 h-4 mr-3 text-blue-600" />
+              <Phone className="w-4 h-4 mr-3 text-gold-deep" />
               <a
                 href={`https://wa.me/55${elector.whatsapp.replace(/\D/g, '')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline font-medium"
+                className="text-gold-deep hover:underline font-medium"
               >
                 {elector.whatsapp}
               </a>
               {elector.aceitaWhatsapp && (
-                <span className="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
+                <span className="ml-2 px-2 py-0.5 bg-emerald-100 text-emerald-700 text-xs rounded-full">
                   ✓ Aceita mensagens
                 </span>
               )}
             </div>
 
             <div className="flex items-center text-gray-700">
-              <MapPin className="w-4 h-4 mr-3 text-blue-600" />
+              <MapPin className="w-4 h-4 mr-3 text-gold-deep" />
               <span>{elector.bairro ? `${elector.bairro}, ` : ''}{elector.cidade}</span>
             </div>
 
             {elector.tituloEleitor && (
               <div className="flex items-center text-gray-700">
-                <BookOpen className="w-4 h-4 mr-3 text-blue-600" />
+                <BookOpen className="w-4 h-4 mr-3 text-gold-deep" />
                 <span>Título de Eleitor: <span className="font-mono font-semibold">{elector.tituloEleitor}</span></span>
               </div>
             )}
 
             {elector.dataNascimento && (
               <div className="flex items-center text-gray-700">
-                <Calendar className="w-4 h-4 mr-3 text-blue-600" />
+                <Calendar className="w-4 h-4 mr-3 text-gold-deep" />
                 <span>Nascimento: {formatDate(elector.dataNascimento)}</span>
               </div>
             )}
 
             {elector.gpsLatitude && elector.gpsLongitude && (
               <div className="flex items-center text-gray-700">
-                <Navigation className="w-4 h-4 mr-3 text-blue-600" />
+                <Navigation className="w-4 h-4 mr-3 text-gold-deep" />
                 <span className="text-xs">
                   GPS: {elector.gpsLatitude.toFixed(6)}, {elector.gpsLongitude.toFixed(6)}
                 </span>
@@ -234,12 +234,12 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
           <div className="bg-white rounded-xl shadow p-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                <QrCode className="w-5 h-5 text-blue-600" />
+                <QrCode className="w-5 h-5 text-gold-deep" />
                 QR Code do Título
               </h3>
               <button
                 onClick={() => setShowQR(v => !v)}
-                className="text-sm text-blue-600 font-medium hover:text-blue-800 transition-colors"
+                className="text-sm text-gold-deep font-medium hover:text-gold transition-colors"
               >
                 {showQR ? 'Ocultar' : 'Mostrar'}
               </button>
@@ -265,14 +265,14 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
         {elector.nichos && elector.nichos.length > 0 && (
           <div className="bg-white rounded-xl shadow p-4">
             <h3 className="font-bold text-gray-900 flex items-center mb-3">
-              <Tag className="w-5 h-5 mr-2 text-blue-600" />
+              <Tag className="w-5 h-5 mr-2 text-gold-deep" />
               Nichos e Interesses
             </h3>
             <div className="flex flex-wrap gap-2">
               {elector.nichos.map(nicho => (
                 <span
                   key={nicho}
-                  className="px-3 py-1 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium border border-blue-200"
+                  className="px-3 py-1 bg-blue-50 text-gold-deep rounded-lg text-sm font-medium border border-gold-deep"
                 >
                   {nicho}
                 </span>
@@ -296,7 +296,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
               onClick={() => setActiveTab('atendimentos')}
               className={`py-4 px-4 font-semibold transition-all ${
                 activeTab === 'atendimentos'
-                  ? 'text-blue-600 border-b-4 border-blue-600 -mb-0.5'
+                  ? 'text-gold-deep border-b-4 border-gold-deep -mb-0.5'
                   : 'text-gray-600 hover:text-gray-800'
               }`}
             >
@@ -323,7 +323,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
                   <h3 className="font-bold text-gray-900">Histórico de Demandas</h3>
                   <button
                     onClick={() => setShowNewAtendimento(!showNewAtendimento)}
-                    className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="p-2 bg-gold-deep text-white rounded-lg hover:bg-gold-deep transition-colors"
                   >
                     <Plus className="w-5 h-5" />
                   </button>
@@ -331,7 +331,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
 
                 {/* Formulário Novo Atendimento */}
                 {showNewAtendimento && (
-                  <div className="mb-4 p-4 bg-blue-50 rounded-lg border-2 border-blue-200">
+                  <div className="mb-4 p-4 bg-blue-50 rounded-lg border-2 border-gold-deep">
                     <h4 className="font-semibold text-gray-900 mb-3">Registrar Nova Demanda</h4>
 
                     <div className="mb-3">
@@ -347,7 +347,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
                             onClick={() => setAtendimentoTipo(tipo.value as any)}
                             className={`py-2 px-3 rounded-lg text-sm font-medium border-2 transition-all ${
                               atendimentoTipo === tipo.value
-                                ? 'bg-blue-600 text-white border-blue-700'
+                                ? 'bg-gold-deep text-white border-gold-deep'
                                 : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
                             }`}
                           >
@@ -362,7 +362,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
                       <textarea
                         value={atendimentoDescricao}
                         onChange={(e) => setAtendimentoDescricao(e.target.value)}
-                        className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none resize-none"
+                        className="w-full px-3 py-2 border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none resize-none"
                         rows={3}
                         placeholder="Ex: Solicitou consulta médica no posto de saúde..."
                       />
@@ -371,7 +371,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
                     <div className="flex gap-2">
                       <button
                         onClick={handleAddAtendimento}
-                        className="flex-1 bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700"
+                        className="flex-1 bg-gold-deep text-white py-2 rounded-lg font-semibold hover:bg-gold-deep"
                       >
                         Salvar
                       </button>

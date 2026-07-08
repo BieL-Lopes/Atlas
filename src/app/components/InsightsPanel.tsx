@@ -12,8 +12,8 @@ interface Props {
 const TYPE_STYLES: Record<InsightType, { bg: string; border: string; text: string; icon: JSX.Element }> = {
   danger:  { bg: 'bg-red-50',    border: 'border-red-400',    text: 'text-red-800',    icon: <AlertTriangle className="w-4 h-4 text-red-500" /> },
   warning: { bg: 'bg-yellow-50', border: 'border-yellow-400', text: 'text-yellow-800', icon: <AlertTriangle className="w-4 h-4 text-yellow-500" /> },
-  success: { bg: 'bg-green-50',  border: 'border-green-400',  text: 'text-green-800',  icon: <CheckCircle   className="w-4 h-4 text-green-500" /> },
-  info:    { bg: 'bg-blue-50',   border: 'border-blue-400',   text: 'text-blue-800',   icon: <Info          className="w-4 h-4 text-blue-500" /> },
+  success: { bg: 'bg-emerald-50',  border: 'border-emerald-400',  text: 'text-emerald-800',  icon: <CheckCircle   className="w-4 h-4 text-emerald-500" /> },
+  info:    { bg: 'bg-blue-50',   border: 'border-gold-deep',   text: 'text-gold-deep',   icon: <Info          className="w-4 h-4 text-gold-deep" /> },
 };
 
 function InsightCard({ insight }: { insight: Insight }) {
@@ -31,7 +31,7 @@ function InsightCard({ insight }: { insight: Insight }) {
 }
 
 function RiskBar({ value }: { value: number }) {
-  const color = value >= 60 ? 'bg-red-500' : value >= 35 ? 'bg-yellow-500' : 'bg-green-500';
+  const color = value >= 60 ? 'bg-red-500' : value >= 35 ? 'bg-yellow-500' : 'bg-emerald-500';
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
@@ -64,26 +64,26 @@ export function InsightsPanel({ electors, users }: Props) {
           <p className="text-2xl font-bold text-yellow-600">{warnings.length}</p>
           <p className="text-xs text-yellow-700 font-medium mt-0.5">Atenção</p>
         </div>
-        <div className="bg-green-50 rounded-xl p-3 text-center border border-green-100">
-          <p className="text-2xl font-bold text-green-600">{others.length}</p>
-          <p className="text-xs text-green-700 font-medium mt-0.5">Positivos</p>
+        <div className="bg-emerald-50 rounded-xl p-3 text-center border border-emerald-100">
+          <p className="text-2xl font-bold text-emerald-600">{others.length}</p>
+          <p className="text-xs text-emerald-700 font-medium mt-0.5">Positivos</p>
         </div>
       </div>
 
       {/* Alertas */}
       <div className="bg-white rounded-xl shadow-sm p-4">
         <h2 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-          <Bell className="w-5 h-5 text-blue-600" />
+          <Bell className="w-5 h-5 text-gold-deep" />
           Alertas Inteligentes
           {insights.length > 0 && (
-            <span className="ml-auto text-xs bg-blue-600 text-white rounded-full px-2 py-0.5">
+            <span className="ml-auto text-xs bg-gold-deep text-white rounded-full px-2 py-0.5">
               {insights.length}
             </span>
           )}
         </h2>
         {insights.length === 0 ? (
           <div className="flex flex-col items-center gap-3 py-8 text-center">
-            <CheckCircle className="w-12 h-12 text-green-400" />
+            <CheckCircle className="w-12 h-12 text-emerald-400" />
             <div>
               <p className="font-semibold text-gray-700">Tudo em ordem!</p>
               <p className="text-sm text-gray-500 mt-1">Nenhum alerta no momento. Continue assim.</p>
@@ -100,7 +100,7 @@ export function InsightsPanel({ electors, users }: Props) {
       {regionRisks.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm p-4">
           <h2 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-blue-600" />
+            <MapPin className="w-5 h-5 text-gold-deep" />
             Risco por Região
           </h2>
           <div className="space-y-3">
@@ -109,7 +109,7 @@ export function InsightsPanel({ electors, users }: Props) {
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-sm font-medium text-gray-800 truncate max-w-[55%]">{r.nome}</span>
                   <div className="flex gap-2 text-xs text-gray-500">
-                    <span title="Forte" className="text-green-600">{r.forte}✓</span>
+                    <span title="Forte" className="text-emerald-600">{r.forte}✓</span>
                     <span title="Indeciso" className="text-yellow-600">{r.indeciso}?</span>
                     <span title="Oposição" className="text-red-600">{r.oposicao}✗</span>
                     <span className="text-gray-400">/{r.total}</span>
@@ -130,17 +130,17 @@ export function InsightsPanel({ electors, users }: Props) {
       {redistribuicao.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm p-4">
           <h2 className="font-bold text-gray-900 mb-3 flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
+            <Users className="w-5 h-5 text-gold-deep" />
             Redistribuição Sugerida
           </h2>
           <div className="space-y-2.5">
             {redistribuicao.map((s, i) => (
-              <div key={i} className="flex items-start gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
-                <RefreshCw className="w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5" />
+              <div key={i} className="flex items-start gap-3 p-3 bg-blue-50 rounded-xl border border-gold-deep">
+                <RefreshCw className="w-4 h-4 text-gold-deep flex-shrink-0 mt-0.5" />
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-blue-900">{s.captador}</p>
-                  <p className="text-xs text-blue-700 mt-0.5">{s.motivo}</p>
-                  <p className="text-xs text-blue-600 mt-1">
+                  <p className="text-sm font-semibold text-gold-deep">{s.captador}</p>
+                  <p className="text-xs text-gold-deep mt-0.5">{s.motivo}</p>
+                  <p className="text-xs text-gold-deep mt-1">
                     Sugestão: realocar para <span className="font-semibold">{s.regiaoSugerida}</span>
                   </p>
                 </div>

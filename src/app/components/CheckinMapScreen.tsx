@@ -105,11 +105,11 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col pb-24">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-5">
+      <div className="bg-gold-deep text-white p-5">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
-            className="p-1.5 hover:bg-blue-800 rounded-lg transition-colors"
+            className="p-1.5 hover:bg-gold-deep rounded-lg transition-colors"
             aria-label="Voltar"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -118,7 +118,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
             <h1 className="text-xl font-bold">
               {isCaptador ? 'Minha Rota' : 'Mapa de Captadores'}
             </h1>
-            <p className="text-xs text-blue-200">
+            <p className="text-xs text-gold-soft">
               {isCaptador
                 ? `${myGPS.length} check-ins com localização`
                 : `${allGPS.length} check-ins registrados`}
@@ -131,11 +131,11 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
       {isCaptador && (
         <div className="bg-white border-b border-gray-200 px-4 py-3 grid grid-cols-3 text-center divide-x divide-gray-100">
           <div>
-            <p className="text-lg font-bold text-blue-600">{myElectors.length}</p>
+            <p className="text-lg font-bold text-gold-deep">{myElectors.length}</p>
             <p className="text-xs text-gray-400">Cadastros</p>
           </div>
           <div>
-            <p className="text-lg font-bold text-green-600">{myGPS.length}</p>
+            <p className="text-lg font-bold text-emerald-600">{myGPS.length}</p>
             <p className="text-xs text-gray-400">Com GPS</p>
           </div>
           <div>
@@ -216,7 +216,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
         {!isCaptador && captadores.length > 0 && (
           <div className="bg-white rounded-2xl shadow p-4">
             <div className="flex items-center gap-2 mb-3">
-              <Users className="w-4 h-4 text-blue-600" />
+              <Users className="w-4 h-4 text-gold-deep" />
               <h3 className="font-bold text-gray-900 text-sm">Legenda</h3>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -249,16 +249,16 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
               myDayGroups.map(([day, group]) => (
                 <div key={day} className="bg-white rounded-2xl shadow overflow-hidden">
                   <div className="flex items-center gap-2 px-4 py-3 border-b border-gray-100 bg-gray-50">
-                    <Calendar className="w-4 h-4 text-blue-600" />
+                    <Calendar className="w-4 h-4 text-gold-deep" />
                     <span className="text-sm font-semibold text-gray-700">{day}</span>
-                    <span className="ml-auto text-xs font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full">
+                    <span className="ml-auto text-xs font-medium text-gold-deep bg-blue-50 px-2 py-0.5 rounded-full">
                       {group.length} cadastro{group.length !== 1 ? 's' : ''}
                     </span>
                   </div>
                   <div className="divide-y divide-gray-50">
                     {group.map(e => (
                       <div key={e.id} className="flex items-center gap-3 px-4 py-3">
-                        <MapPin className="w-4 h-4 text-blue-400 shrink-0" />
+                        <MapPin className="w-4 h-4 text-gold-soft shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{e.nome}</p>
                           <p className="text-xs text-gray-400">{e.bairro}, {e.cidade}</p>
@@ -306,7 +306,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
                         </p>
                       </div>
                       <div className="text-right shrink-0">
-                        <p className="text-sm font-bold text-blue-600">{total}</p>
+                        <p className="text-sm font-bold text-gold-deep">{total}</p>
                         <p className="text-xs text-gray-400">{withGPS} GPS</p>
                       </div>
                     </div>

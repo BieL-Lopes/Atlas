@@ -8,8 +8,8 @@ interface Props {
 }
 
 const ACTION_BADGES: Record<AuditAction, { label: string; style: string }> = {
-  CREATE: { label: 'Criação', style: 'bg-green-100 text-green-800 border-green-200' },
-  UPDATE: { label: 'Edição', style: 'bg-blue-100 text-blue-800 border-blue-200' },
+  CREATE: { label: 'Criação', style: 'bg-emerald-100 text-emerald-800 border-emerald-200' },
+  UPDATE: { label: 'Edição', style: 'bg-gold/10 text-gold-deep border-gold-deep' },
   DELETE: { label: 'Exclusão', style: 'bg-red-100 text-red-800 border-red-200' },
   EXPORT: { label: 'Exportação', style: 'bg-purple-100 text-purple-800 border-purple-200' },
   IMPORT: { label: 'Importação', style: 'bg-amber-100 text-amber-800 border-amber-200' },
@@ -65,12 +65,12 @@ export function AuditLogsScreen({ user }: Props) {
   return (
     <div className="min-h-screen bg-gray-100 pb-24">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+      <div className="bg-gold-deep text-white p-6">
         <div className="flex items-center gap-3 mb-2">
           <Shield className="w-7 h-7" />
           <div>
             <h1 className="text-2xl font-bold">Logs do Sistema</h1>
-            <p className="text-sm text-blue-100">Trilha de auditoria • Compliance LGPD</p>
+            <p className="text-sm text-gold-soft">Trilha de auditoria • Compliance LGPD</p>
           </div>
         </div>
         <div className="flex items-center gap-2 mt-3">
@@ -80,7 +80,7 @@ export function AuditLogsScreen({ user }: Props) {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 text-sm text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="w-full pl-9 pr-4 py-2.5 text-sm text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-deep"
               placeholder="Buscar por usuário ou entidade..."
             />
           </div>
@@ -89,7 +89,7 @@ export function AuditLogsScreen({ user }: Props) {
             aria-label="Abrir filtros"
             onClick={() => setShowFilters(!showFilters)}
             className={`p-2.5 rounded-lg transition-colors ${
-              showFilters ? 'bg-white text-blue-600' : 'bg-white/15 text-white hover:bg-white/25'
+              showFilters ? 'bg-white text-gold-deep' : 'bg-white/15 text-white hover:bg-white/25'
             }`}
           >
             <Filter className="w-5 h-5" />
@@ -104,7 +104,7 @@ export function AuditLogsScreen({ user }: Props) {
             <button
               onClick={() => setActionFilter('')}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-                !actionFilter ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
+                !actionFilter ? 'bg-gold-deep text-white border-gold-deep' : 'bg-white text-gray-600 border-gray-300 hover:bg-gray-50'
               }`}
             >
               Todas
@@ -117,7 +117,7 @@ export function AuditLogsScreen({ user }: Props) {
                   key={action}
                   onClick={() => setActionFilter(isActive ? '' : action)}
                   className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-                    isActive ? 'bg-blue-600 text-white border-blue-600' : `${badge.style} hover:opacity-80`
+                    isActive ? 'bg-gold-deep text-white border-gold-deep' : `${badge.style} hover:opacity-80`
                   }`}
                 >
                   {badge.label}
@@ -132,7 +132,7 @@ export function AuditLogsScreen({ user }: Props) {
                 type="date"
                 value={startDate}
                 onChange={(e) => { setStartDate(e.target.value); setPage(0); }}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               />
             </div>
             <div className="flex-1">
@@ -141,7 +141,7 @@ export function AuditLogsScreen({ user }: Props) {
                 type="date"
                 value={endDate}
                 onChange={(e) => { setEndDate(e.target.value); setPage(0); }}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none"
+                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               />
             </div>
           </div>
@@ -163,7 +163,7 @@ export function AuditLogsScreen({ user }: Props) {
 
         {loading ? (
           <div className="bg-white rounded-xl shadow p-12 text-center">
-            <div className="animate-spin w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full mx-auto mb-3" />
+            <div className="animate-spin w-8 h-8 border-4 border-gold-deep border-t-blue-600 rounded-full mx-auto mb-3" />
             <p className="text-gray-500 text-sm">Carregando logs...</p>
           </div>
         ) : filteredLogs.length === 0 ? (
@@ -181,8 +181,8 @@ export function AuditLogsScreen({ user }: Props) {
                   <div key={log.id} className="p-4 hover:bg-gray-50 transition-colors">
                     <div className="flex items-start justify-between gap-2 mb-2">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                          <UserIcon className="w-4 h-4 text-blue-600" />
+                        <div className="w-8 h-8 rounded-full bg-gold/10 flex items-center justify-center flex-shrink-0">
+                          <UserIcon className="w-4 h-4 text-gold-deep" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-gray-900 truncate">{log.userName || 'Sistema'}</p>

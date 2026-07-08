@@ -32,7 +32,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
 
   const getNivelBadge = (nivel: 'forte' | 'medio' | 'fraco' | 'indeciso' | 'oposicao') => {
     const styles = {
-      forte:    'bg-green-100 text-green-800 border-green-300',
+      forte:    'bg-emerald-100 text-emerald-800 border-emerald-300',
       medio:    'bg-yellow-100 text-yellow-800 border-yellow-300',
       fraco:    'bg-red-100 text-red-800 border-red-300',
       indeciso: 'bg-slate-100 text-slate-700 border-slate-300',
@@ -55,7 +55,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
   const getNivelEngajamentoBadge = (nivel: 'lideranca' | 'cabo_eleitoral' | 'eleitor_comum') => {
     const styles = {
       lideranca: 'bg-purple-100 text-purple-800 border-purple-300',
-      cabo_eleitoral: 'bg-blue-100 text-blue-800 border-blue-300',
+      cabo_eleitoral: 'bg-gold/10 text-gold-deep border-gold-deep',
       eleitor_comum: 'bg-gray-100 text-gray-800 border-gray-300'
     };
     const labels = {
@@ -174,18 +174,18 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-4 sticky top-0 z-10 shadow-lg">
+      <div className="bg-gold-deep text-white p-4 sticky top-0 z-10 shadow-lg">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
             <button
               onClick={onBack}
-              className="mr-3 p-2 hover:bg-blue-700 rounded-lg transition-colors"
+              className="mr-3 p-2 hover:bg-gold-deep rounded-lg transition-colors"
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
             <div>
               <h1 className="text-xl font-bold">Meus Contatos</h1>
-              <p className="text-sm text-blue-100">{contacts.length} contato{contacts.length !== 1 ? 's' : ''} cadastrado{contacts.length !== 1 ? 's' : ''}</p>
+              <p className="text-sm text-gold-soft">{contacts.length} contato{contacts.length !== 1 ? 's' : ''} cadastrado{contacts.length !== 1 ? 's' : ''}</p>
             </div>
           </div>
 
@@ -194,7 +194,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
             <div className="relative">
               <button
                 onClick={() => setShowExportMenu(!showExportMenu)}
-                className="p-2 hover:bg-blue-700 rounded-lg transition-colors flex items-center"
+                className="p-2 hover:bg-gold-deep rounded-lg transition-colors flex items-center"
               >
                 <Download className="w-5 h-5" />
               </button>
@@ -212,9 +212,9 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
                   </div>
                   <button
                     onClick={exportToCSV}
-                    className="w-full px-4 py-3 text-left hover:bg-blue-50 flex items-center text-gray-700 transition-colors"
+                    className="w-full px-4 py-3 text-left hover:bg-gold flex items-center text-gray-700 transition-colors"
                   >
-                    <FileSpreadsheet className="w-5 h-5 mr-3 text-green-600" />
+                    <FileSpreadsheet className="w-5 h-5 mr-3 text-emerald-600" />
                     <div>
                       <p className="font-medium text-sm">CSV / Excel</p>
                       <p className="text-xs text-gray-500">Planilha completa</p>
@@ -222,7 +222,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
                   </button>
                   <button
                     onClick={exportToPDF}
-                    className="w-full px-4 py-3 text-left hover:bg-blue-50 flex items-center text-gray-700 border-t border-gray-100 transition-colors"
+                    className="w-full px-4 py-3 text-left hover:bg-gold flex items-center text-gray-700 border-t border-gray-100 transition-colors"
                   >
                     <FileText className="w-5 h-5 mr-3 text-red-600" />
                     <div>
@@ -244,7 +244,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-11 pr-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300"
+              className="w-full pl-11 pr-4 py-3 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-deep"
               placeholder="Buscar por nome, cidade ou bairro..."
             />
           </div>
@@ -252,8 +252,8 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
             onClick={() => setShowFilters(!showFilters)}
             className={`px-4 py-3 rounded-lg font-semibold flex items-center justify-center transition-colors ${
               showFilters || scoreFilter !== 'todos' || funilFilter !== 'todos'
-                ? 'bg-blue-800 text-white shadow-inner'
-                : 'bg-blue-500 text-white hover:bg-blue-400'
+                ? 'bg-gold-deep text-white shadow-inner'
+                : 'bg-gold-deep text-white hover:bg-gold/10'
             }`}
           >
             <Filter className="w-5 h-5" />
@@ -262,16 +262,16 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
 
         {/* Painel de Filtros e Estatísticas Expandível */}
         {showFilters && (
-          <div className="mt-3 bg-blue-700/50 rounded-xl p-3 space-y-3">
+          <div className="mt-3 bg-gold-deep/50 rounded-xl p-3 space-y-3">
             {/* Filtro por score */}
             <div>
-              <p className="text-xs font-semibold text-blue-100 mb-1.5 uppercase tracking-wider">Por Score</p>
+              <p className="text-xs font-semibold text-gold-soft mb-1.5 uppercase tracking-wider">Por Score</p>
               <div className="flex gap-2 overflow-x-auto pb-1 hide-scrollbar">
                 {(['todos', 'alto', 'medio', 'baixo'] as const).map(tier => {
                   const active = scoreFilter === tier;
                   const config = {
-                    todos: { label: 'Todos', activeStyle: 'bg-white text-blue-700 font-bold' },
-                    alto:  { label: `Alto (${contacts.filter(c => computeScore(c).tier === 'alto').length})`,  activeStyle: 'bg-green-500 text-white font-bold' },
+                    todos: { label: 'Todos', activeStyle: 'bg-white text-gold-deep font-bold' },
+                    alto:  { label: `Alto (${contacts.filter(c => computeScore(c).tier === 'alto').length})`,  activeStyle: 'bg-emerald-500 text-white font-bold' },
                     medio: { label: `Médio (${contacts.filter(c => computeScore(c).tier === 'medio').length})`, activeStyle: 'bg-yellow-400 text-yellow-900 font-bold' },
                     baixo: { label: `Baixo (${contacts.filter(c => computeScore(c).tier === 'baixo').length})`, activeStyle: 'bg-red-500 text-white font-bold' },
                   };
@@ -282,7 +282,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
                       className={`whitespace-nowrap px-3 text-xs py-1.5 rounded-full transition-colors border ${
                         active
                           ? config[tier].activeStyle + ' border-transparent'
-                          : 'bg-blue-500 text-blue-100 border-blue-400 hover:bg-blue-400'
+                          : 'bg-gold-deep text-gold-soft border-gold-deep hover:bg-gold/10'
                       }`}
                     >
                       {config[tier].label}
@@ -294,14 +294,14 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
 
             {/* Filtro por Status do Funil */}
             <div>
-              <p className="text-xs font-semibold text-blue-100 mb-1.5 uppercase tracking-wider">Por Funil</p>
+              <p className="text-xs font-semibold text-gold-soft mb-1.5 uppercase tracking-wider">Por Funil</p>
               <div className="flex gap-1.5 overflow-x-auto pb-1 hide-scrollbar">
                 <button
                   onClick={() => setFunilFilter('todos')}
                   className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition-colors border ${
                     funilFilter === 'todos'
-                      ? 'bg-white text-blue-700 font-bold border-transparent'
-                      : 'bg-blue-500 text-blue-100 border-blue-400 hover:bg-blue-400'
+                      ? 'bg-white text-gold-deep font-bold border-transparent'
+                      : 'bg-gold-deep text-gold-soft border-gold-deep hover:bg-gold/10'
                   }`}
                 >
                   Todos
@@ -315,8 +315,8 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
                       onClick={() => setFunilFilter(funilFilter === status ? 'todos' : status)}
                       className={`whitespace-nowrap px-3 py-1 rounded-full text-xs font-semibold transition-colors border ${
                         funilFilter === status
-                          ? 'bg-white text-blue-700 font-bold border-transparent'
-                          : 'bg-blue-500 text-blue-100 border-blue-400 hover:bg-blue-400'
+                          ? 'bg-white text-gold-deep font-bold border-transparent'
+                          : 'bg-gold-deep text-gold-soft border-gold-deep hover:bg-gold/10'
                       }`}
                     >
                       {cfg.icon} {count}
@@ -328,31 +328,31 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
             
             {/* Estatísticas Rápidas (Movido do bottom nav para cá) */}
             {contacts.length > 0 && (
-              <div className="pt-2 border-t border-blue-500/30">
+              <div className="pt-2 border-t border-gold-deep/30">
                 <div className="grid grid-cols-6 gap-1 text-center">
                   <div>
-                    <p className="text-green-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'forte').length}</p>
-                    <p className="text-blue-200 text-[10px]">Fortes</p>
+                    <p className="text-emerald-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'forte').length}</p>
+                    <p className="text-gold-soft text-[10px]">Fortes</p>
                   </div>
                   <div>
                     <p className="text-yellow-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'medio').length}</p>
-                    <p className="text-blue-200 text-[10px]">Médios</p>
+                    <p className="text-gold-soft text-[10px]">Médios</p>
                   </div>
                   <div>
                     <p className="text-red-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'fraco').length}</p>
-                    <p className="text-blue-200 text-[10px]">Fracos</p>
+                    <p className="text-gold-soft text-[10px]">Fracos</p>
                   </div>
                   <div>
                     <p className="text-slate-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'indeciso').length}</p>
-                    <p className="text-blue-200 text-[10px]">Indecisos</p>
+                    <p className="text-gold-soft text-[10px]">Indecisos</p>
                   </div>
                   <div>
                     <p className="text-purple-300 font-bold text-sm leading-tight">{contacts.filter(c => c.nivelVoto === 'oposicao').length}</p>
-                    <p className="text-blue-200 text-[10px]">Oposição</p>
+                    <p className="text-gold-soft text-[10px]">Oposição</p>
                   </div>
                   <div>
                     <p className="text-white font-bold text-sm leading-tight">{avgScore(contacts)}</p>
-                    <p className="text-blue-200 text-[10px]">Score</p>
+                    <p className="text-gold-soft text-[10px]">Score</p>
                   </div>
                 </div>
               </div>
@@ -414,7 +414,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
                       {contact.nichos.slice(0, 3).map(nicho => (
                         <span
                           key={nicho}
-                          className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded text-xs font-medium border border-blue-200"
+                          className="px-2 py-0.5 bg-blue-50 text-gold-deep rounded text-xs font-medium border border-gold-deep"
                         >
                           {nicho}
                         </span>
@@ -445,19 +445,19 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
 
               <div className="space-y-2 text-sm text-gray-700">
                 <div className="flex items-center">
-                  <Phone className="w-4 h-4 mr-2 text-blue-600" />
+                  <Phone className="w-4 h-4 mr-2 text-gold-deep" />
                   <a
                     href={`https://wa.me/55${contact.whatsapp.replace(/\D/g, '')}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
+                    className="text-gold-deep hover:underline"
                   >
                     {contact.whatsapp}
                   </a>
                 </div>
 
                 <div className="flex items-center">
-                  <MapPin className="w-4 h-4 mr-2 text-blue-600" />
+                  <MapPin className="w-4 h-4 mr-2 text-gold-deep" />
                   <span>
                     {contact.bairro ? `${contact.bairro}, ` : ''}{contact.cidade}
                   </span>
@@ -489,7 +489,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
       {onAdd && (
         <button
           onClick={onAdd}
-          className="fixed bottom-24 right-6 w-14 h-14 bg-blue-600 hover:bg-blue-700 text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-40"
+          className="fixed bottom-24 right-6 w-14 h-14 bg-gold-deep hover:bg-gold-deep text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 z-40"
           aria-label="Novo Cadastro"
         >
           <Plus className="w-7 h-7" strokeWidth={3} />

@@ -149,7 +149,7 @@ export function RegionCompareScreen({ electors }: Props) {
               onClick={() => setPeriodo(p.id)}
               className={`flex-1 py-2 rounded-lg text-sm font-semibold transition-colors ${
                 periodo === p.id
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-gold-deep text-white'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
@@ -161,8 +161,8 @@ export function RegionCompareScreen({ electors }: Props) {
 
       {/* Seletor de regiões */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="bg-white rounded-xl shadow p-3 border-t-4 border-blue-500">
-          <p className="text-xs font-bold text-blue-600 mb-2 uppercase tracking-wide">Região A</p>
+        <div className="bg-white rounded-xl shadow p-3 border-t-4 border-gold-deep">
+          <p className="text-xs font-bold text-gold-deep mb-2 uppercase tracking-wide">Região A</p>
           <select
             value={regiaoA}
             onChange={e => setRegiaoA(e.target.value)}
@@ -186,11 +186,11 @@ export function RegionCompareScreen({ electors }: Props) {
       {/* Cards de destaque */}
       {statsA && statsB && (
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-blue-600 rounded-xl shadow p-4 text-white">
-            <p className="text-xs text-blue-200 uppercase tracking-wide mb-1 truncate">{regiaoA}</p>
+          <div className="bg-gold-deep rounded-xl shadow p-4 text-white">
+            <p className="text-xs text-gold-soft uppercase tracking-wide mb-1 truncate">{regiaoA}</p>
             <p className="text-3xl font-bold">{statsA.projecao.toLocaleString('pt-BR')}</p>
-            <p className="text-xs text-blue-200 mt-1">votos projetados</p>
-            <p className="text-xs text-blue-100 mt-2">{statsA.total} cadastros · {statsA.forte} fortes</p>
+            <p className="text-xs text-gold-soft mt-1">votos projetados</p>
+            <p className="text-xs text-gold-soft mt-2">{statsA.total} cadastros · {statsA.forte} fortes</p>
           </div>
           <div className="bg-purple-600 rounded-xl shadow p-4 text-white">
             <p className="text-xs text-purple-200 uppercase tracking-wide mb-1 truncate">{regiaoB}</p>
@@ -207,7 +207,7 @@ export function RegionCompareScreen({ electors }: Props) {
           {/* Cabeçalho */}
           <div className="grid grid-cols-3 bg-gray-50 border-b border-gray-100">
             <div className="p-3 text-xs font-medium text-gray-500 uppercase tracking-wide">Métrica</div>
-            <div className="p-3 text-xs font-bold text-blue-600 uppercase tracking-wide text-center truncate">{regiaoA}</div>
+            <div className="p-3 text-xs font-bold text-gold-deep uppercase tracking-wide text-center truncate">{regiaoA}</div>
             <div className="p-3 text-xs font-bold text-purple-600 uppercase tracking-wide text-center truncate">{regiaoB}</div>
           </div>
 
@@ -217,7 +217,7 @@ export function RegionCompareScreen({ electors }: Props) {
               className={`grid grid-cols-3 border-b border-gray-50 last:border-0 ${i % 2 === 1 ? 'bg-gray-50/40' : ''}`}
             >
               <div className="p-3 text-sm text-gray-600 font-medium">{row.label}</div>
-              <div className={`p-3 text-sm font-bold text-center ${row.winner === 'a' ? 'text-blue-600' : 'text-gray-700'}`}>
+              <div className={`p-3 text-sm font-bold text-center ${row.winner === 'a' ? 'text-gold-deep' : 'text-gray-700'}`}>
                 {row.winner === 'a' && <span className="mr-1">🏆</span>}
                 {row.a}
               </div>

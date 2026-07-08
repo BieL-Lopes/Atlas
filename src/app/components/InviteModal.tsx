@@ -150,7 +150,7 @@ export function InviteModal({ onClose, onInviteValidated }: InviteModalProps) {
                 Já tem uma conta?{' '}
                 <button
                   onClick={onClose}
-                  className="text-blue-600 hover:underline font-medium"
+                  className="text-gold-deep hover:underline font-medium"
                 >
                   Voltar ao Login
                 </button>
@@ -160,8 +160,8 @@ export function InviteModal({ onClose, onInviteValidated }: InviteModalProps) {
         ) : (
           <div className="space-y-6">
             <div className="flex justify-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-8 h-8 text-emerald-600" />
               </div>
             </div>
 
@@ -175,9 +175,9 @@ export function InviteModal({ onClose, onInviteValidated }: InviteModalProps) {
               </p>
             </div>
 
-            <div className="bg-blue-50 border border-blue-200 p-4 rounded space-y-2">
-              <p className="text-xs font-medium text-blue-900">Próximo passo:</p>
-              <p className="text-sm text-blue-800">
+            <div className="bg-blue-50 border border-gold-deep p-4 rounded space-y-2">
+              <p className="text-xs font-medium text-gold-deep">Próximo passo:</p>
+              <p className="text-sm text-gold-deep">
                 Você será redirecionado para criar sua senha com seu CPF e e-mail.
               </p>
             </div>

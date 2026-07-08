@@ -155,12 +155,12 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-blue-600 text-white p-6">
+      <div className="bg-gold-deep text-white p-6">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Minha Agenda</h1>
           <Bell className="w-5 h-5" />
         </div>
-        <p className="text-sm text-blue-100">
+        <p className="text-sm text-gold-soft">
           {notificationPermissionDenied
             ? 'Notificações desativadas — verifique as permissões do navegador'
             : 'Você receberá alertas 30 minutos antes de cada atividade'}
@@ -171,7 +171,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
         {/* Botão Nova Atividade */}
         <button
           onClick={() => setShowForm(!showForm)}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 px-6 rounded-xl font-semibold shadow-lg flex items-center justify-center transition-all"
+          className="w-full bg-gold-deep hover:bg-gold-deep text-white py-4 px-6 rounded-xl font-semibold shadow-lg flex items-center justify-center transition-all"
         >
           <Plus className="w-5 h-5 mr-2" />
           Nova Atividade
@@ -179,7 +179,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
 
         {/* Formulário */}
         {showForm && (
-          <div className="bg-white rounded-xl shadow-lg p-5 border-2 border-blue-200">
+          <div className="bg-white rounded-xl shadow-lg p-5 border-2 border-gold-deep">
             <h3 className="font-bold text-gray-900 mb-4">Criar Nova Atividade</h3>
 
             <div className="space-y-3">
@@ -201,7 +201,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
                   onClick={() => setFormType('visita')}
                   className={`py-3 px-4 rounded-lg border-2 font-semibold transition-colors ${
                     formType === 'visita'
-                      ? 'border-green-600 bg-green-50 text-green-700'
+                      ? 'border-emerald-600 bg-emerald-50 text-emerald-700'
                       : 'border-gray-300 bg-white text-gray-700'
                   }`}
                 >
@@ -214,7 +214,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
                 placeholder="Título da atividade"
                 value={formTitle}
                 onChange={e => setFormTitle(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               />
 
               <input
@@ -222,7 +222,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
                 placeholder="Local"
                 value={formLocation}
                 onChange={e => setFormLocation(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
               />
 
               <div className="grid grid-cols-2 gap-3">
@@ -230,13 +230,13 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
                   type="date"
                   value={formDate}
                   onChange={e => setFormDate(e.target.value)}
-                  className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                  className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
                 />
                 <input
                   type="time"
                   value={formTime}
                   onChange={e => setFormTime(e.target.value)}
-                  className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-blue-600 focus:outline-none"
+                  className="px-4 py-3 border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
                 />
               </div>
 
@@ -244,7 +244,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
                 <button
                   onClick={handleSave}
                   disabled={saving}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
+                  className="flex-1 bg-gold-deep hover:bg-gold-deep disabled:opacity-50 text-white py-3 rounded-lg font-semibold flex items-center justify-center gap-2"
                 >
                   {saving && <Loader2 className="w-4 h-4 animate-spin" />}
                   Salvar
@@ -263,7 +263,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
         {/* Lista */}
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+            <Loader2 className="w-8 h-8 animate-spin text-gold-soft" />
           </div>
         ) : Object.keys(grouped).length === 0 ? (
           <div className="text-center py-12 bg-white rounded-xl">
@@ -275,7 +275,7 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
           Object.entries(grouped).map(([date, dayActivities]) => (
             <div key={date}>
               <h3 className="font-bold text-gray-900 mb-3 flex items-center capitalize">
-                <Calendar className="w-5 h-5 mr-2 text-blue-600" />
+                <Calendar className="w-5 h-5 mr-2 text-gold-deep" />
                 {formatDate(date)}
               </h3>
 
@@ -283,19 +283,19 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
                 {dayActivities.map(activity => (
                   <div
                     key={activity.id}
-                    className="bg-white rounded-xl shadow p-4 border-l-4 border-blue-600"
+                    className="bg-white rounded-xl shadow p-4 border-l-4 border-gold-deep"
                   >
                     <div className="flex justify-between items-start mb-3">
                       <div className="flex items-center">
-                        <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mr-3">
-                          <Clock className="w-6 h-6 text-blue-600" />
+                        <div className="w-12 h-12 bg-gold/10 rounded-lg flex items-center justify-center mr-3">
+                          <Clock className="w-6 h-6 text-gold-deep" />
                         </div>
                         <div>
-                          <p className="font-bold text-blue-600">{activity.time || '--:--'}</p>
+                          <p className="font-bold text-gold-deep">{activity.time || '--:--'}</p>
                           <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold ${
                             activity.type === 'reuniao'
                               ? 'bg-purple-100 text-purple-700'
-                              : 'bg-green-100 text-green-700'
+                              : 'bg-emerald-100 text-emerald-700'
                           }`}>
                             {activity.type === 'reuniao' ? 'Reunião' : 'Visita'}
                           </span>

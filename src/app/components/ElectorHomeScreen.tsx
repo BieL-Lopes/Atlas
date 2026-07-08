@@ -127,13 +127,13 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-700 to-blue-900 text-white px-5 pt-10 pb-16 relative">
+      <div className="bg-gold-deep text-white px-5 pt-10 pb-16 relative">
         <div className="flex items-center justify-between mb-1">
           <div>
-            <p className="text-blue-200 text-sm">Bem-vindo(a) 👋</p>
+            <p className="text-gold-soft text-sm">Bem-vindo(a) 👋</p>
             <h1 className="text-2xl font-bold leading-tight">{user.name}</h1>
             {user.regiao && (
-              <p className="text-blue-200 text-sm mt-0.5 flex items-center gap-1">
+              <p className="text-gold-soft text-sm mt-0.5 flex items-center gap-1">
                 <MapPin className="w-3.5 h-3.5" /> {user.regiao}
               </p>
             )}
@@ -158,7 +158,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
             </div>
             <button
               onClick={() => setShowQR(v => !v)}
-              className="flex items-center gap-1.5 bg-blue-600 text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-1.5 bg-gold-deep text-white text-xs font-semibold px-3 py-2 rounded-lg hover:bg-gold-deep transition-colors"
             >
               <QrCode className="w-4 h-4" />
               {showQR ? 'Ocultar' : 'Ver QR'}
@@ -167,7 +167,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
 
           {showQR && (
             <div className="flex flex-col items-center py-4 gap-3">
-              <div className="p-3 bg-white border-2 border-blue-100 rounded-xl shadow-inner">
+              <div className="p-3 bg-white border-2 border-gold-deep rounded-xl shadow-inner">
                 <QRCodeSVG
                   value={user.id}
                   size={180}
@@ -186,14 +186,14 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
       <div className="px-4 mt-5 space-y-5">
         {loading ? (
           <div className="flex items-center justify-center py-16">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+            <Loader2 className="w-8 h-8 animate-spin text-gold-soft" />
           </div>
         ) : (
         <>
         {/* Eventos Próximos */}
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <CalendarDays className="w-5 h-5 text-blue-600" />
+            <CalendarDays className="w-5 h-5 text-gold-deep" />
             <h2 className="font-bold text-gray-800">Próximos Eventos</h2>
           </div>
           {eventos.length === 0 ? (
@@ -226,14 +226,14 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
                     </p>
                   </div>
                   {evento.confirmado ? (
-                    <span className="shrink-0 flex items-center gap-1 text-green-600 text-xs font-semibold bg-green-50 px-2.5 py-1.5 rounded-lg">
+                    <span className="shrink-0 flex items-center gap-1 text-emerald-600 text-xs font-semibold bg-emerald-50 px-2.5 py-1.5 rounded-lg">
                       <CheckCircle2 className="w-4 h-4" />
                       Confirmado
                     </span>
                   ) : (
                     <button
                       onClick={() => confirmarPresenca(evento.id)}
-                      className="shrink-0 flex items-center gap-1 text-blue-600 text-xs font-semibold bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors"
+                      className="shrink-0 flex items-center gap-1 text-gold-deep text-xs font-semibold bg-blue-50 hover:bg-gold/10 px-2.5 py-1.5 rounded-lg transition-colors"
                     >
                       <Star className="w-3.5 h-3.5" />
                       Confirmar
@@ -265,7 +265,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
               >
                 <p className="font-semibold text-gray-800 text-sm mb-3">{enquete.pergunta}</p>
                 {enquete.votado ? (
-                  <div className="flex items-center gap-2 text-green-600 text-sm font-medium bg-green-50 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-2 text-emerald-600 text-sm font-medium bg-emerald-50 rounded-lg px-3 py-2">
                     <CheckCircle2 className="w-4 h-4 shrink-0" />
                     Você votou em: <span className="font-bold">{enquete.votado}</span>
                   </div>
@@ -291,7 +291,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
         {/* Contato com Coordenador */}
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <MessageCircle className="w-5 h-5 text-green-600" />
+            <MessageCircle className="w-5 h-5 text-emerald-600" />
             <h2 className="font-bold text-gray-800">Fale com a Equipe</h2>
           </div>
           <div className="bg-white rounded-xl shadow-sm border border-gray-100 divide-y divide-gray-100">
@@ -302,8 +302,8 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
               className="flex items-center justify-between px-4 py-3.5 hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-green-100 flex items-center justify-center">
-                  <MessageCircle className="w-5 h-5 text-green-600" />
+                <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <MessageCircle className="w-5 h-5 text-emerald-600" />
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-800">WhatsApp da Campanha</p>

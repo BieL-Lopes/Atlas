@@ -98,7 +98,7 @@ export function CheckinPortariaModal({ onClose }: CheckinPortariaModalProps) {
         <div className="max-w-md mx-auto space-y-6">
           <div className="bg-white rounded-2xl shadow p-5">
             <h3 className="font-bold text-gray-900 flex items-center gap-2 mb-3">
-              <Calendar className="w-5 h-5 text-blue-600" />
+              <Calendar className="w-5 h-5 text-gold-deep" />
               Selecione o Evento Atual
             </h3>
             
@@ -110,7 +110,7 @@ export function CheckinPortariaModal({ onClose }: CheckinPortariaModalProps) {
               <select
                 value={selectedEventoId}
                 onChange={(e) => setSelectedEventoId(e.target.value)}
-                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-blue-600 outline-none"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-gold-deep outline-none"
               >
                 <option value="" disabled>Escolha um evento...</option>
                 {eventos.map(ev => (
@@ -124,7 +124,7 @@ export function CheckinPortariaModal({ onClose }: CheckinPortariaModalProps) {
 
           <div className="bg-white rounded-2xl shadow p-6 text-center">
             <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Camera className="w-10 h-10 text-blue-600" />
+              <Camera className="w-10 h-10 text-gold-deep" />
             </div>
             <h3 className="font-bold text-gray-900 mb-2">Leitor de QR Code</h3>
             <p className="text-gray-500 text-sm mb-6">
@@ -134,7 +134,7 @@ export function CheckinPortariaModal({ onClose }: CheckinPortariaModalProps) {
             <button
               onClick={() => setShowScanner(true)}
               disabled={!selectedEventoId}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all"
+              className="w-full bg-gold-deep hover:bg-gold-deep disabled:opacity-50 disabled:cursor-not-allowed text-white py-4 rounded-xl font-bold text-lg shadow-lg transition-all"
             >
               Abrir Câmera
             </button>
@@ -142,18 +142,18 @@ export function CheckinPortariaModal({ onClose }: CheckinPortariaModalProps) {
 
           {lastCheckin && (
             <div className={`rounded-xl p-4 flex items-start gap-3 ${
-              lastCheckin.status === 'success' ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
+              lastCheckin.status === 'success' ? 'bg-emerald-50 border border-emerald-200' : 'bg-red-50 border border-red-200'
             }`}>
               {lastCheckin.status === 'success' ? (
-                <CheckCircle className="w-6 h-6 text-green-600 shrink-0 mt-0.5" />
+                <CheckCircle className="w-6 h-6 text-emerald-600 shrink-0 mt-0.5" />
               ) : (
                 <AlertCircle className="w-6 h-6 text-red-600 shrink-0 mt-0.5" />
               )}
               <div>
-                <p className={`font-bold ${lastCheckin.status === 'success' ? 'text-green-800' : 'text-red-800'}`}>
+                <p className={`font-bold ${lastCheckin.status === 'success' ? 'text-emerald-800' : 'text-red-800'}`}>
                   {lastCheckin.name}
                 </p>
-                <p className={`text-sm ${lastCheckin.status === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+                <p className={`text-sm ${lastCheckin.status === 'success' ? 'text-emerald-600' : 'text-red-600'}`}>
                   {lastCheckin.message}
                 </p>
               </div>

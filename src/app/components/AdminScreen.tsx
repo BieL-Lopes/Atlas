@@ -186,8 +186,8 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
     const styles: Record<UserRole, string> = {
       lideranca: 'bg-red-100 text-red-800 border-red-200',
       coordenador_geral: 'bg-purple-100 text-purple-800 border-purple-200',
-      coordenador_regional: 'bg-blue-100 text-blue-800 border-blue-200',
-      captador_votos: 'bg-green-100 text-green-800 border-green-200',
+      coordenador_regional: 'bg-gold/10 text-gold-deep border-gold-deep',
+      captador_votos: 'bg-emerald-100 text-emerald-800 border-emerald-200',
       eleitor: 'bg-gray-100 text-gray-800 border-gray-200',
     };
     return styles[role];
@@ -255,11 +255,11 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
       )}
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+      <div className="bg-gold-deep text-white p-6">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="text-2xl font-bold mb-1">Administração</h1>
-            <p className="text-sm text-blue-100">Gestão de usuários e configurações</p>
+            <p className="text-sm text-gold-soft">Gestão de usuários e configurações</p>
           </div>
           {user.role === 'lideranca' && (
             <button
@@ -279,7 +279,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
           <button
             onClick={() => setActiveTab('users')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors ${
-              activeTab === 'users' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              activeTab === 'users' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <Users className="w-4 h-4 inline mr-1" />
@@ -289,7 +289,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             <button
               onClick={() => setActiveTab('dashboard')}
               className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors ${
-                activeTab === 'dashboard' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+                activeTab === 'dashboard' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
               }`}
             >
               <BarChart2 className="w-4 h-4 inline mr-1" />
@@ -300,7 +300,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             <button
               onClick={() => setActiveTab('mapa')}
               className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors ${
-                activeTab === 'mapa' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+                activeTab === 'mapa' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
               }`}
             >
               <Map className="w-4 h-4 inline mr-1" />
@@ -311,7 +311,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             <button
               onClick={() => setActiveTab('alertas')}
               className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors ${
-                activeTab === 'alertas' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+                activeTab === 'alertas' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
               }`}
             >
               <Bell className="w-4 h-4 inline mr-1" />
@@ -322,7 +322,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             <button
               onClick={() => setActiveTab('whatsapp')}
               className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors ${
-                activeTab === 'whatsapp' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500'
+                activeTab === 'whatsapp' ? 'border-emerald-600 text-emerald-600' : 'border-transparent text-gray-500'
               }`}
             >
               <MessageCircle className="w-4 h-4 inline mr-1" />
@@ -332,7 +332,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
           <button
             onClick={() => setActiveTab('settings')}
             className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors ${
-              activeTab === 'settings' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500'
+              activeTab === 'settings' ? 'border-gold-deep text-gold-deep' : 'border-transparent text-gray-500'
             }`}
           >
             <Settings className="w-4 h-4 inline mr-1" />
@@ -348,7 +348,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             <div className="flex gap-2 mb-4">
               <button 
                 onClick={() => setShowGenerateInvite(true)}
-                className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold flex items-center justify-center transition-colors shadow-lg"
+                className="w-full py-3 px-4 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold flex items-center justify-center transition-colors shadow-lg"
               >
                 <UserPlus className="w-5 h-5 mr-2" />
                 Adicionar
@@ -367,7 +367,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             {canExport && (
               <button
                 onClick={handleExportElectors}
-                className="w-full py-3 px-4 bg-white border-2 border-blue-200 text-blue-700 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-blue-50 transition-colors"
+                className="w-full py-3 px-4 bg-white border-2 border-gold-deep text-gold-deep rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-gold transition-colors"
               >
                 <Download className="w-5 h-5" />
                 CSV Eleitores completo ({electors.length} registros)
@@ -387,7 +387,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             {/* Resumo por Papel */}
             <div className="bg-white rounded-xl shadow p-4">
               <h2 className="font-bold text-gray-900 mb-3 flex items-center">
-                <Shield className="w-5 h-5 mr-2 text-blue-600" />
+                <Shield className="w-5 h-5 mr-2 text-gold-deep" />
                 Usuários por Perfil
               </h2>
               <div className="grid grid-cols-2 gap-2">
@@ -421,7 +421,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                      <button className="p-2 text-gray-400 hover:text-gold hover:bg-gold rounded-lg transition-colors">
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
@@ -448,13 +448,13 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             ) : (
               <>
                 {/* Card destaque — Projeção de Votos */}
-                <div className="bg-gradient-to-r from-blue-600 to-blue-800 rounded-xl shadow-lg p-5 text-white">
+                <div className="bg-gold-deep rounded-xl shadow-lg p-5 text-white">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-medium text-blue-200 uppercase tracking-wide">Projeção de Votos</p>
-                    <Target className="w-5 h-5 text-blue-300" />
+                    <p className="text-sm font-medium text-gold-soft uppercase tracking-wide">Projeção de Votos</p>
+                    <Target className="w-5 h-5 text-gold-soft" />
                   </div>
                   <p className="text-4xl font-bold">{projecaoTotal.toLocaleString('pt-BR')}</p>
-                  <p className="text-xs text-blue-300 mt-2">
+                  <p className="text-xs text-gold-soft mt-2">
                     forte ×1.0 &nbsp;+&nbsp; médio ×0.6 &nbsp;+&nbsp; indeciso ×0.2
                     &nbsp;|&nbsp;
                     {electors.length > 0 ? ((projecaoTotal / electors.length) * 100).toFixed(0) : 0}% de {electors.length} cadastros
@@ -468,7 +468,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
                     <p className="text-xs text-gray-500">Eleitores</p>
                   </div>
                   <div className="bg-white rounded-xl shadow p-3 text-center">
-                    <p className="text-2xl font-bold text-green-600">{votoMap.forte}</p>
+                    <p className="text-2xl font-bold text-emerald-600">{votoMap.forte}</p>
                     <p className="text-xs text-gray-500">Voto Forte</p>
                   </div>
                   <div className="bg-white rounded-xl shadow p-3 text-center">
@@ -481,7 +481,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
                 {regiaoData.length > 0 && (
                   <div className="bg-white rounded-xl shadow p-4">
                     <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                      <TrendingUp className="w-5 h-5 text-blue-600" />
+                      <TrendingUp className="w-5 h-5 text-gold-deep" />
                       Eleitores por Região
                     </h2>
                     <ResponsiveContainer width="100%" height={200}>
@@ -551,7 +551,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
                 {/* Evolução da Projeção de Votos */}
                 <div className="bg-white rounded-xl shadow p-4">
                   <h2 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <Target className="w-5 h-5 text-blue-600" />
+                    <Target className="w-5 h-5 text-gold-deep" />
                     Evolução da Projeção — últimos 30 dias
                   </h2>
                   <ResponsiveContainer width="100%" height={200}>
@@ -603,7 +603,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             <button
               onClick={() => setShowWhatsApp(true)}
               disabled={!whatsappConfigured}
-              className="w-full py-3 px-4 bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
+              className="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl font-semibold flex items-center justify-center gap-2 transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
               Novo Disparo
@@ -613,7 +613,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             <div className="bg-white rounded-xl shadow-sm">
               <div className="p-4 border-b border-gray-100">
                 <h2 className="font-bold text-gray-900 text-sm flex items-center gap-2">
-                  <MessageCircle className="w-4 h-4 text-green-600" />
+                  <MessageCircle className="w-4 h-4 text-emerald-600" />
                   Histórico de Disparos
                 </h2>
               </div>
@@ -626,8 +626,8 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
                 <div className="divide-y divide-gray-100">
                   {disparosHistory.map(d => {
                     const statusStyle =
-                      d.status === 'concluido' ? 'bg-green-100 text-green-800' :
-                      d.status === 'enviando'  ? 'bg-blue-100 text-blue-800' :
+                      d.status === 'concluido' ? 'bg-emerald-100 text-emerald-800' :
+                      d.status === 'enviando'  ? 'bg-gold/10 text-gold-deep' :
                       d.status === 'erro'      ? 'bg-red-100 text-red-800' :
                                                  'bg-gray-100 text-gray-700';
                     return (
