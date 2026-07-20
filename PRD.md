@@ -45,11 +45,11 @@ Uma plataforma unificada que integra:
 
 | Persona | Descrição | Necessidade |
 |---------|-----------|------------|
-| **Captador** | Voluntário/eleitor que cadastra eleitores em campo | Formulário simples, GPS, QR Code, offline |
-| **Coordenador Regional** | Gerencia 5-20 captadores em uma região | Ver produção por captador, exportar, mapa |
-| **Coordenador Geral** | Gerencia múltiplos coordenadores (3-5 regiões) | Drill-down, comparativos, alertas |
-| **Liderança** | Deputado ou gestor de campanha | Dashboard executivo, projeções, IA, WhatsApp |
-| **Eleitor** | Visualiza seu perfil e participa de enquetes | Perfil, QR Code, eventos, agenda |
+| **Cabo Eleitoral / Captador** | Voluntário/eleitor que cadastra eleitores em campo | Formulário simples, GPS, QR Code, offline |
+| **Colaborador / Voluntário** | Apoia as ações da campanha | Listas, comunicados, heatmap, ranking |
+| **Liderança** | Coordena atividades locais | Drill-down, gestão, metas locais |
+| **Coordenador** | Gerencia equipes de captadores e lideranças | Dashboards, envio de convites, exportações |
+| **Administrador / Candidato** | Gestor máximo da campanha | Dashboard executivo, projeções, IA, WhatsApp |
 
 ---
 
@@ -63,8 +63,8 @@ Uma plataforma unificada que integra:
 |--------|-----------|--------|
 | **Login com CPF/E-mail** | Máscara de CPF, validação, fallback offline | ✅ |
 | **Cadastro de Eleitor** | Formulário: nome, CPF, WhatsApp, título eleitoral (12 dígitos), endereço, nível de voto, nichos, engajamento, GPS, aceite WhatsApp, observações | ✅ |
-| **5 Papéis de Acesso** | Liderança, Coord. Geral, Coord. Regional, Captador, Eleitor — cada um com telas e permissões diferentes | ✅ |
-| **RBAC em Banco de Dados** | Row-level security (RLS) no Supabase: captador vê só seus cadastros; coord. regional vê sua região; liderança vê tudo | ✅ |
+| **5 Papéis de Acesso** | Administrador, Coordenador, Liderança, Colaborador e Cabo Eleitoral — cada um com telas e permissões diferentes | ✅ |
+| **RBAC em Banco de Dados** | Row-level security (RLS) no Supabase: cabo eleitoral vê só seus cadastros; coordenador vê sua equipe; administrador vê tudo | ✅ |
 | **Edição de Eleitor** | Formulário reutilizável em modo edição | ✅ |
 | **Validação de Campos** | Título eleitoral (12 dígitos), CPF (valid module 11), e-mail, telefone | ✅ |
 | **Armazenamento Local** | IndexedDB via Dexie — funciona totalmente desconectado | ✅ |
@@ -79,9 +79,9 @@ Uma plataforma unificada que integra:
 
 | Função | Descrição | Status |
 |--------|-----------|--------|
-| **Dashboard Liderança** | Gráficos: por região, por nível de voto, por nicho, evolução por dia (7, 30, 90 dias) — recharts | ✅ |
-| **Coordenação com Drill-Down** | Coord. Geral vê regiões → seleciona → vê coordenadores regionais → seleciona → vê captadores com KPIs | ✅ |
-| **Lista de Coordenadores** | Coord. Regional vê captadores com: cadastros, conversão (fraco/indeciso/forte), último login, status de sincronização | ✅ |
+| **Dashboard Admin** | Gráficos: por região, por nível de voto, por nicho, evolução por dia (7, 30, 90 dias) — recharts | ✅ |
+| **Coordenação com Drill-Down** | Coordenador vê regiões → seleciona → vê lideranças → seleciona → vê captadores com KPIs | ✅ |
+| **Lista de Captadores** | Liderança vê equipe com: cadastros, conversão (fraco/indeciso/forte), último login, status de sincronização | ✅ |
 | **Perfil do Eleitor** | Nome, dados de contato, nível de voto, engajamento, QR Code gerado (título eleitoral), eventos inscritos, enquetes respondidas | ✅ |
 | **Exportação CSV/PDF** | Dados de eleitores filtrados, com restrição por papel (RBAC) | ✅ |
 | **Score de Engajamento** | Pontuação 0–100 por eleitor: fórmula com nível de voto, engajamento, atendimentos, nichos, WhatsApp, observações | ✅ |
@@ -95,9 +95,9 @@ Uma plataforma unificada que integra:
 
 | Função | Descrição | Status |
 |--------|-----------|--------|
-| **Agenda Integrada** | CRUD real no Supabase: criar evento, listar, editar, deletar — visível para Liderança + Coord. Geral | ✅ |
+| **Agenda Integrada** | CRUD real no Supabase: criar evento, listar, editar, deletar — visível para Admin + Coordenador | ✅ |
 | **Enquetes** | CRUD real: criar enquete, definir opções, ativar/desativar, eleitores respondendo, exibir resultados em tempo real | ✅ |
-| **Comunicados** | Liderança/Coord. Geral enviam mensagens → push notification em tempo real via Supabase Realtime | ✅ |
+| **Comunicados** | Admin/Coordenador enviam mensagens → push notification em tempo real via Supabase Realtime | ✅ |
 | **QR Code (Geração)** | Perfil do eleitor: exibe QR Code com título eleitoral codificado (qrcode.react) | ✅ |
 | **QR Code (Leitura)** | Novo cadastro: botão "Escanear Título" → abre câmera (html5-qrcode) → preenche campo automaticamente | ✅ |
 | **Indicador Offline** | Barra fixa com ícone WifiOff + spinner quando desconectado; badge com número de pendências | ✅ |
@@ -174,7 +174,7 @@ Uma plataforma unificada que integra:
 | **Funil de Relacionamento** | Novo campo `statusFunil` (Contato, Interessado, Simpatizante, Apoiador, Multiplicador) para segmentação no Kanban/Listagem | ✅ |
 | **Importação em Massa** | Módulo de Upload CSV/XLSX com preview, validação de colunas e barra de progresso. | ✅ |
 | **Trilha de Auditoria (LGPD)** | Tabela `audit_logs` imutável no Supabase, registrando ações críticas (CREATE, UPDATE, DELETE, EXPORT, IMPORT, LOGIN) | ✅ |
-| **Relatórios Estratégicos** | Visão analítica para Liderança/Coordenadores (Captadores vs Meta, Drill-down da equipe e Conversão de Funil) | ✅ |
+| **Relatórios Estratégicos** | Visão analítica para Administrador/Coordenadores (Captadores vs Meta, Drill-down da equipe e Conversão de Funil) | ✅ |
 
 ---
 
@@ -303,9 +303,9 @@ pending_changes (id UUID, entity_type, entity_id, operation, data JSON, created_
 ```
 
 **RLS Policies:**
-- Captador: `SELECT * FROM electors WHERE created_by = auth.uid()`
-- Coord. Regional: `SELECT * FROM electors WHERE regiao = user.regiao`
-- Coord. Geral / Liderança: `SELECT * FROM electors` (sem filtro)
+- Captador / Liderança: `SELECT * FROM electors WHERE created_by = auth.uid()`
+- Coordenador: `SELECT * FROM electors WHERE is_coord_regional_of(...)`
+- Administrador: `SELECT * FROM electors` (sem filtro)
 
 ### 5.3 Fluxo de Dados (Sync)
 
@@ -335,7 +335,7 @@ pending_changes (id UUID, entity_type, entity_id, operation, data JSON, created_
             └─→ broadcast via Realtime
 
 ┌──────────────────┐
-│ Coordenador Geral│
+│   Coordenador    │
 │   (Online)       │
 └─────────┬────────┘
           │

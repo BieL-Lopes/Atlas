@@ -226,13 +226,13 @@ Criados pelo `seed.sql`. Senha de todos: **`1234`**
 
 | E-mail | CPF (login alternativo) | Papel |
 |---|---|---|
-| `victor@atlas.com` | `000.000.000-01` | Liderança |
-| `ana@atlas.com` | `000.000.000-02` | Coordenador Geral |
-| `carlos@atlas.com` | `000.000.000-03` | Coordenador Regional |
-| `fernanda@atlas.com` | `000.000.000-04` | Coordenador Regional |
-| `rafael@atlas.com` | `000.000.000-05` | Captador de Votos |
-| `juliana@atlas.com` | `000.000.000-06` | Captador de Votos |
-| `marcos@atlas.com` | `000.000.000-07` | Eleitor |
+| `victor@atlas.com` | `000.000.000-01` | Administrador / Candidato |
+| `ana@atlas.com` | `000.000.000-02` | Coordenador |
+| `carlos@atlas.com` | `000.000.000-03` | Liderança |
+| `fernanda@atlas.com` | `000.000.000-04` | Colaborador / Voluntário |
+| `rafael@atlas.com` | `000.000.000-05` | Cabo Eleitoral / Captador de Votos |
+| `juliana@atlas.com` | `000.000.000-06` | Cabo Eleitoral / Captador de Votos |
+| `marcos@atlas.com` | `000.000.000-07` | (Eleitor Comum - removido do RBAC base) |
 
 > O login aceita tanto o **e-mail** quanto o **CPF** (com ou sem formatação).
 
@@ -242,11 +242,11 @@ Criados pelo `seed.sql`. Senha de todos: **`1234`**
 
 | Papel | Home | Contatos | Agenda | Enquetes | Coordenação | Admin | Resultados |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| Liderança | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Coord. Geral | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Coord. Regional | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Captador | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
-| Eleitor | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Administrador / Candidato | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Coordenador | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Liderança | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Colaborador / Voluntário | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
+| Cabo Eleitoral / Captador | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ✅ |
 
 Permissões adicionais (`rbac.ts`): `canCreateElector`, `canDeleteElector`, `canExport`, `canManagePolls`, `canViewReports`, `canManageUsers`.
 
@@ -598,13 +598,13 @@ Criados pelo `seed.sql`. Senha de todos: **`1234`**
 
 | E-mail | CPF (login alternativo) | Papel |
 |---|---|---|
-| `victor@atlas.com` | `000.000.000-01` | Liderança |
-| `ana@atlas.com` | `000.000.000-02` | Coordenador Geral |
-| `carlos@atlas.com` | `000.000.000-03` | Coordenador Regional |
-| `fernanda@atlas.com` | `000.000.000-04` | Coordenador Regional |
-| `rafael@atlas.com` | `000.000.000-05` | Captador de Votos |
-| `juliana@atlas.com` | `000.000.000-06` | Captador de Votos |
-| `marcos@atlas.com` | `000.000.000-07` | Eleitor |
+| `victor@atlas.com` | `000.000.000-01` | Administrador / Candidato |
+| `ana@atlas.com` | `000.000.000-02` | Coordenador |
+| `carlos@atlas.com` | `000.000.000-03` | Liderança |
+| `fernanda@atlas.com` | `000.000.000-04` | Colaborador / Voluntário |
+| `rafael@atlas.com` | `000.000.000-05` | Cabo Eleitoral / Captador de Votos |
+| `juliana@atlas.com` | `000.000.000-06` | Cabo Eleitoral / Captador de Votos |
+| `marcos@atlas.com` | `000.000.000-07` | (Eleitor Comum) |
 
 > O login aceita tanto o **e-mail** quanto o **CPF** (com ou sem formatação).
 
@@ -614,11 +614,11 @@ Criados pelo `seed.sql`. Senha de todos: **`1234`**
 
 | Papel | Home | Contatos | Agenda | Enquetes | Coordenação | Admin |
 |---|:---:|:---:|:---:|:---:|:---:|:---:|
-| Liderança | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Coord. Geral | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Coord. Regional | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Captador | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Eleitor | ✅ | ❌ | ✅ | ❌ | ❌ | ❌ |
+| Administrador / Candidato | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Coordenador | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Liderança | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Colaborador / Voluntário | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Cabo Eleitoral / Captador | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
 
 Permissões adicionais (`rbac.ts`): `canCreateElector`, `canDeleteElector`, `canExport`, `canManagePolls`, `canViewReports`, `canManageUsers`.
 
