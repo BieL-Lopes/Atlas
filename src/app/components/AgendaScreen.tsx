@@ -1,7 +1,8 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, Calendar, Clock, MapPin, Users, Trash2, Loader2, Bell } from 'lucide-react';
 import { User } from '../lib/auth';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { formatLongDate } from '../lib/dateUtils';
 import {
   scheduleNotificationsForActivities,
   cancelAllScheduledNotifications
@@ -137,15 +138,6 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
     setActivities(prev => prev.filter(a => a.id !== id));
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString + 'T12:00:00');
-    return date.toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      day: '2-digit',
-      month: 'long',
-    });
-  };
-
   const grouped = activities.reduce((acc, a) => {
     if (!acc[a.date]) acc[a.date] = [];
     acc[a.date].push(a);
@@ -274,10 +266,9 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
         ) : (
           Object.entries(grouped).map(([date, dayActivities]) => (
             <div key={date}>
-              <h3 className="font-bold text-gray-900 mb-3 flex items-center capitalize">
-                <Calendar className="w-5 h-5 mr-2 text-gold-deep" />
-                {formatDate(date)}
-              </h3>
+              <h2 className="text-xl font-bold text-gray-900 capitalize mb-1">
+                {formatLongDate(date)}
+              </h2>
 
               <div className="space-y-3 mb-6">
                 {dayActivities.map(activity => (

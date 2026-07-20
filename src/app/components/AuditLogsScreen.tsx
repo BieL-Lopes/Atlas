@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Shield, Search, Filter, ChevronLeft, ChevronRight, Clock, User as UserIcon, FileText } from 'lucide-react';
 import { fetchAuditLogs, AuditLogEntry, AuditAction } from '../lib/auditService';
 import { User } from '../lib/auth';
+import { formatDate } from '../lib/dateUtils';
 
 interface Props {
   user: User;
@@ -56,11 +57,6 @@ export function AuditLogsScreen({ user }: Props) {
         (l.entityId ?? '').toLowerCase().includes(searchTerm.toLowerCase())
       )
     : logs;
-
-  const formatDate = (iso: string) => {
-    const d = new Date(iso);
-    return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-  };
 
   return (
     <div className="min-h-screen bg-gray-100 pb-24">

@@ -145,6 +145,24 @@ CREATE TRIGGER trigger_eleitores_atualizado_em
   BEFORE UPDATE ON public.eleitores
   FOR EACH ROW EXECUTE FUNCTION public.set_atualizado_em();
 
+-- =========================================
+-- Trigger: atualiza nome do criador automaticamente
+-- =========================================
+CREATE OR REPLACE FUNCTION public.set_criado_por_nome()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  IF NEW.criado_por IS NOT NULL THEN
+    NEW.criado_por_nome := (SELECT nome FROM public.perfis WHERE id = NEW.criado_por);
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trigger_set_criado_por_nome ON public.eleitores;
+CREATE TRIGGER trigger_set_criado_por_nome
+  BEFORE INSERT OR UPDATE OF criado_por ON public.eleitores
+  FOR EACH ROW EXECUTE FUNCTION public.set_criado_por_nome();
+
 -- ─────────────────────────────────────────────
 -- Trigger: cria perfil automaticamente no sign-up
 -- ─────────────────────────────────────────────

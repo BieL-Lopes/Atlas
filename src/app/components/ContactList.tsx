@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, Search, Phone, MapPin, Trash2, Download, FileText, FileSpreadsheet, X, TrendingUp, LayoutList, LayoutGrid, Filter, Plus } from 'lucide-react';
 import { ElectorData, STATUS_FUNIL_CONFIG, STATUS_FUNIL_ORDER, StatusFunil } from './CaptureForm';
 import { computeScore, avgScore } from '../lib/score';
+import { formatDate } from '../lib/dateUtils';
 
 interface ContactListProps {
   contacts: ElectorData[];
@@ -70,19 +71,14 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
     );
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
-  };
-
   const exportToCSV = () => {
     const headers = ['Nome', 'WhatsApp', 'Titulo Eleitor', 'Data Nascimento', 'Bairro', 'Cidade', 'Nivel Voto', 'Nivel Engajamento', 'Nichos', 'Aceita WhatsApp', 'Observacoes', 'Data Cadastro'];
     const rows = filteredContacts.map(c => [
       c.nome,
       c.whatsapp,
       c.tituloEleitor || '',
-      c.dataNascimento ? formatDate(c.dataNascimento) : '',
-      c.bairro,
+      c.dataNascimento ? formatDate(c.dataNascimento, true) : '',
+      c.bairro || '',
       c.cidade,
       c.nivelVoto === 'forte' ? 'Forte' : c.nivelVoto === 'medio' ? 'Medio' : c.nivelVoto === 'fraco' ? 'Fraco' : c.nivelVoto === 'indeciso' ? 'Indeciso' : 'Oposicao',
       c.nivelEngajamento === 'lideranca' ? 'Lideranca' : c.nivelEngajamento === 'cabo_eleitoral' ? 'Cabo Eleitoral' : 'Eleitor Comum',
@@ -464,8 +460,8 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
                 </div>
 
                 {contact.dataNascimento && (
-                  <div className="text-xs text-gray-500">
-                    Nascimento: {formatDate(contact.dataNascimento)}
+                  <div className="flex items-center text-gray-500 mb-1 text-xs">
+                    Nascimento: {formatDate(contact.dataNascimento, true)}
                   </div>
                 )}
 

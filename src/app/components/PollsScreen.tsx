@@ -1,7 +1,8 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Plus, BarChart3, Users, Clock, TrendingUp, Download, FileText, FileSpreadsheet, X, Loader2, CheckCircle2, StopCircle } from 'lucide-react';
 import { User } from '../lib/auth';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { formatDate } from '../lib/dateUtils';
 import { getPermissions } from '../lib/rbac';
 
 interface Poll {
@@ -101,9 +102,6 @@ export function PollsScreen({ user }: PollsScreenProps) {
     }
     setPolls(prev => prev.map(p => p.id === poll.id ? { ...p, status: newStatus } : p));
   };
-
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
 
   const totalRespostas = polls.reduce((acc, p) => acc + p.respostas, 0);
   const totalAtivas = polls.filter(p => p.status === 'ativa').length;
