@@ -167,11 +167,11 @@ export function SignupForm({
   };
 
   const roleDisplayNames: Record<string, string> = {
+    administrador: 'Administrador',
+    sub_coordenador: 'Sub-Coordenador',
     lideranca: 'Liderança',
-    coordenador_geral: 'Coordenador Geral',
-    coordenador_regional: 'Coordenador Regional',
-    captador_votos: 'Captador',
-    eleitor: 'Eleitor'
+    colaborador: 'Colaborador / Voluntário',
+    cabo_eleitoral: 'Cabo Eleitoral / Captador de Voto'
   };
 
   return (

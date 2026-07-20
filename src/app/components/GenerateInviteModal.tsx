@@ -10,7 +10,7 @@ interface GenerateInviteModalProps {
 }
 
 export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps) {
-  const [role, setRole] = useState<UserRole>('captador_votos');
+  const [role, setRole] = useState<UserRole>('colaborador');
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);

@@ -1,4 +1,4 @@
-﻿import { ElectorData } from '../components/CaptureForm';
+import { ElectorData } from '../components/CaptureForm';
 import { User } from './auth';
 
 export type InsightType = 'danger' | 'warning' | 'success' | 'info';
@@ -47,7 +47,7 @@ export function generateInsights(electors: ElectorData[], users: User[]): Insigh
   const now = Date.now();
 
   // 1. Captadores sem atividade
-  const captadores = users.filter(u => u.role === 'captador_votos');
+  const captadores = users.filter(u => u.role === 'colaborador');
   for (const c of captadores) {
     const proprios = electors.filter(e => e.createdBy === c.id);
     if (!proprios.length) continue;
@@ -223,7 +223,7 @@ export function computeRedistribuicao(
 ): RedistribuicaoSugestao[] {
   const sugestoes: RedistribuicaoSugestao[] = [];
   const now = Date.now();
-  const captadores = users.filter(u => u.role === 'captador_votos');
+  const captadores = users.filter(u => u.role === 'colaborador');
 
   const inativos = captadores.filter(c => {
     const proprios = electors.filter(e => e.createdBy === c.id);

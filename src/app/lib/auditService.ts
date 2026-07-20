@@ -34,7 +34,7 @@ export async function logAudit(params: AuditParams): Promise<void> {
 }
 
 /**
- * Busca logs de auditoria paginados (apenas liderança e coordenador_geral via RLS).
+ * Busca logs de auditoria paginados (apenas candidato via RLS).
  */
 export async function fetchAuditLogs(params: {
   page: number;

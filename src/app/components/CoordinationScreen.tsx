@@ -55,8 +55,8 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
   const barColor = (p: number) =>
     p >= 80 ? 'bg-emerald-500' : p >= 50 ? 'bg-yellow-500' : 'bg-red-400';
 
-  // ── Coordenador Regional: mostra seus próprios captadores ──
-  if (user.role === 'coordenador_regional') {
+  // ── Liderança: mostra seus próprios colaboradores ──
+  if (user.role === 'lideranca') {
     const captadores = users.filter(u => u.coordenadorRegionalId === user.id);
     const total = captadores.reduce((s, c) => s + countByCaptador(c.id), 0);
 
@@ -141,13 +141,13 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
     );
   }
 
-  // ── Coordenador Geral / Liderança: drill-down regiao → captadores ──
+  // ── Coordenador / Candidato: drill-down regiao → colaboradores ──
   const regionalCoords = users.filter(u =>
-    u.role === 'coordenador_regional' &&
-    (user.role === 'lideranca' || (user.deputadoId && u.deputadoId === user.deputadoId))
+    u.role === 'lideranca' &&
+    (user.role === 'candidato' || (user.deputadoId && u.deputadoId === user.deputadoId))
   );
 
-  const allCaptadores = users.filter(u => u.role === 'captador_votos');
+  const allCaptadores = users.filter(u => u.role === 'colaborador');
   const grandTotal = electors.length;
   const grandTarget = allCaptadores.length * META_POR_CAPTADOR;
 
@@ -181,7 +181,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
             <h1 className="text-2xl font-bold mb-1">Coordenação</h1>
             <p className="text-sm text-gold-soft">Visão geral da equipe</p>
           </div>
-          {(user.role === 'lideranca' || user.role === 'coordenador_geral') && (
+          {(user.role === 'candidato' || user.role === 'coordenador') && (
             <button
               onClick={() => setShowComunicado(true)}
               className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
@@ -223,7 +223,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
             <MapPin className="w-4 h-4" />
             Mapa
           </button>
-          {(user.role === 'coordenador_geral' || user.role === 'lideranca') && (
+          {(user.role === 'coordenador' || user.role === 'candidato') && (
             <button
               onClick={() => setCoordTab('heatmap')}
               className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors flex items-center gap-1.5 ${

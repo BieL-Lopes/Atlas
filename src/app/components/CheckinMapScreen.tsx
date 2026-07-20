@@ -81,7 +81,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
 
   // --- Coordinator mode ---
   const captadores = useMemo(
-    () => users.filter(u => u.role === 'captador_votos'),
+    () => users.filter(u => u.role === 'colaborador'),
     [users]
   );
   const captadorColorMap = useMemo(() => {

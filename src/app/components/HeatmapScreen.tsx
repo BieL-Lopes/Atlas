@@ -45,7 +45,7 @@ export function HeatmapScreen({ electors, users }: Props) {
   );
 
   const captadores = useMemo(
-    () => users.filter(u => u.role === 'captador_votos'),
+    () => users.filter(u => u.role === 'colaborador'),
     [users]
   );
 

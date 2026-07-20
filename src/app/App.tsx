@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { LoginScreen } from './components/LoginScreen';
 import { HomeScreen } from './components/HomeScreen';
-import { ElectorHomeScreen } from './components/ElectorHomeScreen';
 import { CaptureForm, ElectorData } from './components/CaptureForm';
 import { ContactList } from './components/ContactList';
 import { ElectorProfile } from './components/ElectorProfile';
@@ -42,7 +41,7 @@ export default function App() {
   const { isOnline, pendingCount, refreshCount, syncedAt } = useSync();
 
   const captadorStats = useMemo(() => {
-    if (!user || user.role !== 'captador_votos') return undefined;
+    if (!user || user.role !== 'colaborador') return undefined;
     const total = electors.filter(e => e.createdBy === user.id).length;
     const ranking = buildRanking(users, electors);
     const rank = ranking.find(r => r.id === user.id)?.rank ?? ranking.length + 1;
@@ -436,7 +435,7 @@ export default function App() {
       <>
         <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
         <AgendaScreen user={user!} />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -447,7 +446,7 @@ export default function App() {
       <>
         <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
         <PollsScreen user={user!} />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -463,7 +462,7 @@ export default function App() {
           users={users}
           canExport={userPermissions?.canExport ?? false}
         />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -479,7 +478,7 @@ export default function App() {
           onLogout={handleLogout}
           onViewRoute={() => setCurrentScreen('checkin')}
         />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -496,7 +495,7 @@ export default function App() {
           onBack={() => setCurrentScreen('results')}
           mode="captador"
         />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -512,7 +511,7 @@ export default function App() {
           users={users}
           canExport={userPermissions?.canExport ?? false}
         />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -523,7 +522,7 @@ export default function App() {
       <>
         <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
         <AuditLogsScreen user={user} />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -534,7 +533,7 @@ export default function App() {
       <>
         <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
         <StrategicReportsScreen user={user} electors={electors} users={users} />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -557,7 +556,7 @@ export default function App() {
             setCurrentScreen('form');
           } : undefined}
         />
-        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );
@@ -566,30 +565,24 @@ export default function App() {
   return (
     <>
       <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
-      {user?.role === 'eleitor' ? (
-        <ElectorHomeScreen user={user} onLogout={handleLogout} />
-      ) : (
-        <>
-          <HomeScreen
-            user={user ?? undefined}
-            userName={user?.name || 'Usuario'}
-            totalCadastros={electors.length}
-            votoStats={{
-              forte: electors.filter(e => e.nivelVoto === 'forte').length,
-              medio: electors.filter(e => e.nivelVoto === 'medio').length,
-              fraco: electors.filter(e => e.nivelVoto === 'fraco').length,
-              indeciso: electors.filter(e => e.nivelVoto === 'indeciso').length,
-              oposicao: electors.filter(e => e.nivelVoto === 'oposicao').length,
-            }}
-            electors={electors}
-            onNavigate={setCurrentScreen}
-            onLogout={handleLogout}
-            userRole={user?.role || 'eleitor'}
-            captadorStats={captadorStats}
-          />
-          <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'eleitor'} />
-        </>
-      )}
+      <HomeScreen
+        user={user ?? undefined}
+        userName={user?.name || 'Usuario'}
+        totalCadastros={electors.length}
+        votoStats={{
+          forte: electors.filter(e => e.nivelVoto === 'forte').length,
+          medio: electors.filter(e => e.nivelVoto === 'medio').length,
+          fraco: electors.filter(e => e.nivelVoto === 'fraco').length,
+          indeciso: electors.filter(e => e.nivelVoto === 'indeciso').length,
+          oposicao: electors.filter(e => e.nivelVoto === 'oposicao').length,
+        }}
+        onNavigate={setCurrentScreen}
+        onLogout={handleLogout}
+        userRole={user?.role || 'cabo_eleitoral'}
+        captadorStats={captadorStats || undefined}
+        electors={electors}
+      />
+      <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
       <Toaster position="top-center" richColors />
     </>
   );

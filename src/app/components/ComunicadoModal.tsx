@@ -10,17 +10,17 @@ interface Props {
 }
 
 const DESTINO_OPTIONS: Record<string, { label: string; roles: string[] }[]> = {
-  lideranca: [
+  candidato: [
     { label: 'Todos', roles: ['todos'] },
-    { label: 'Coordenadores (Geral + Regional)', roles: ['coordenador_geral', 'coordenador_regional'] },
-    { label: 'Apenas Coordenadores Regionais', roles: ['coordenador_regional'] },
-    { label: 'Captadores de Votos', roles: ['captador_votos'] },
-    { label: 'Eleitores', roles: ['eleitor'] },
+    { label: 'Coordenadores + Lideranças', roles: ['coordenador', 'lideranca'] },
+    { label: 'Apenas Lideranças', roles: ['lideranca'] },
+    { label: 'Colaboradores / Voluntários', roles: ['colaborador'] },
+    { label: 'Cabos Eleitorais', roles: ['cabo_eleitoral'] },
   ],
-  coordenador_geral: [
-    { label: 'Coordenadores Regionais', roles: ['coordenador_regional'] },
-    { label: 'Captadores de Votos', roles: ['captador_votos'] },
-    { label: 'Coordenadores e Captadores', roles: ['coordenador_regional', 'captador_votos'] },
+  coordenador: [
+    { label: 'Lideranças', roles: ['lideranca'] },
+    { label: 'Colaboradores / Voluntários', roles: ['colaborador'] },
+    { label: 'Lideranças e Colaboradores', roles: ['lideranca', 'colaborador'] },
   ],
 };
 

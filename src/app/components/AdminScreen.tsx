@@ -47,7 +47,7 @@ function exportCSV(rows: Record<string, unknown>[], filename: string) {
 }
 
 export function AdminScreen({ user, electors, users, canExport }: Props) {
-  const showDashboard = user.role === 'lideranca' || user.role === 'coordenador_geral';
+  const showDashboard = user.role === 'candidato' || user.role === 'coordenador';
   const [activeTab, setActiveTab] = useState<'users' | 'dashboard' | 'mapa' | 'alertas' | 'whatsapp' | 'settings'>(
     showDashboard ? 'dashboard' : 'users'
   );
@@ -184,11 +184,11 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
 
   const getRoleBadgeStyle = (role: UserRole) => {
     const styles: Record<UserRole, string> = {
-      lideranca: 'bg-red-100 text-red-800 border-red-200',
-      coordenador_geral: 'bg-purple-100 text-purple-800 border-purple-200',
-      coordenador_regional: 'bg-gold/10 text-gold-deep border-gold-deep',
-      captador_votos: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-      eleitor: 'bg-gray-100 text-gray-800 border-gray-200',
+      candidato: 'bg-red-100 text-red-800 border-red-200',
+      coordenador: 'bg-purple-100 text-purple-800 border-purple-200',
+      lideranca: 'bg-gold/10 text-gold-deep border-gold-deep',
+      colaborador: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+      cabo_eleitoral: 'bg-gray-100 text-gray-800 border-gray-200',
     };
     return styles[role];
   };
@@ -261,7 +261,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
             <h1 className="text-2xl font-bold mb-1">Administração</h1>
             <p className="text-sm text-gold-soft">Gestão de usuários e configurações</p>
           </div>
-          {user.role === 'lideranca' && (
+          {user.role === 'candidato' && (
             <button
               onClick={() => setShowComunicado(true)}
               className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-semibold px-3 py-2 rounded-xl transition-colors"
@@ -374,7 +374,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
               </button>
             )}
 
-            {(user.role === 'lideranca' || user.role === 'coordenador_geral') && (
+            {(user.role === 'candidato' || user.role === 'coordenador') && (
               <button
                 onClick={() => setShowImport(true)}
                 className="w-full py-3 px-4 bg-white border-2 border-emerald-200 text-emerald-700 rounded-xl font-semibold flex items-center justify-center gap-2 hover:bg-emerald-50 transition-colors"

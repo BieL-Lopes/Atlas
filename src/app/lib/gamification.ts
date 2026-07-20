@@ -105,7 +105,7 @@ export function computeStreak(electors: ElectorData[], captadorId: string): numb
 }
 
 export function buildRanking(users: User[], electors: ElectorData[]): RankEntry[] {
-  const captadores = users.filter(u => u.role === 'captador_votos');
+  const captadores = users.filter(u => u.role === 'colaborador');
   const entries: RankEntry[] = captadores.map(c => {
     const total = electors.filter(e => e.createdBy === c.id).length;
     return {

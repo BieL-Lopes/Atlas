@@ -43,9 +43,9 @@ CREATE TABLE IF NOT EXISTS public.perfis (
   nome                     TEXT NOT NULL,
   email                    TEXT,
   cpf                      TEXT UNIQUE,
-  role                     TEXT NOT NULL DEFAULT 'eleitor'
+  role                     TEXT NOT NULL DEFAULT 'cabo_eleitoral'
     CONSTRAINT perfis_role_check
-      CHECK (role IN ('lideranca', 'coordenador_geral', 'coordenador_regional', 'captador_votos', 'eleitor')),
+      CHECK (role IN ('candidato', 'coordenador', 'lideranca', 'colaborador', 'cabo_eleitoral')),
   regiao                   TEXT,
   deputado_id              TEXT,
   coordenador_regional_id  UUID REFERENCES public.perfis(id),
@@ -155,7 +155,7 @@ BEGIN
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'eleitor')
+    COALESCE(NEW.raw_user_meta_data->>'role', 'cabo_eleitoral')
   )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
@@ -187,7 +187,7 @@ CREATE POLICY "perfis_insert_proprio"  ON public.perfis FOR INSERT WITH CHECK (a
 
 CREATE POLICY "perfis_select_gestores" ON public.perfis FOR SELECT USING (
   deputado_id = public.get_my_tenant_id() AND
-  get_my_role() IN ('lideranca', 'coordenador_geral')
+  get_my_role() IN ('candidato', 'coordenador')
 );
 
 CREATE POLICY "perfis_select_equipe_coord" ON public.perfis FOR SELECT USING (
@@ -209,7 +209,7 @@ CREATE POLICY "eleitores_select_proprio" ON public.eleitores FOR SELECT USING (
 
 CREATE POLICY "eleitores_select_gestores" ON public.eleitores FOR SELECT USING (
   deputado_id = public.get_my_tenant_id() AND
-  get_my_role() IN ('lideranca', 'coordenador_geral')
+  get_my_role() IN ('candidato', 'coordenador')
 );
 
 CREATE POLICY "eleitores_select_coord_regional" ON public.eleitores FOR SELECT USING (
@@ -224,14 +224,14 @@ CREATE POLICY "eleitores_insert" ON public.eleitores FOR INSERT WITH CHECK (
 CREATE POLICY "eleitores_update" ON public.eleitores FOR UPDATE USING (
   deputado_id = public.get_my_tenant_id() AND (
     criado_por = auth.uid()
-    OR get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional')
+    OR get_my_role() IN ('candidato', 'coordenador', 'lideranca')
   )
 );
 
 CREATE POLICY "eleitores_delete" ON public.eleitores FOR DELETE USING (
   deputado_id = public.get_my_tenant_id() AND (
     criado_por = auth.uid()
-    OR get_my_role() IN ('lideranca', 'coordenador_geral')
+    OR get_my_role() IN ('candidato', 'coordenador')
   )
 );
 
@@ -296,9 +296,9 @@ DROP POLICY IF EXISTS "eventos_delete_gestores" ON public.eventos;
 CREATE POLICY "eventos_select_all"      ON public.eventos FOR SELECT
   USING (deputado_id = public.get_my_tenant_id() AND auth.role() = 'authenticated');
 CREATE POLICY "eventos_insert_gestores" ON public.eventos FOR INSERT
-  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional'));
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('candidato', 'coordenador', 'lideranca'));
 CREATE POLICY "eventos_delete_gestores" ON public.eventos FOR DELETE
-  USING (deputado_id = public.get_my_tenant_id() AND (get_my_role() IN ('lideranca', 'coordenador_geral') OR criado_por = auth.uid()));
+  USING (deputado_id = public.get_my_tenant_id() AND (get_my_role() IN ('candidato', 'coordenador') OR criado_por = auth.uid()));
 
 -- ─────────────────────────────────────────────
 -- Tabela: evento_confirmacoes (presença em eventos)
@@ -329,7 +329,7 @@ DROP POLICY IF EXISTS "confirmacoes_select_gestores" ON public.evento_confirmaco
 CREATE POLICY "confirmacoes_select_proprio"  ON public.evento_confirmacoes FOR SELECT
   USING (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 CREATE POLICY "confirmacoes_select_gestores" ON public.evento_confirmacoes FOR SELECT
-  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral', 'coordenador_regional'));
+  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('candidato', 'coordenador', 'lideranca'));
 CREATE POLICY "confirmacoes_insert_proprio"  ON public.evento_confirmacoes FOR INSERT
   WITH CHECK (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 CREATE POLICY "confirmacoes_delete_proprio"  ON public.evento_confirmacoes FOR DELETE
@@ -365,9 +365,9 @@ DROP POLICY IF EXISTS "enquetes_update_gestores" ON public.enquetes;
 CREATE POLICY "enquetes_select_all"      ON public.enquetes FOR SELECT
   USING (deputado_id = public.get_my_tenant_id() AND auth.role() = 'authenticated');
 CREATE POLICY "enquetes_insert_gestores" ON public.enquetes FOR INSERT
-  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral'));
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('candidato', 'coordenador'));
 CREATE POLICY "enquetes_update_gestores" ON public.enquetes FOR UPDATE
-  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral'));
+  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('candidato', 'coordenador'));
 
 -- ─────────────────────────────────────────────
 -- Tabela: enquete_votos (votos por eleitor)
@@ -398,7 +398,7 @@ DROP POLICY IF EXISTS "votos_select_gestores" ON public.enquete_votos;
 CREATE POLICY "votos_select_proprio"  ON public.enquete_votos FOR SELECT
   USING (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 CREATE POLICY "votos_select_gestores" ON public.enquete_votos FOR SELECT
-  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral'));
+  USING (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('candidato', 'coordenador'));
 CREATE POLICY "votos_insert_proprio"  ON public.enquete_votos FOR INSERT
   WITH CHECK (deputado_id = public.get_my_tenant_id() AND eleitor_id = auth.uid());
 
@@ -439,7 +439,7 @@ CREATE POLICY "comunicados_select" ON public.comunicados FOR SELECT USING (
 
 -- Só liderança e coordenador_geral podem enviar
 CREATE POLICY "comunicados_insert" ON public.comunicados FOR INSERT
-  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('lideranca', 'coordenador_geral'));
+  WITH CHECK (deputado_id = public.get_my_tenant_id() AND get_my_role() IN ('candidato', 'coordenador'));
 
 -- Habilitar Realtime para esta tabela (necessário para atualizações em tempo real no app)
 ALTER TABLE public.comunicados REPLICA IDENTITY FULL;
@@ -508,7 +508,7 @@ CREATE POLICY "disparo_read" ON public.disparos_whatsapp
     deputado_id = public.get_my_tenant_id() AND EXISTS (
       SELECT 1 FROM public.perfis
       WHERE id = auth.uid()
-        AND role IN ('lideranca', 'coordenador_geral')
+        AND role IN ('candidato', 'coordenador')
     )
   );
 
@@ -518,7 +518,7 @@ CREATE POLICY "disparo_insert" ON public.disparos_whatsapp
     deputado_id = public.get_my_tenant_id() AND EXISTS (
       SELECT 1 FROM public.perfis
       WHERE id = auth.uid()
-        AND role IN ('lideranca', 'coordenador_geral')
+        AND role IN ('candidato', 'coordenador')
     )
   );
 
@@ -535,7 +535,7 @@ CREATE TABLE IF NOT EXISTS public.invites (
   chave_unica           TEXT NOT NULL UNIQUE CHECK (length(chave_unica) = 6),
   role                  TEXT NOT NULL
     CONSTRAINT invites_role_check
-      CHECK (role IN ('lideranca', 'coordenador_geral', 'coordenador_regional', 'captador_votos', 'eleitor')),
+      CHECK (role IN ('candidato', 'coordenador', 'lideranca', 'colaborador', 'cabo_eleitoral')),
   usado                 BOOLEAN NOT NULL DEFAULT FALSE,
   usado_por             UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
   usado_em              TIMESTAMPTZ,
@@ -584,7 +584,7 @@ CREATE POLICY "invite_insert_gestores" ON public.invites
   FOR INSERT WITH CHECK (
     deputado_id = public.get_my_tenant_id() AND EXISTS (
       SELECT 1 FROM public.perfis
-      WHERE id = auth.uid() AND role IN ('lideranca', 'coordenador_geral')
+      WHERE id = auth.uid() AND role IN ('candidato', 'coordenador')
     )
   );
 
@@ -620,7 +620,7 @@ BEGIN
       COUNT(e.id) as total_cadastros
     FROM public.eleitores e
     JOIN public.perfis p ON e.criado_por = p.id
-    WHERE e.deputado_id = p_tenant_id AND p.role = 'captador_votos'
+    WHERE e.deputado_id = p_tenant_id AND p.role = 'colaborador'
     GROUP BY e.criado_por
   ),
   ranked_stats AS (

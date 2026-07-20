@@ -30,7 +30,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
 
   // ── Data for Tab 1: Produtividade por Captador ──
   const captadorData = useMemo(() => {
-    const captadores = users.filter(u => u.role === 'captador_votos');
+    const captadores = users.filter(u => u.role === 'colaborador');
     return captadores
       .map(c => ({
         id: c.id,
@@ -48,7 +48,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
 
   // ── Data for Tab 2: Produtividade por Coordenador ──
   const coordData = useMemo(() => {
-    const coordRegionais = users.filter(u => u.role === 'coordenador_regional');
+    const coordRegionais = users.filter(u => u.role === 'lideranca');
     return coordRegionais.map(rc => {
       const captadores = users.filter(u => u.coordenadorRegionalId === rc.id);
       const somaContatos = captadores.reduce((s, c) => s + countByCaptador(c.id), 0);

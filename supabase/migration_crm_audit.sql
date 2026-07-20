@@ -49,7 +49,7 @@ DROP POLICY IF EXISTS "audit_logs_select_gestores" ON public.audit_logs;
 CREATE POLICY "audit_logs_select_gestores" ON public.audit_logs
   FOR SELECT USING (
     deputado_id = public.get_my_tenant_id() AND
-    get_my_role() IN ('lideranca', 'coordenador_geral')
+    get_my_role() IN ('candidato', 'coordenador')
   );
 
 -- Qualquer usuário autenticado pode inserir logs de suas próprias ações
