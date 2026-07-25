@@ -248,9 +248,16 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                   onChange={(e) => {
                     const numbers = e.target.value.replace(/\D/g, '');
                     let formatted = numbers;
-                    if (numbers.length > 10) formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
-                    else if (numbers.length > 6) formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
-                    else if (numbers.length > 2) formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+                    if (numbers.length <= 11) {
+                      if (numbers.length > 6) formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+                      else if (numbers.length > 2) formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+                    } else {
+                      if (numbers.length >= 13) {
+                        formatted = `+${numbers.slice(0, 2)} (${numbers.slice(2, 4)}) ${numbers.slice(4, 9)}-${numbers.slice(9, 13)}`;
+                      } else {
+                        formatted = `+${numbers.slice(0, 2)} (${numbers.slice(2, 4)}) ${numbers.slice(4)}`;
+                      }
+                    }
                     setIndividualNumber(formatted);
                   }}
                   placeholder="(11) 99999-9999"
