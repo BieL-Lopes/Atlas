@@ -4,10 +4,8 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
 import { isRateLimited } from '../_shared/rateLimiter.ts';
 
-const EVOLUTION_API_URL      = Deno.env.get('EVOLUTION_API_URL') ?? '';
-const EVOLUTION_API_KEY      = Deno.env.get('EVOLUTION_API_KEY') ?? '';
-const EVOLUTION_INSTANCE     = Deno.env.get('EVOLUTION_INSTANCE') ?? '';
-const SUPABASE_URL           = Deno.env.get('SUPABASE_URL') ?? '';
+const ZAPI_URL = Deno.env.get('ZAPI_URL') ?? '';
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 
 serve(async (req) => {
@@ -21,9 +19,9 @@ serve(async (req) => {
     return new Response('Method not allowed', { status: 405, headers: corsHeaders });
   }
 
-  if (!EVOLUTION_API_URL || !EVOLUTION_API_KEY || !EVOLUTION_INSTANCE) {
+  if (!ZAPI_URL) {
     return new Response(
-      JSON.stringify({ error: 'Evolution API não configurada. Defina EVOLUTION_API_URL, EVOLUTION_API_KEY e EVOLUTION_INSTANCE nos secrets do Supabase.' }),
+      JSON.stringify({ error: 'Z-API não configurada. Defina ZAPI_URL nos secrets do Supabase.' }),
       { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
@@ -65,15 +63,20 @@ serve(async (req) => {
       const normalized = digits.startsWith('55') ? digits : `55${digits}`;
 
       try {
+        // Garante que se a URL já terminar com /send-text, não duplica
+        const cleanBaseUrl = ZAPI_URL.replace(/\/send-text\/?$/, '');
+        const targetUrl = `${cleanBaseUrl}/send-text`;
+
+        console.log(`Enviando para Z-API corrigido: ${targetUrl}, Número: ${normalized}`);
+
         const res = await fetch(
-          `${EVOLUTION_API_URL}/message/sendText/${EVOLUTION_INSTANCE}`,
+          targetUrl,
           {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'apikey': EVOLUTION_API_KEY,
             },
-            body: JSON.stringify({ number: normalized, text: mensagem }),
+            body: JSON.stringify({ phone: normalized, message: mensagem }),
           }
         );
 
