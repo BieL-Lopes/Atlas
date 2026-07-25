@@ -125,9 +125,20 @@ export function SignupForm({
         }
       });
 
-      // Mensagem genérica para TODOS os erros de signup (previne enumeração de usuário)
-      if (authError || !authData.user) {
-        throw new Error('Não foi possível criar a conta. Verifique os dados e tente novamente.');
+      if (authError) {
+        let msg = authError.message;
+        if (msg.toLowerCase().includes('invalid') && msg.toLowerCase().includes('email')) {
+          msg = 'O endereço de e-mail informado é inválido.';
+        } else if (msg.toLowerCase().includes('already registered')) {
+          msg = 'Este e-mail já está cadastrado em nossa base de dados.';
+        } else if (msg.toLowerCase().includes('password')) {
+          msg = 'A senha informada é muito fraca ou curta.';
+        }
+        throw new Error(msg);
+      }
+
+      if (!authData.user) {
+        throw new Error('Não foi possível criar a conta. Servidor não retornou os dados.');
       }
 
       // Marca o convite como usado (apenas se existir inviteKey)
@@ -146,9 +157,7 @@ export function SignupForm({
         }
       }
 
-      if (inviteError) {
-        console.warn('Aviso ao marcar convite como usado:', inviteError);
-      }
+
 
       signupLimiter.reset();
       setStep('success');
@@ -157,7 +166,6 @@ export function SignupForm({
       }, 2000);
     } catch (err: unknown) {
       console.error('Signup error:', err);
-      // Mensagem genérica — nunca revelar detalhes específicos do Supabase Auth
       const message = err instanceof Error ? err.message : 'Não foi possível criar a conta. Verifique os dados e tente novamente.';
       setErrorMessage(message);
       setStep('error');
