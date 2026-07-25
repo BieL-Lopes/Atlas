@@ -22,37 +22,17 @@ interface SignupFormProps {
   onCancel: () => void;
 }
 
-function formatCPF(value: string): string {
+function formatWhatsApp(value: string): string {
   const digits = value.replace(/\D/g, '').slice(0, 11);
-  if (digits.length <= 3) return digits;
-  if (digits.length <= 6) return `${digits.slice(0, 3)}.${digits.slice(3)}`;
-  if (digits.length <= 9) return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6)}`;
-  return `${digits.slice(0, 3)}.${digits.slice(3, 6)}.${digits.slice(6, 9)}-${digits.slice(9)}`;
+  if (digits.length === 0) return '';
+  if (digits.length <= 2) return `(${digits}`;
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
-function validateCPF(cpf: string): boolean {
-  const digits = cpf.replace(/\D/g, '');
-  if (digits.length !== 11 || /^(\d)\1{10}$/.test(digits)) return false;
-  
-  let sum = 0;
-  let remainder;
-
-  for (let i = 1; i <= 9; i++) {
-    sum += parseInt(digits.substring(i - 1, i)) * (11 - i);
-  }
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(digits.substring(9, 10))) return false;
-
-  sum = 0;
-  for (let i = 1; i <= 10; i++) {
-    sum += parseInt(digits.substring(i - 1, i)) * (12 - i);
-  }
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(digits.substring(10, 11))) return false;
-
-  return true;
+function validateWhatsApp(phone: string): boolean {
+  const digits = phone.replace(/\D/g, '');
+  return digits.length === 11;
 }
 
 export function SignupForm({
@@ -66,16 +46,16 @@ export function SignupForm({
   const [errorMessage, setErrorMessage] = useState('');
   
   const [nome, setNome] = useState('');
-  const [cpf, setCpf] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [confirmaSenha, setConfirmaSenha] = useState('');
   const [showSenha, setShowSenha] = useState(false);
   const [showConfirma, setShowConfirma] = useState(false);
 
-  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
-    setCpf(formatCPF(raw));
+    setWhatsapp(formatWhatsApp(raw));
     setErrorMessage('');
   };
 
@@ -88,12 +68,12 @@ export function SignupForm({
       setErrorMessage('Nome é obrigatório');
       return;
     }
-    if (!cpf.trim()) {
-      setErrorMessage('CPF é obrigatório');
+    if (!whatsapp.trim()) {
+      setErrorMessage('WhatsApp é obrigatório');
       return;
     }
-    if (!validateCPF(cpf)) {
-      setErrorMessage('CPF inválido');
+    if (!validateWhatsApp(whatsapp)) {
+      setErrorMessage('WhatsApp inválido. Formato: (DDD) 99999-9999');
       return;
     }
     if (!email.trim()) {
@@ -134,7 +114,7 @@ export function SignupForm({
         password: senha,
         options: {
           data: {
-            cpf: cpf.replace(/\D/g, ''),
+            whatsapp: whatsapp.replace(/\D/g, ''),
             nome,
             name: nome, // Trigger looks for 'name'
             role,
@@ -236,14 +216,14 @@ export function SignupForm({
             </div>
 
             <div>
-              <Label htmlFor="cpf" className="text-sm font-medium">
-                CPF
+              <Label htmlFor="whatsapp" className="text-sm font-medium">
+                WhatsApp
               </Label>
               <Input
-                id="cpf"
-                placeholder="000.000.000-00"
-                value={cpf}
-                onChange={handleCpfChange}
+                id="whatsapp"
+                placeholder="(00) 00000-0000"
+                value={whatsapp}
+                onChange={handleWhatsappChange}
                 disabled={step !== 'form'}
               />
             </div>
