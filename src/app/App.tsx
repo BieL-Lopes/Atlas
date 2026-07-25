@@ -12,6 +12,7 @@ import { CaptadorResultsScreen } from './components/CaptadorResultsScreen';
 import { CheckinMapScreen } from './components/CheckinMapScreen';
 import { AuditLogsScreen } from './components/AuditLogsScreen';
 import { StrategicReportsScreen } from './components/StrategicReportsScreen';
+import { InviteScreen } from './components/InviteScreen';
 import { BottomNav } from './components/BottomNav';
 import { OfflineBanner } from './components/OfflineBanner';
 import { MassImportModal } from './components/MassImportModal';
@@ -27,7 +28,7 @@ import { buildRanking, todayCount, computeStreak, MEDALS } from './lib/gamificat
 import { useSync } from './lib/useSync';
 import { logAudit } from './lib/auditService';
 
-type Screen = 'login' | 'home' | 'form' | 'list' | 'profile' | 'agenda' | 'polls' | 'coordination' | 'admin' | 'results' | 'checkin' | 'logs' | 'reports';
+type Screen = 'login' | 'home' | 'form' | 'list' | 'profile' | 'agenda' | 'polls' | 'coordination' | 'admin' | 'results' | 'checkin' | 'logs' | 'reports' | 'invite';
 
 export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('login');
@@ -213,6 +214,9 @@ export default function App() {
       case 'reports':
         setCurrentScreen('reports');
         break;
+      case 'invite':
+        setCurrentScreen('invite');
+        break;
     }
   };
 
@@ -372,6 +376,17 @@ export default function App() {
       <>
         <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
         <LoginScreen onLogin={handleLogin} />
+        <Toaster position="top-center" richColors />
+      </>
+    );
+  }
+
+  if (currentScreen === 'invite' && user) {
+    return (
+      <>
+        <OfflineBanner isOnline={isOnline} pendingCount={pendingCount} />
+        <InviteScreen user={user} />
+        <BottomNav currentTab={currentTab} onTabChange={handleTabChange} userRole={user?.role || 'cabo_eleitoral'} />
         <Toaster position="top-center" richColors />
       </>
     );

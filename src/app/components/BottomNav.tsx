@@ -1,4 +1,4 @@
-import { Home, Users, Calendar, BarChart3, Settings, Map, Trophy, FileText, TrendingUp } from 'lucide-react';
+import { Home, Users, Calendar, BarChart3, Settings, Map, Trophy, FileText, TrendingUp, Share2 } from 'lucide-react';
 import { UserRole, canAccessTab, Tab } from '../lib/rbac';
 
 interface BottomNavProps {
@@ -13,6 +13,7 @@ export function BottomNav({ currentTab, onTabChange, userRole }: BottomNavProps)
     { id: 'contacts' as const, icon: Users, label: 'Contatos' },
     { id: 'agenda' as const, icon: Calendar, label: 'Agenda' },
     { id: 'results' as const, icon: Trophy, label: 'Resultados' },
+    { id: 'invite' as const, icon: Share2, label: 'Rede' },
     { id: 'polls' as const, icon: BarChart3, label: 'Enquetes' },
     { id: 'reports' as const, icon: TrendingUp, label: 'Relatórios' },
     { id: 'coordination' as const, icon: Map, label: 'Coordenação' },

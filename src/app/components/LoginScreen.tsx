@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { User as UserIcon, Lock, Eye, EyeOff, AtSign, CreditCard } from 'lucide-react';
 import { User, authenticate } from '../lib/auth';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { InviteModal } from './InviteModal';
-import { SignupForm } from './SignupForm';
+import { SignupForm, ReferrerData } from './SignupForm';
+import { ConfirmRegistrationScreen } from './ConfirmRegistrationScreen';
 import { loginLimiter } from '../lib/rateLimiter';
 
 interface LoginScreenProps {
@@ -47,8 +49,41 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [fieldError, setFieldError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showInviteModal, setShowInviteModal] = useState(false);
-  const [signupData, setSignupData] = useState<{ role: string; inviteKey: string } | null>(null);
+  const [signupData, setSignupData] = useState<{ role: string; inviteKey?: string } | null>(null);
+  const [referrer, setReferrer] = useState<ReferrerData | null>(null);
+  const [showConfirmRegistration, setShowConfirmRegistration] = useState(false);
   const [cooldown, setCooldown] = useState(0);
+
+  // Lê parâmetro ?ref= da URL para MMN
+  useEffect(() => {
+    const checkReferral = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const refId = params.get('ref');
+      if (refId && isSupabaseConfigured && supabase) {
+        try {
+          const { data } = await supabase
+            .from('perfis')
+            .select('id, nome, regiao, deputado_id')
+            .eq('id', refId)
+            .single();
+          
+          if (data) {
+            const refData: ReferrerData = {
+              id: data.id,
+              nome: data.nome,
+              regiao: data.regiao,
+              deputado_id: data.deputado_id
+            };
+            setReferrer(refData);
+            setSignupData({ role: 'cabo_eleitoral' }); // Default role para indicações
+          }
+        } catch (err) {
+          console.error('Ref inválido ou não encontrado', err);
+        }
+      }
+    };
+    checkReferral();
+  }, []);
 
   // Countdown timer para cooldown do rate limiter
   useEffect(() => {
@@ -263,19 +298,34 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       )}
 
       {/* Modal de Signup */}
-      {signupData && (
+      {signupData && !showConfirmRegistration && (
         <SignupForm
           role={signupData.role}
           inviteKey={signupData.inviteKey}
+          referrer={referrer || undefined}
           onSignupComplete={(success, message) => {
             if (success) {
               setError(message || '');
-              setSignupData(null);
-              setLogin('');
-              setPassword('');
+              setShowConfirmRegistration(true);
             }
           }}
-          onCancel={() => setSignupData(null)}
+          onCancel={() => {
+            setSignupData(null);
+            setReferrer(null);
+          }}
+        />
+      )}
+
+      {/* Tela de Confirmação Pós-Cadastro */}
+      {showConfirmRegistration && (
+        <ConfirmRegistrationScreen 
+          onContinue={() => {
+            setShowConfirmRegistration(false);
+            setSignupData(null);
+            setReferrer(null);
+            setLogin('');
+            setPassword('');
+          }} 
         />
       )}
     </div>

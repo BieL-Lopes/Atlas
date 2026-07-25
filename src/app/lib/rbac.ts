@@ -7,7 +7,7 @@ export type UserRole =
   | 'cabo_eleitoral';      // Cabo Eleitoral / Captador de Voto - cadastros feitos, ranking e disparos
 
 // Tabs disponiveis no sistema
-export type Tab = 'home' | 'contacts' | 'agenda' | 'polls' | 'admin' | 'coordination' | 'results' | 'logs' | 'reports';
+export type Tab = 'home' | 'contacts' | 'agenda' | 'polls' | 'admin' | 'coordination' | 'results' | 'logs' | 'reports' | 'invite';
 
 // Labels amigaveis para os papeis
 export const ROLE_LABELS: Record<UserRole, string> = {
@@ -32,7 +32,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, {
 }> = {
   // Candidato: acesso total a tudo
   candidato: {
-    tabs: ['home', 'contacts', 'agenda', 'polls', 'reports', 'logs', 'admin', 'coordination', 'results'],
+    tabs: ['home', 'contacts', 'agenda', 'polls', 'reports', 'logs', 'admin', 'coordination', 'results', 'invite'],
     canCreateElector: true,
     canDeleteElector: true,
     canExport: true,
@@ -44,7 +44,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, {
   },
   // Coordenador: acesso a liderancas, colaboradores, cabos, eleitores e ranking
   coordenador: {
-    tabs: ['home', 'contacts', 'agenda', 'polls', 'reports', 'coordination', 'results'],
+    tabs: ['home', 'contacts', 'agenda', 'polls', 'reports', 'coordination', 'results', 'invite'],
     canCreateElector: true,
     canDeleteElector: true,
     canExport: true,
@@ -56,7 +56,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, {
   },
   // Lideranca: cadastros feitos + ranking + disparos redes sociais
   lideranca: {
-    tabs: ['home', 'contacts', 'results'],
+    tabs: ['home', 'contacts', 'results', 'invite'],
     canCreateElector: true,
     canDeleteElector: false,
     canExport: false,
@@ -68,7 +68,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, {
   },
   // Colaborador: cadastros feitos + ranking + disparos redes sociais
   colaborador: {
-    tabs: ['home', 'contacts', 'results'],
+    tabs: ['home', 'contacts', 'results', 'invite'],
     canCreateElector: true,
     canDeleteElector: false,
     canExport: false,
@@ -80,7 +80,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, {
   },
   // Cabo Eleitoral: cadastros feitos + ranking + disparos redes sociais
   cabo_eleitoral: {
-    tabs: ['home', 'contacts', 'results'],
+    tabs: ['home', 'contacts', 'results', 'invite'],
     canCreateElector: true,
     canDeleteElector: false,
     canExport: false,

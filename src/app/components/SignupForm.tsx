@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle, User as UserIcon } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -7,9 +7,17 @@ import { Label } from './ui/label';
 import { Card } from './ui/card';
 import { signupLimiter } from '../lib/rateLimiter';
 
+export interface ReferrerData {
+  id: string;
+  nome: string;
+  regiao?: string;
+  deputado_id?: string;
+}
+
 interface SignupFormProps {
   role: string;
-  inviteKey: string;
+  inviteKey?: string;
+  referrer?: ReferrerData;
   onSignupComplete: (success: boolean, message?: string) => void;
   onCancel: () => void;
 }
@@ -50,6 +58,7 @@ function validateCPF(cpf: string): boolean {
 export function SignupForm({
   role,
   inviteKey,
+  referrer,
   onSignupComplete,
   onCancel
 }: SignupFormProps) {
@@ -128,7 +137,10 @@ export function SignupForm({
             cpf: cpf.replace(/\D/g, ''),
             nome,
             name: nome, // Trigger looks for 'name'
-            role
+            role,
+            regiao: referrer?.regiao,
+            deputado_id: referrer?.deputado_id,
+            indicado_por: referrer?.id
           }
         }
       });
@@ -138,15 +150,21 @@ export function SignupForm({
         throw new Error('Não foi possível criar a conta. Verifique os dados e tente novamente.');
       }
 
-      // Marca o convite como usado
-      const { error: inviteError } = await supabase
-        .from('invites')
-        .update({
-          usado: true,
-          usado_por: authData.user.id,
-          usado_em: new Date().toISOString()
-        })
-        .eq('chave_unica', inviteKey);
+      // Marca o convite como usado (apenas se existir inviteKey)
+      if (inviteKey) {
+        const { error: inviteError } = await supabase
+          .from('invites')
+          .update({
+            usado: true,
+            usado_por: authData.user.id,
+            usado_em: new Date().toISOString()
+          })
+          .eq('chave_unica', inviteKey);
+
+        if (inviteError) {
+          console.error('Erro ao marcar convite como usado:', inviteError);
+        }
+      }
 
       if (inviteError) {
         console.warn('Aviso ao marcar convite como usado:', inviteError);
@@ -178,15 +196,31 @@ export function SignupForm({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-md p-6">
         {step === 'form' && (
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-1">
-                Criar Conta
-              </h2>
-              <p className="text-gray-600 text-sm">
-                Perfil: <strong>{roleDisplayNames[role]}</strong>
-              </p>
-            </div>
+          <>
+            {/* Banner de Indicação */}
+            {referrer && (
+              <div className="bg-white rounded-xl p-4 border border-gold-soft shadow-sm mb-6 flex items-center gap-4">
+                <div className="w-12 h-12 bg-gold/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <UserIcon className="w-6 h-6 text-gold" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-gray-900 text-sm">Junte-se à Nossa Rede</h3>
+                  <p className="text-gray-600 text-xs">
+                    <span className="font-semibold text-gold-deep">{referrer.nome}</span> convidou você a participar.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-1">
+                  Criar Conta
+                </h2>
+                <p className="text-gray-600 text-sm">
+                  Perfil: <strong>{roleDisplayNames[role]}</strong>
+                </p>
+              </div>
 
             <div>
               <Label htmlFor="nome" className="text-sm font-medium">
@@ -298,6 +332,7 @@ export function SignupForm({
               </Button>
             </div>
           </form>
+          </>
         )}
 
         {step === 'loading' && (

@@ -6,6 +6,7 @@ import { User } from '../lib/auth';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { META_DIARIA, MEDALS } from '../lib/gamification';
 import { toast } from 'sonner';
+import { InviteShareModule } from './InviteShareModule';
 
 interface Activity {
   id: string;
@@ -170,6 +171,12 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
 
       {/* Cards de Estatísticas */}
       <div className="px-4 -mt-16">
+        {user && (
+          <div className="mb-6">
+            <InviteShareModule user={user} />
+          </div>
+        )}
+
         <button
           onClick={() => onNavigate('list')}
           className="w-full bg-white rounded-2xl shadow-lg p-6 mb-4 text-left transition-all hover:shadow-xl active:scale-[0.99]"

@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { X, Copy, Check, UserPlus } from 'lucide-react';
+import { X, Copy, Check, UserPlus, MapPin } from 'lucide-react';
 import { UserRole, ROLE_LABELS } from '../lib/rbac';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { User } from '../lib/auth';
+import { getSystemSettings } from '../lib/settings';
 
 interface GenerateInviteModalProps {
   user: User;
@@ -11,14 +12,25 @@ interface GenerateInviteModalProps {
 
 export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps) {
   const [role, setRole] = useState<UserRole>('colaborador');
+  const [selectedRegion, setSelectedRegion] = useState('');
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
+  const regions = getSystemSettings().regions;
+
+  // Região é obrigatória para todos os papéis exceto candidato
+  const requiresRegion = role !== 'candidato';
 
   const handleGenerate = async () => {
     setLoading(true);
     setError('');
+
+    if (requiresRegion && !selectedRegion) {
+      setError('Selecione uma região para este perfil.');
+      setLoading(false);
+      return;
+    }
     
     // Generate 6 uppercase alphanumeric chars
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
@@ -30,6 +42,7 @@ export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps)
           .insert([{
             chave_unica: code,
             role: role,
+            codigo_regiao: requiresRegion ? selectedRegion : null,
             criado_por: user.id
           }]);
 
@@ -89,6 +102,30 @@ export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps)
                   Um código único será gerado para que o usuário crie sua conta com este perfil.
                 </p>
               </div>
+
+              {requiresRegion && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <span className="flex items-center gap-1.5">
+                      <MapPin className="w-4 h-4 text-gold-deep" />
+                      Região *
+                    </span>
+                  </label>
+                  <select
+                    value={selectedRegion}
+                    onChange={(e) => setSelectedRegion(e.target.value)}
+                    className="w-full border-gray-300 rounded-xl shadow-sm py-2.5 px-3 focus:ring-gold-deep focus:border-gold-deep"
+                  >
+                    <option value="">Selecione a região...</option>
+                    {regions.map((region) => (
+                      <option key={region} value={region}>{region}</option>
+                    ))}
+                  </select>
+                  <p className="text-xs text-gray-500 mt-1">
+                    O voluntário será vinculado a esta região ao se cadastrar.
+                  </p>
+                </div>
+              )}
 
               {error && (
                 <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">

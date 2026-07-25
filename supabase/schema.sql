@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS public.perfis (
   regiao                   TEXT,
   deputado_id              TEXT,
   coordenador_regional_id  UUID REFERENCES public.perfis(id),
+  indicado_por             UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
   created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -62,6 +63,11 @@ $$;
 CREATE OR REPLACE FUNCTION public.get_my_tenant_id()
 RETURNS TEXT LANGUAGE sql SECURITY DEFINER STABLE AS $$
   SELECT deputado_id FROM public.perfis WHERE id = auth.uid();
+$$;
+
+CREATE OR REPLACE FUNCTION public.get_my_regiao()
+RETURNS TEXT LANGUAGE sql SECURITY DEFINER STABLE AS $$
+  SELECT regiao FROM public.perfis WHERE id = auth.uid();
 $$;
 
 CREATE OR REPLACE FUNCTION public.set_tenant_id()
@@ -169,11 +175,14 @@ CREATE TRIGGER trigger_set_criado_por_nome
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
-  INSERT INTO public.perfis (id, nome, role)
+  INSERT INTO public.perfis (id, nome, role, regiao, deputado_id, indicado_por)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'cabo_eleitoral')
+    COALESCE(NEW.raw_user_meta_data->>'role', 'cabo_eleitoral'),
+    NEW.raw_user_meta_data->>'regiao',
+    NEW.raw_user_meta_data->>'deputado_id',
+    (NEW.raw_user_meta_data->>'indicado_por')::UUID
   )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
@@ -231,25 +240,43 @@ CREATE POLICY "eleitores_select_gestores" ON public.eleitores FOR SELECT USING (
 );
 
 CREATE POLICY "eleitores_select_coord_regional" ON public.eleitores FOR SELECT USING (
-  deputado_id = public.get_my_tenant_id() AND
-  is_coord_regional_of(criado_por)
+  deputado_id = public.get_my_tenant_id()
+  AND public.get_my_role() = 'coordenador'
+  AND regiao = public.get_my_regiao()
+);
+
+DROP POLICY IF EXISTS "eleitores_select_regiao_lideranca" ON public.eleitores;
+CREATE POLICY "eleitores_select_regiao_lideranca" ON public.eleitores FOR SELECT USING (
+  deputado_id = public.get_my_tenant_id()
+  AND public.get_my_role() = 'lideranca'
+  AND regiao = public.get_my_regiao()
 );
 
 CREATE POLICY "eleitores_insert" ON public.eleitores FOR INSERT WITH CHECK (
   deputado_id = public.get_my_tenant_id() AND criado_por = auth.uid()
 );
 
-CREATE POLICY "eleitores_update" ON public.eleitores FOR UPDATE USING (
-  deputado_id = public.get_my_tenant_id() AND (
-    criado_por = auth.uid()
-    OR get_my_role() IN ('candidato', 'coordenador', 'lideranca')
+CREATE POLICY "eleitores_update" ON public.eleitores FOR UPDATE
+  USING (
+    deputado_id = public.get_my_tenant_id() AND (
+      criado_por = auth.uid()
+      OR (get_my_role() = 'candidato')
+      OR (get_my_role() IN ('coordenador', 'lideranca') AND regiao = public.get_my_regiao())
+    )
   )
-);
+  WITH CHECK (
+    deputado_id = public.get_my_tenant_id() AND (
+      criado_por = auth.uid()
+      OR (get_my_role() = 'candidato')
+      OR (get_my_role() IN ('coordenador', 'lideranca') AND regiao = public.get_my_regiao())
+    )
+  );
 
 CREATE POLICY "eleitores_delete" ON public.eleitores FOR DELETE USING (
   deputado_id = public.get_my_tenant_id() AND (
     criado_por = auth.uid()
-    OR get_my_role() IN ('candidato', 'coordenador')
+    OR (get_my_role() = 'candidato')
+    OR (get_my_role() IN ('coordenador', 'lideranca') AND regiao = public.get_my_regiao())
   )
 );
 
@@ -554,6 +581,7 @@ CREATE TABLE IF NOT EXISTS public.invites (
   role                  TEXT NOT NULL
     CONSTRAINT invites_role_check
       CHECK (role IN ('candidato', 'coordenador', 'lideranca', 'colaborador', 'cabo_eleitoral')),
+  codigo_regiao         TEXT,
   usado                 BOOLEAN NOT NULL DEFAULT FALSE,
   usado_por             UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
   usado_em              TIMESTAMPTZ,
@@ -577,9 +605,11 @@ ALTER TABLE public.invites ENABLE ROW LEVEL SECURITY;
 CREATE OR REPLACE FUNCTION public.handle_invite_used()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
-  IF NEW.usado = TRUE AND OLD.usado = FALSE AND NEW.usado_por IS NOT NULL AND NEW.deputado_id IS NOT NULL THEN
-    UPDATE public.perfis 
-    SET deputado_id = NEW.deputado_id
+  IF NEW.usado = TRUE AND OLD.usado = FALSE AND NEW.usado_por IS NOT NULL THEN
+    UPDATE public.perfis
+    SET
+      deputado_id = COALESCE(NEW.deputado_id, deputado_id),
+      regiao = COALESCE(NEW.codigo_regiao, regiao)
     WHERE id = NEW.usado_por;
   END IF;
   RETURN NEW;

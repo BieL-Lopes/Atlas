@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Save, User, Phone, Calendar, MapPin, MessageSquare, Navigation, Tag, Award, Camera, Upload } from 'lucide-react';
-import { QrScannerModal } from './QrScannerModal';
+import { ArrowLeft, Save, User, Phone, Calendar, MapPin, MessageSquare, Navigation, Tag, Award, Upload } from 'lucide-react';
 import { getSystemSettings } from '../lib/settings';
 import { db } from '../lib/db';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
@@ -74,17 +73,15 @@ const NICHOS_DISPONIVEIS = [
 
 export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportClick }: CaptureFormProps) {
   const [nome, setNome] = useState(electorToEdit?.nome ?? '');
-  const [cpf, setCpf] = useState(electorToEdit?.cpf ?? '');
   const [whatsapp, setWhatsapp] = useState(electorToEdit?.whatsapp ?? '');
   const [email, setEmail] = useState(electorToEdit?.email ?? '');
-  const [tituloEleitor, setTituloEleitor] = useState(electorToEdit?.tituloEleitor ?? '');
   const [dataNascimento, setDataNascimento] = useState(electorToEdit?.dataNascimento ?? '');
   const [bairro, setBairro] = useState(electorToEdit?.bairro ?? '');
   const [cidade, setCidade] = useState(electorToEdit?.cidade ?? '');
   const [nivelVoto, setNivelVoto] = useState<'forte' | 'medio' | 'fraco' | 'indeciso' | 'oposicao' | ''>(electorToEdit?.nivelVoto ?? '');
   const [nivelEngajamento, setNivelEngajamento] = useState<'lideranca' | 'cabo_eleitoral' | 'eleitor_comum' | ''>(electorToEdit?.nivelEngajamento ?? '');
   const [statusFunil, setStatusFunil] = useState<StatusFunil>(electorToEdit?.statusFunil ?? 'contato');
-  const [showQrScanner, setShowQrScanner] = useState(false);
+
   const [nichos, setNichos] = useState<string[]>(electorToEdit?.nichos ?? []);
   const [gpsLatitude, setGpsLatitude] = useState<number | undefined>(electorToEdit?.gpsLatitude ?? undefined);
   const [gpsLongitude, setGpsLongitude] = useState<number | undefined>(electorToEdit?.gpsLongitude ?? undefined);
@@ -147,89 +144,36 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
     setWhatsapp(formatted);
   };
 
-  const handleCpfChange = (value: string) => {
-    const numbers = value.replace(/\D/g, '');
-    let formatted = numbers;
-    if (numbers.length > 9) {
-      formatted = `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6, 9)}-${numbers.slice(9, 11)}`;
-    } else if (numbers.length > 6) {
-      formatted = `${numbers.slice(0, 3)}.${numbers.slice(3, 6)}.${numbers.slice(6)}`;
-    } else if (numbers.length > 3) {
-      formatted = `${numbers.slice(0, 3)}.${numbers.slice(3)}`;
-    }
-    setCpf(formatted);
-  };
 
-  const handleTituloEleitorChange = (value: string) => {
-    // Remove tudo que não é número
-    const numbers = value.replace(/\D/g, '');
-    // Formata XXXX XXXX XXXX (12 dígitos)
-    let formatted = numbers;
-    if (numbers.length > 8) {
-      formatted = `${numbers.slice(0, 4)} ${numbers.slice(4, 8)} ${numbers.slice(8, 12)}`;
-    } else if (numbers.length > 4) {
-      formatted = `${numbers.slice(0, 4)} ${numbers.slice(4, 8)}`;
-    }
-    setTituloEleitor(formatted);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!nome || !whatsapp || !nivelVoto || !nivelEngajamento || !cidade) {
-      alert('Preencha pelo menos: Nome, WhatsApp, Cidade, Nível de Voto e Nível de Engajamento');
+    if (!nome || !whatsapp || !dataNascimento || !nivelVoto || !nivelEngajamento || !cidade) {
+      alert('Preencha pelo menos: Nome, WhatsApp, Data de Nascimento, Cidade, Nível de Voto e Nível de Engajamento');
       return;
     }
 
-    if (cpf && cpf.replace(/\D/g, '').length !== 11) {
-      alert('CPF inválido. Deve conter 11 dígitos.');
+    // Validação Anti-Fraude (Prevenção de Duplicidade por WhatsApp)
+    const isDuplicateLocal = await db.electors.where('whatsapp').equals(whatsapp).count();
+    if (isDuplicateLocal > 0 && (!electorToEdit || electorToEdit.whatsapp !== whatsapp)) {
+      alert('Erro Anti-Fraude: Este número de WhatsApp já está cadastrado localmente.');
       return;
     }
 
-    if (tituloEleitor && tituloEleitor.replace(/\D/g, '').length !== 12) {
-      alert('Título de Eleitor inválido. Deve conter exatamente 12 dígitos.');
-      return;
-    }
-
-    // Validação Anti-Fraude (Prevenção de Duplicidade)
-    if (cpf) {
-      const isDuplicateLocal = await db.electors.where('cpf').equals(cpf).count();
-      if (isDuplicateLocal > 0 && (!electorToEdit || electorToEdit.cpf !== cpf)) {
-        alert('Erro Anti-Fraude: Este CPF já está cadastrado localmente.');
+    if (navigator.onLine && isSupabaseConfigured && supabase) {
+      const { data } = await supabase.from('eleitores').select('id').eq('whatsapp', whatsapp).limit(1);
+      if (data && data.length > 0 && (!electorToEdit || data[0].id !== electorToEdit.id)) {
+        alert('Erro Anti-Fraude: Este número de WhatsApp já está cadastrado no servidor por outro captador.');
         return;
-      }
-      
-      if (navigator.onLine && isSupabaseConfigured && supabase) {
-        const { data } = await supabase.from('eleitores').select('id').eq('cpf', cpf).limit(1);
-        if (data && data.length > 0 && (!electorToEdit || data[0].id !== electorToEdit.id)) {
-          alert('Erro Anti-Fraude: Este CPF já está cadastrado no servidor por outro captador.');
-          return;
-        }
-      }
-    }
-
-    if (tituloEleitor) {
-      const isDuplicateLocal = await db.electors.where('tituloEleitor').equals(tituloEleitor).count();
-      if (isDuplicateLocal > 0 && (!electorToEdit || electorToEdit.tituloEleitor !== tituloEleitor)) {
-        alert('Erro Anti-Fraude: Este Título de Eleitor já está cadastrado localmente.');
-        return;
-      }
-
-      if (navigator.onLine && isSupabaseConfigured && supabase) {
-        const { data } = await supabase.from('eleitores').select('id').eq('titulo_eleitor', tituloEleitor).limit(1);
-        if (data && data.length > 0 && (!electorToEdit || data[0].id !== electorToEdit.id)) {
-          alert('Erro Anti-Fraude: Este Título de Eleitor já está cadastrado no servidor por outro captador.');
-          return;
-        }
       }
     }
 
     const formData = {
       nome,
-      cpf,
       whatsapp,
       email,
-      tituloEleitor,
+      tituloEleitor: '',
       dataNascimento,
       bairro,
       cidade,
@@ -249,10 +193,8 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
       onSave(formData);
       // Limpa o formulario apenas no modo criacao
       setNome('');
-      setCpf('');
       setWhatsapp('');
       setEmail('');
-      setTituloEleitor('');
       setDataNascimento('');
       setBairro('');
       setCidade('');
@@ -316,19 +258,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              CPF
-            </label>
-            <input
-              type="text"
-              value={cpf}
-              onChange={(e) => handleCpfChange(e.target.value)}
-              className="w-full px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
-              placeholder="000.000.000-00"
-              maxLength={14}
-            />
-          </div>
+
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -363,7 +293,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Data de Nascimento
+              Data de Nascimento *
             </label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -372,33 +302,11 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
                 value={dataNascimento}
                 onChange={(e) => setDataNascimento(e.target.value)}
                 className="w-full pl-11 pr-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
+                required
               />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Titulo de Eleitor
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={tituloEleitor}
-                onChange={(e) => handleTituloEleitorChange(e.target.value)}
-                className="flex-1 px-4 py-3 text-lg border-2 border-gray-300 rounded-lg focus:border-gold-deep focus:outline-none"
-                placeholder="0000 0000 0000"
-                maxLength={14}
-              />
-              <button
-                type="button"
-                onClick={() => setShowQrScanner(true)}
-                className="px-4 py-3 bg-blue-50 border-2 border-gold-deep text-gold-deep rounded-lg hover:bg-gold/10 transition-colors flex items-center gap-1.5"
-                title="Escanear QR Code do título"
-              >
-                <Camera className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* Localização */}
@@ -676,22 +584,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
         </div>
       </form>
 
-      {showQrScanner && (
-        <QrScannerModal
-          onScan={(rawText) => {
-            let titulo = rawText;
-            try {
-              const parsed = JSON.parse(rawText);
-              titulo = parsed.numeroInscricao ?? parsed.nrTitulo ?? parsed.titulo ?? rawText;
-              if (!nome && parsed.nomeCivil) setNome(parsed.nomeCivil);
-              if (!dataNascimento && parsed.dataNascimento) setDataNascimento(parsed.dataNascimento);
-            } catch {}
-            handleTituloEleitorChange(String(titulo));
-            setShowQrScanner(false);
-          }}
-          onClose={() => setShowQrScanner(false)}
-        />
-      )}
+
     </div>
   );
 }
