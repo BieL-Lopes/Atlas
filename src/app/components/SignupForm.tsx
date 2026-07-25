@@ -174,7 +174,7 @@ export function SignupForm({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <Card className="w-full max-w-md p-6">
+      <Card className="w-full max-w-md p-6 max-h-[95vh] overflow-y-auto">
         {step === 'form' && (
           <>
             {/* Banner de Indicação */}
