@@ -65,6 +65,8 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
   const [template, setTemplate] = useState<TemplateTipo>('livre');
   const [mensagem, setMensagem] = useState('');
   const [filtros, setFiltros] = useState<Filtros>({ niveisVoto: ['forte', 'medio'], bairro: '', regiao: '' });
+  const [isIndividual, setIsIndividual] = useState(false);
+  const [individualNumber, setIndividualNumber] = useState('');
 
   // Opções únicas de bairro e região
   const bairros = useMemo(() => {
@@ -114,7 +116,11 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
       toast.error('Digite a mensagem antes de enviar');
       return;
     }
-    if (destinatarios.length === 0) {
+    if (isIndividual && individualNumber.replace(/\D/g, '').length < 10) {
+      toast.error('Digite um número de WhatsApp válido');
+      return;
+    }
+    if (!isIndividual && destinatarios.length === 0) {
       toast.error('Nenhum destinatário com os filtros selecionados');
       return;
     }
@@ -132,8 +138,8 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
         .insert({
           mensagem: mensagem.trim(),
           template_tipo: template,
-          filtros: { niveisVoto: filtros.niveisVoto, bairro: filtros.bairro || null, regiao: filtros.regiao || null },
-          total_destinatarios: destinatarios.length,
+          filtros: isIndividual ? { individual: individualNumber } : { niveisVoto: filtros.niveisVoto, bairro: filtros.bairro || null, regiao: filtros.regiao || null },
+          total_destinatarios: isIndividual ? 1 : destinatarios.length,
           remetente_id: user.id,
           remetente_nome: user.name,
           status: 'pendente',
@@ -148,7 +154,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
       }
 
       // 2. Invocar Edge Function com os números
-      const numeros = destinatarios.map(e => e.whatsapp).filter(Boolean) as string[];
+      const numeros = isIndividual ? [individualNumber] : destinatarios.map(e => e.whatsapp).filter(Boolean) as string[];
       const { error: fnErr } = await supabase.functions.invoke('send-whatsapp', {
         body: { disparo_id: disparo.id, mensagem: mensagem.trim(), numeros },
       });
@@ -177,7 +183,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4">
-      <div className="w-full sm:max-w-lg bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[92vh] flex flex-col">
+      <div className="w-full sm:max-w-lg bg-white rounded-t-2xl sm:rounded-2xl shadow-2xl max-h-[85vh] flex flex-col">
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
@@ -219,70 +225,106 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
               </div>
             </div>
 
-            {/* Filtro: Nível de Voto */}
-            <div>
-              <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Nível de apoio</p>
-              <div className="flex flex-wrap gap-2">
-                {ALL_NIVEIS.map(nivel => (
-                  <button
-                    key={nivel}
-                    onClick={() => toggleNivel(nivel)}
-                    className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
-                      filtros.niveisVoto.includes(nivel)
-                        ? NIVEL_COLORS[nivel]
-                        : 'bg-white text-gray-400 border-gray-200'
-                    }`}
-                  >
-                    {NIVEL_LABELS[nivel]}
-                  </button>
-                ))}
-              </div>
-              <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
-                <Info className="w-3 h-3" />
-                Oposição nunca incluída em disparos de campanha
-              </p>
+            {/* Toggle Tipo de Disparo */}
+            <div className="flex items-center gap-2 mb-2">
+              <label className="flex items-center cursor-pointer">
+                <div className="relative">
+                  <input type="checkbox" className="sr-only" checked={isIndividual} onChange={(e) => setIsIndividual(e.target.checked)} />
+                  <div className={`block w-10 h-6 rounded-full transition-colors ${isIndividual ? 'bg-emerald-500' : 'bg-gray-300'}`}></div>
+                  <div className={`absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform ${isIndividual ? 'transform translate-x-4' : ''}`}></div>
+                </div>
+                <div className="ml-3 text-sm font-semibold text-gray-700">
+                  Disparo Individual / Teste
+                </div>
+              </label>
             </div>
 
-            {/* Filtros: Bairro / Região */}
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Bairro</label>
-                <select
-                  value={filtros.bairro}
-                  onChange={e => setFiltros(f => ({ ...f, bairro: e.target.value }))}
+            {isIndividual ? (
+              <div className="mb-4">
+                <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Número do WhatsApp</label>
+                <input
+                  type="text"
+                  value={individualNumber}
+                  onChange={(e) => {
+                    const numbers = e.target.value.replace(/\D/g, '');
+                    let formatted = numbers;
+                    if (numbers.length > 10) formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7, 11)}`;
+                    else if (numbers.length > 6) formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+                    else if (numbers.length > 2) formatted = `(${numbers.slice(0, 2)}) ${numbers.slice(2)}`;
+                    setIndividualNumber(formatted);
+                  }}
+                  placeholder="(11) 99999-9999"
                   className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                >
-                  <option value="">Todos</option>
-                  {bairros.map(b => <option key={b} value={b}>{b}</option>)}
-                </select>
+                />
               </div>
-              <div>
-                <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Região</label>
-                <select
-                  value={filtros.regiao}
-                  onChange={e => setFiltros(f => ({ ...f, regiao: e.target.value }))}
-                  className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
-                >
-                  <option value="">Todas</option>
-                  {regioes.map(r => <option key={r} value={r}>{r}</option>)}
-                </select>
-              </div>
-            </div>
+            ) : (
+              <>
+                {/* Filtro: Nível de Voto */}
+                <div>
+                  <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Nível de apoio</p>
+                  <div className="flex flex-wrap gap-2">
+                    {ALL_NIVEIS.map(nivel => (
+                      <button
+                        key={nivel}
+                        onClick={() => toggleNivel(nivel)}
+                        className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                          filtros.niveisVoto.includes(nivel)
+                            ? NIVEL_COLORS[nivel]
+                            : 'bg-white text-gray-400 border-gray-200'
+                        }`}
+                      >
+                        {NIVEL_LABELS[nivel]}
+                      </button>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                    <Info className="w-3 h-3" />
+                    Oposição nunca incluída em disparos de campanha
+                  </p>
+                </div>
 
-            {/* Preview de destinatários */}
-            <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
-              destinatarios.length > 0
-                ? 'bg-emerald-50 border-emerald-200'
-                : 'bg-gray-50 border-gray-200'
-            }`}>
-              <Users className={`w-5 h-5 flex-shrink-0 ${destinatarios.length > 0 ? 'text-emerald-600' : 'text-gray-400'}`} />
-              <div>
-                <p className={`font-bold text-sm ${destinatarios.length > 0 ? 'text-emerald-800' : 'text-gray-500'}`}>
-                  {destinatarios.length} destinatário{destinatarios.length !== 1 ? 's' : ''}
-                </p>
-                <p className="text-xs text-gray-500">com WhatsApp opt-in ativo e filtros aplicados</p>
-              </div>
-            </div>
+                {/* Filtros: Bairro / Região */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Bairro</label>
+                    <select
+                      value={filtros.bairro}
+                      onChange={e => setFiltros(f => ({ ...f, bairro: e.target.value }))}
+                      className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    >
+                      <option value="">Todos</option>
+                      {bairros.map(b => <option key={b} value={b}>{b}</option>)}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500 uppercase block mb-1">Região</label>
+                    <select
+                      value={filtros.regiao}
+                      onChange={e => setFiltros(f => ({ ...f, regiao: e.target.value }))}
+                      className="w-full text-sm border border-gray-300 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-400"
+                    >
+                      <option value="">Todas</option>
+                      {regioes.map(r => <option key={r} value={r}>{r}</option>)}
+                    </select>
+                  </div>
+                </div>
+
+                {/* Preview de destinatários */}
+                <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border ${
+                  destinatarios.length > 0
+                    ? 'bg-emerald-50 border-emerald-200'
+                    : 'bg-gray-50 border-gray-200'
+                }`}>
+                  <Users className={`w-5 h-5 flex-shrink-0 ${destinatarios.length > 0 ? 'text-emerald-600' : 'text-gray-400'}`} />
+                  <div>
+                    <p className={`font-bold text-sm ${destinatarios.length > 0 ? 'text-emerald-800' : 'text-gray-500'}`}>
+                      {destinatarios.length} destinatário{destinatarios.length !== 1 ? 's' : ''}
+                    </p>
+                    <p className="text-xs text-gray-500">com WhatsApp opt-in ativo e filtros aplicados</p>
+                  </div>
+                </div>
+              </>
+            )}
 
             {/* Textarea */}
             <div>
@@ -310,7 +352,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                 </div>
                 <p className="text-sm text-yellow-700">
                   Você está prestes a enviar uma mensagem para{' '}
-                  <strong>{destinatarios.length} pessoa{destinatarios.length !== 1 ? 's' : ''}</strong>.
+                  <strong>{isIndividual ? 1 : destinatarios.length} pessoa{(!isIndividual && destinatarios.length !== 1) ? 's' : ''}</strong>.
                   Esta ação não pode ser desfeita.
                 </p>
               </div>
@@ -325,7 +367,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
             <div>
               <p className="font-bold text-gray-800">Enviando mensagens...</p>
               <p className="text-sm text-gray-500 mt-1">
-                Processando {destinatarios.length} destinatário{destinatarios.length !== 1 ? 's' : ''} com intervalo de segurança
+                Processando {isIndividual ? 1 : destinatarios.length} destinatário{(!isIndividual && destinatarios.length !== 1) ? 's' : ''} com intervalo de segurança
               </p>
             </div>
           </div>
@@ -363,7 +405,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                 </button>
                 <button
                   onClick={handleEnviar}
-                  disabled={destinatarios.length === 0 || !mensagem.trim()}
+                  disabled={(isIndividual ? !individualNumber : destinatarios.length === 0) || !mensagem.trim()}
                   className="flex-1 py-2.5 bg-emerald-600 text-white rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-emerald-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                 >
                   <ChevronRight className="w-4 h-4" />
