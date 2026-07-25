@@ -59,9 +59,13 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     const checkReferral = async () => {
       const params = new URLSearchParams(window.location.search);
       const refId = params.get('ref');
-      if (refId && isSupabaseConfigured && supabase) {
-        try {
-          const { data } = await supabase
+      if (refId) {
+        // Altera imediatamente o estado para forçar a renderização do formulário de cadastro
+        setSignupData({ role: 'cabo_eleitoral' });
+
+        if (isSupabaseConfigured && supabase) {
+          try {
+            const { data } = await supabase
             .from('perfis')
             .select('id, nome, regiao, deputado_id')
             .eq('id', refId)
@@ -75,15 +79,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               deputado_id: data.deputado_id
             };
             setReferrer(refData);
-            setSignupData({ role: 'cabo_eleitoral' }); // Default role para indicações
           }
         } catch (err) {
           console.error('Ref inválido ou não encontrado', err);
         }
       }
-    };
-    checkReferral();
-  }, []);
+    }
+  };
+  checkReferral();
+}, []);
 
   // Countdown timer para cooldown do rate limiter
   useEffect(() => {
@@ -170,8 +174,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
   return (
     <div className="min-h-screen bg-bg-main flex items-center justify-center p-4 text-text-primary">
-      <div className="w-full max-w-md">
-        <div className="bg-bg-card rounded-3xl shadow-2xl border border-border-gold p-8">
+      {!signupData && !showConfirmRegistration && (
+        <div className="w-full max-w-md">
+          <div className="bg-bg-card rounded-3xl shadow-2xl border border-border-gold p-8">
           {/* Logo/Título */}
           <div className="text-center mb-8">
             <div className="w-20 h-20 bg-gradient-gold rounded-full mx-auto mb-4 flex items-center justify-center shadow-gold">
@@ -285,6 +290,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           </form>
         </div>
       </div>
+      )}
 
       {/* Modal de Convite */}
       {showInviteModal && (
