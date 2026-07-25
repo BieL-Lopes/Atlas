@@ -66,10 +66,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         if (isSupabaseConfigured && supabase) {
           try {
             const { data } = await supabase
-            .from('perfis')
-            .select('id, nome, regiao, deputado_id')
-            .eq('id', refId)
-            .single();
+              .rpc('get_referrer_info', { p_id: refId })
+              .single();
           
           if (data) {
             const refData: ReferrerData = {
