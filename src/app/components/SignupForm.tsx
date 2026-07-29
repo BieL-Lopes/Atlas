@@ -417,11 +417,9 @@ export function SignupForm({
                 Participar
               </Button>
 
-              <a href="https://atlas-campaign-pulse.vercel.app/" className="w-full">
-                <Button type="button" variant="outline" className="w-full">
-                  Já sou cadastrado? Acessar
-                </Button>
-              </a>
+              <Button type="button" variant="outline" className="w-full" onClick={onCancel}>
+                Já sou cadastrado? Acessar
+              </Button>
             </div>
 
             <div className="text-center mt-6 text-sm text-gray-500">
