@@ -50,8 +50,13 @@ CREATE TABLE IF NOT EXISTS public.perfis (
   deputado_id              TEXT,
   coordenador_regional_id  UUID REFERENCES public.perfis(id),
   indicado_por             UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
+  aceitou_termos           BOOLEAN NOT NULL DEFAULT FALSE,
+  data_aceite_termos       TIMESTAMPTZ,
   created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+COMMENT ON COLUMN public.perfis.aceitou_termos IS 'LGPD: Registro de consentimento explícito do usuário aos Termos de Uso e Política de Privacidade';
+COMMENT ON COLUMN public.perfis.data_aceite_termos IS 'LGPD: Timestamp exato (imutável) do momento em que o usuário aceitou os termos';
 
 -- Funções auxiliares SECURITY DEFINER — bypassam RLS para checar role
 -- sem causar recursão infinita nas policies
@@ -175,14 +180,20 @@ CREATE TRIGGER trigger_set_criado_por_nome
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
-  INSERT INTO public.perfis (id, nome, role, regiao, deputado_id, indicado_por)
+  INSERT INTO public.perfis (id, nome, role, regiao, deputado_id, indicado_por, aceitou_termos, data_aceite_termos)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
     COALESCE(NEW.raw_user_meta_data->>'role', 'cabo_eleitoral'),
     NEW.raw_user_meta_data->>'regiao',
     NEW.raw_user_meta_data->>'deputado_id',
-    (NEW.raw_user_meta_data->>'indicado_por')::UUID
+    (NEW.raw_user_meta_data->>'indicado_por')::UUID,
+    COALESCE((NEW.raw_user_meta_data->>'aceitou_termos')::boolean, false),
+    CASE
+      WHEN NEW.raw_user_meta_data->>'data_aceite_termos' IS NOT NULL
+      THEN (NEW.raw_user_meta_data->>'data_aceite_termos')::timestamptz
+      ELSE NULL
+    END
   )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;

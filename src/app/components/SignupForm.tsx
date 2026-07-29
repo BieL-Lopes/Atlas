@@ -52,6 +52,7 @@ export function SignupForm({
   const [confirmaSenha, setConfirmaSenha] = useState('');
   const [showSenha, setShowSenha] = useState(false);
   const [showConfirma, setShowConfirma] = useState(false);
+  const [aceitouTermos, setAceitouTermos] = useState(false);
 
   const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -92,6 +93,10 @@ export function SignupForm({
       setErrorMessage('Senhas não conferem');
       return;
     }
+    if (!aceitouTermos) {
+      setErrorMessage('Você precisa aceitar os termos para continuar.');
+      return;
+    }
 
     // Rate limit check
     if (!signupLimiter.canAttempt()) {
@@ -120,7 +125,9 @@ export function SignupForm({
             role,
             regiao: referrer?.regiao,
             deputado_id: referrer?.deputado_id,
-            indicado_por: referrer?.id
+            indicado_por: referrer?.id,
+            aceitou_termos: true,
+            data_aceite_termos: new Date().toISOString()
           }
         }
       });
@@ -296,6 +303,30 @@ export function SignupForm({
                   {showConfirma ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+            </div>
+
+            {/* LGPD Consent Checkbox */}
+            <div className="flex items-start gap-3 pt-1">
+              <input
+                type="checkbox"
+                id="aceitou-termos"
+                checked={aceitouTermos}
+                onChange={(e) => { setAceitouTermos(e.target.checked); setErrorMessage(''); }}
+                disabled={step !== 'form'}
+                className="mt-1 h-4 w-4 rounded border-gray-300 text-gold-deep focus:ring-gold accent-amber-600 cursor-pointer flex-shrink-0"
+              />
+              <label htmlFor="aceitou-termos" className="text-xs text-gray-600 leading-relaxed cursor-pointer select-none">
+                Li e concordo com os{' '}
+                <a
+                  href="/termos"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gold-deep font-semibold underline hover:text-gold transition-colors"
+                >
+                  Termos de Uso e Política de Privacidade
+                </a>
+                , e aceito receber comunicações da campanha via WhatsApp.
+              </label>
             </div>
 
             {errorMessage && (
