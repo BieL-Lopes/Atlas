@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff, User as UserIcon } from 'lucide-react';
+import { ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff, User as UserIcon, UserPlus } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { LocationFields } from './LocationFields';
 import { Button } from './ui/button';
@@ -411,22 +411,18 @@ export function SignupForm({
               </div>
             )}
 
-            <div className="pt-4">
-              <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="w-full h-12 bg-[#635BFF] hover:bg-[#534BEB] text-white rounded-lg text-lg font-medium">
+            <div className="pt-4 flex flex-col gap-3">
+              <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="w-full h-12 bg-[#635BFF] hover:bg-[#534BEB] text-white rounded-lg text-lg font-medium flex items-center justify-center gap-2">
+                <UserPlus className="w-5 h-5" />
                 Participar
               </Button>
-            </div>
-            <div className="text-center mt-4 pt-4 border-t border-gray-100">
-              <p className="text-sm text-gray-600">
-                Já sou cadastrado?{' '}
-                <button 
-                  type="button" 
-                  onClick={onCancel}
-                  className="text-gold-deep font-semibold hover:underline bg-transparent border-none p-0 cursor-pointer"
-                >
-                  Acessar
-                </button>
-              </p>
+
+              <a 
+                href="https://atlas-campaign-pulse.vercel.app/"
+                className="w-full h-12 bg-[#1B873B] hover:bg-[#167332] text-white rounded-lg text-lg font-medium flex items-center justify-center decoration-transparent"
+              >
+                Já sou cadastrado? Acessar
+              </a>
             </div>
           </form>
           </>
