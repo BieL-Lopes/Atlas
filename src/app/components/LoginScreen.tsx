@@ -323,6 +323,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       {/* Tela de Confirmação Pós-Cadastro */}
       {showConfirmRegistration && (
         <ConfirmRegistrationScreen 
+          referrerName={referrer?.nome}
           onContinue={() => {
             setShowConfirmRegistration(false);
             setSignupData(null);

@@ -1,6 +1,6 @@
 # Product Requirements Document — ATLAS
 
-**Versão:** 1.0 | **Status:** Em Produção | **Última Atualização:** Jun/2026
+**Versão:** 1.0 | **Status:** Em Produção | **Última Atualização:** Jul/2026
 
 ---
 
@@ -143,11 +143,33 @@ Uma plataforma unificada que integra:
 |--------|-----------|--------|
 | **Tabela Invites** | `invites` com `chave_unica` (6 caracteres), `role`, `usado`, `usado_por`, `usado_em`, criado_em — RLS: público lê não-usadas, service_role gerencia | ✅ |
 | **Modal de Convite** | UI: pede código, valida contra BD, exibe role confirmado se válido — step-by-step onboarding | ✅ |
-| **Signup Form** | Nome, CPF (validação), E-mail, Senha — cria user em Supabase Auth + perfil + marca invite como usado | ✅ |
+| **Signup Form (Convite)** | Nome, CPF (validação), E-mail, Senha — cria user em Supabase Auth + perfil + marca invite como usado | ✅ |
 | **Botão "Primeiro Acesso"** | LoginScreen: novo botão ao lado de "Esqueci Senha" para disparar fluxo de convite | ✅ |
 | **Local Push Notifications** | Utility `notificationScheduler.ts`: agenda notificações nativas do navegador/Android sem hits ao banco | ✅ |
 | **Reminders de Agenda** | AgendaScreen integrada: dispara notificação local 30min antes de cada atividade de hoje (reunião/visita) | ✅ |
 | **Permissão Notification API** | Request automático ao abrir aba Agenda; aviso visual se negada | ✅ |
+
+---
+
+### 3.5.6 Fase 5.6 — Cadastro Público via Link (✅ CONCLUÍDO)
+
+**Escopo:** Fluxo de cadastro público acessível por URL compartilhável, sem necessidade de código de convite.
+
+| Função | Descrição | Status |
+|--------|-----------|--------|
+| **URL Pública de Cadastro** | Rota `/cadastro?ref={id_do_captador}&role={papel}` acessível sem login — captador compartilha link único | ✅ |
+| **Identificação do Referenciador** | Ao abrir o link, o sistema busca os dados do captador (`indicado_por`) e exibe banner personalizado: "*{Nome}* convidou você a participar" | ✅ |
+| **Campos Obrigatórios no Cadastro** | Nome Completo*, WhatsApp*, E-mail*, Nascimento*, Sexo*, Estado (UF)*, Município* e Bairro* — todos marcados com asterisco | ✅ |
+| **Componente LocationFields** | Componente compartilhado `LocationFields.tsx` com lógica IBGE: carrega estados via API, carrega municípios dinamicamente ao selecionar UF, campo Bairro livre. Layout: Estado + Município na mesma linha, Bairro abaixo. Reutilizado em `SignupForm` e `CaptureForm` | ✅ |
+| **Validação de Localização via IBGE** | Lista de estados e municípios carregada dinamicamente da API pública do IBGE (`servicodados.ibge.gov.br`). DF tem município fixo (Brasília). | ✅ |
+| **Metadados Salvos no Supabase Auth** | `nome`, `whatsapp`, `role`, `deputado_id`, `indicado_por`, `estado`, `municipio`, `bairro`, `sexo`, `data_nascimento`, `aceitou_termos`, `data_aceite_termos` | ✅ |
+| **Trigger `handle_new_user`** | Trigger no banco copia `user_metadata` para a tabela `perfis` automaticamente no INSERT de auth.users — inclui `estado`, `municipio` e `bairro` | ✅ |
+| **Aceite LGPD Obrigatório** | Checkbox de aceite dos Termos de Uso e Política de Privacidade — botão "Participar" fica desabilitado até ser marcado | ✅ |
+| **Detecção de E-mail Duplicado** | Quando Supabase retorna `identities: []`, o sistema exibe: "Este e-mail já está cadastrado. Clique em 'Já sou cadastrado? Acessar' para fazer login." | ✅ |
+| **Erro de Convite Não Bloqueia** | O update do convite no banco roda em `try/catch` isolado — falha silenciosa para não abortar o cadastro | ✅ |
+| **Botão "Já sou cadastrado? Acessar"** | Fecha o formulário e redireciona para a tela de login do portal | ✅ |
+| **Rodapé Identidade Visual** | "Base Política. Desenvolvido por Atlas" com link para `https://atlas-campaign-pulse.vercel.app/` e linha de copyright | ✅ |
+| **Confirmação de E-mail (Supabase)** | Supabase Auth envia e-mail de confirmação automaticamente. Rate limit: 4 emails/hora no plano free. Para desabilitar (temporariamente durante testes): Authentication → Providers → Email → desmarcar "Confirm email" | ⚠️ Configurar conforme ambiente |
 
 ---
 
@@ -281,16 +303,57 @@ Uma plataforma unificada que integra:
 
 ```sql
 -- Usuários (auth via Supabase Auth + profiles)
-profiles (id UUID, name, role, regiao, deputadoId, coordenadorRegionalId)
+perfis (
+  id UUID PRIMARY KEY,          -- auth.users.id
+  nome TEXT,
+  role TEXT,                    -- administrador | coordenador | lideranca | colaborador | cabo_eleitoral
+  regiao TEXT,
+  deputado_id TEXT,
+  coordenador_regional_id UUID,
+  indicado_por UUID,
+  aceitou_termo BOOLEAN,
+  data_aceite_termo TIMESTAMPTZ,
+  data_nascimento TEXT,
+  sexo TEXT,
+  estado TEXT,                  -- UF (ex: "DF", "GO")
+  municipio TEXT,               -- Nome do município (via IBGE)
+  bairro TEXT,
+  created_at TIMESTAMPTZ
+)
 
--- Dados
-electors (id UUID, name, cpf, whatsapp, titulo_eleitor, bairro, regiao, 
-          nivel_voto, engajamento, nichos, gps_lat, gps_lon, 
-          aceita_whatsapp, score, created_by, created_at, updated_at)
+-- Dados de Eleitores
+eleitores (
+  id TEXT PRIMARY KEY,
+  nome TEXT,
+  cpf TEXT,
+  whatsapp TEXT,
+  email TEXT,
+  titulo_eleitor TEXT,
+  data_nascimento TEXT,
+  bairro TEXT,
+  cidade TEXT,
+  nivel_voto TEXT,
+  nivel_engajamento TEXT,
+  nichos TEXT[],
+  gps_latitude DOUBLE PRECISION,
+  gps_longitude DOUBLE PRECISION,
+  aceita_whatsapp BOOLEAN,
+  observacoes TEXT,
+  regiao TEXT,
+  atendimentos JSONB,
+  criado_por UUID,
+  criado_por_nome TEXT,
+  deputado_id TEXT,
+  data_cadastro TIMESTAMPTZ,
+  atualizado_em TIMESTAMPTZ
+)
+
+-- Convites
+invites (chave_unica TEXT PK, role TEXT, usado BOOLEAN, usado_por UUID, usado_em TIMESTAMPTZ, criado_em TIMESTAMPTZ)
 
 -- Interatividade
 agenda (id UUID, title, date, location, created_by, created_at, updated_at)
-polls (id UUID, title, options JSON, elector_responses JSON, created_by, created_at, updated_at)
+pols (id UUID, title, options JSON, elector_responses JSON, created_by, created_at, updated_at)
 comunicados (id UUID, message, sender_id, created_at)
 
 -- WhatsApp
@@ -496,5 +559,5 @@ Não (v2.0). Roadmap: multi-tenant architecture (Q1 2027).
 
 ---
 
-**Documento PRD v2.0 — Jun 2026**
+**Documento PRD v2.1 — Jul 2026**
 *Mantido por: Equipe Atlas*
