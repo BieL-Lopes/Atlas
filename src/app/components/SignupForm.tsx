@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle, User as UserIcon } from 'lucide-react';
+import { ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff, User as UserIcon } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { LocationFields } from './LocationFields';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -320,64 +321,16 @@ export function SignupForm({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="estado" className="text-sm font-medium">
-                  Estado (UF)
-                </Label>
-                <select
-                  id="estado"
-                  value={estado}
-                  onChange={(e) => setEstado(e.target.value)}
-                  disabled={step !== 'form'}
-                  className="flex h-9 w-full min-w-0 rounded-md border border-input bg-input-background px-3 py-1 text-base transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-                >
-                  <option value="" disabled>UF</option>
-                  <option value="AC">AC</option><option value="AL">AL</option>
-                  <option value="AP">AP</option><option value="AM">AM</option>
-                  <option value="BA">BA</option><option value="CE">CE</option>
-                  <option value="DF">DF</option><option value="ES">ES</option>
-                  <option value="GO">GO</option><option value="MA">MA</option>
-                  <option value="MT">MT</option><option value="MS">MS</option>
-                  <option value="MG">MG</option><option value="PA">PA</option>
-                  <option value="PB">PB</option><option value="PR">PR</option>
-                  <option value="PE">PE</option><option value="PI">PI</option>
-                  <option value="RJ">RJ</option><option value="RN">RN</option>
-                  <option value="RS">RS</option><option value="RO">RO</option>
-                  <option value="RR">RR</option><option value="SC">SC</option>
-                  <option value="SP">SP</option><option value="SE">SE</option>
-                  <option value="TO">TO</option>
-                </select>
-              </div>
-
-              <div>
-                <Label htmlFor="municipio" className="text-sm font-medium">
-                  Município
-                </Label>
-                <Input
-                  id="municipio"
-                  type="text"
-                  placeholder="Sua cidade"
-                  value={municipio}
-                  onChange={(e) => setMunicipio(e.target.value)}
-                  disabled={step !== 'form'}
-                />
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="bairro" className="text-sm font-medium">
-                Bairro
-              </Label>
-              <Input
-                id="bairro"
-                type="text"
-                placeholder="Seu bairro"
-                value={bairro}
-                onChange={(e) => setBairro(e.target.value)}
-                disabled={step !== 'form'}
-              />
-            </div>
+            <LocationFields 
+              uf={estado}
+              setUf={setEstado}
+              cidade={municipio}
+              setCidade={setMunicipio}
+              bairro={bairro}
+              setBairro={setBairro}
+              disabled={step !== 'form'}
+              theme="auth"
+            />
 
             <div>
               <Label htmlFor="senha" className="text-sm font-medium">
