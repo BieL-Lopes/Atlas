@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS public.perfis (
   sexo                     TEXT,
   estado                   TEXT,
   municipio                TEXT,
+  bairro                   TEXT,
   created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -184,7 +185,7 @@ CREATE TRIGGER trigger_set_criado_por_nome
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
-  INSERT INTO public.perfis (id, nome, role, regiao, deputado_id, indicado_por, aceitou_termos, data_aceite_termos, data_nascimento, sexo, estado, municipio)
+  INSERT INTO public.perfis (id, nome, role, regiao, deputado_id, indicado_por, aceitou_termos, data_aceite_termos, data_nascimento, sexo, estado, municipio, bairro)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
@@ -205,7 +206,8 @@ BEGIN
     END,
     NEW.raw_user_meta_data->>'sexo',
     NEW.raw_user_meta_data->>'estado',
-    NEW.raw_user_meta_data->>'municipio'
+    NEW.raw_user_meta_data->>'municipio',
+    NEW.raw_user_meta_data->>'bairro'
   )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;

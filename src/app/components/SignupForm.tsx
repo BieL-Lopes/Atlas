@@ -448,7 +448,7 @@ export function SignupForm({
               >
                 Cancelar
               </Button>
-              <Button type="submit" disabled={step !== 'form'} className="flex-1">
+              <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="flex-1">
                 Criar Conta
               </Button>
             </div>
