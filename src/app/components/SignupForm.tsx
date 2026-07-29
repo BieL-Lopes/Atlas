@@ -250,7 +250,7 @@ export function SignupForm({
 
             <div>
               <Label htmlFor="nome" className="text-sm font-medium">
-                Nome Completo
+                Nome Completo *
               </Label>
               <Input
                 id="nome"
@@ -263,7 +263,7 @@ export function SignupForm({
 
             <div>
               <Label htmlFor="whatsapp" className="text-sm font-medium">
-                WhatsApp
+                WhatsApp *
               </Label>
               <Input
                 id="whatsapp"
@@ -276,7 +276,7 @@ export function SignupForm({
 
             <div>
               <Label htmlFor="email" className="text-sm font-medium">
-                E-mail
+                E-mail *
               </Label>
               <Input
                 id="email"
@@ -291,7 +291,7 @@ export function SignupForm({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label htmlFor="dataNascimento" className="text-sm font-medium">
-                  Nascimento
+                  Nascimento *
                 </Label>
                 <Input
                   id="dataNascimento"
@@ -304,7 +304,7 @@ export function SignupForm({
 
               <div>
                 <Label htmlFor="sexo" className="text-sm font-medium">
-                  Sexo
+                  Sexo *
                 </Label>
                 <select
                   id="sexo"
@@ -334,7 +334,7 @@ export function SignupForm({
 
             <div>
               <Label htmlFor="senha" className="text-sm font-medium">
-                Senha
+                Senha *
               </Label>
               <div className="relative">
                 <Input
@@ -358,7 +358,7 @@ export function SignupForm({
 
             <div>
               <Label htmlFor="confirma" className="text-sm font-medium">
-                Confirmar Senha
+                Confirmar Senha *
               </Label>
               <div className="relative">
                 <Input
@@ -411,19 +411,22 @@ export function SignupForm({
               </div>
             )}
 
-            <div className="flex gap-3 pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={onCancel}
-                disabled={step !== 'form'}
-                className="flex-1"
-              >
-                Cancelar
+            <div className="pt-4">
+              <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="w-full h-12 bg-[#635BFF] hover:bg-[#534BEB] text-white rounded-lg text-lg font-medium">
+                Participar
               </Button>
-              <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="flex-1">
-                Criar Conta
-              </Button>
+            </div>
+            <div className="text-center mt-4 pt-4 border-t border-gray-100">
+              <p className="text-sm text-gray-600">
+                Já sou cadastrado?{' '}
+                <button 
+                  type="button" 
+                  onClick={onCancel}
+                  className="text-gold-deep font-semibold hover:underline bg-transparent border-none p-0 cursor-pointer"
+                >
+                  Acessar
+                </button>
+              </p>
             </div>
           </form>
           </>

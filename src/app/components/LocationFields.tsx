@@ -92,33 +92,33 @@ export function LocationFields({
         </div>
 
         <div>
-          <label className={labelClass}>Bairro *</label>
-          <input
-            type="text"
-            value={bairro}
-            onChange={(e) => setBairro(e.target.value)}
+          <label className={labelClass}>Município *</label>
+          <select
+            value={cidade}
+            onChange={(e) => setCidade(e.target.value)}
             className={inputClass}
-            placeholder="Seu bairro"
             required
-            disabled={disabled}
-          />
+            disabled={disabled || !uf || uf === 'DF' || loadingMunicipios}
+          >
+            <option value="" disabled>{loadingMunicipios ? 'Carregando...' : 'Selecione...'}</option>
+            {municipios.map(m => (
+              <option key={m.id} value={m.nome}>{m.nome}</option>
+            ))}
+          </select>
         </div>
       </div>
 
       <div>
-        <label className={labelClass}>Município *</label>
-        <select
-          value={cidade}
-          onChange={(e) => setCidade(e.target.value)}
+        <label className={labelClass}>Bairro *</label>
+        <input
+          type="text"
+          value={bairro}
+          onChange={(e) => setBairro(e.target.value)}
           className={inputClass}
+          placeholder="Seu bairro"
           required
-          disabled={disabled || !uf || uf === 'DF' || loadingMunicipios}
-        >
-          <option value="" disabled>{loadingMunicipios ? 'Carregando...' : 'Selecione...'}</option>
-          {municipios.map(m => (
-            <option key={m.id} value={m.nome}>{m.nome}</option>
-          ))}
-        </select>
+          disabled={disabled}
+        />
       </div>
     </div>
   );
