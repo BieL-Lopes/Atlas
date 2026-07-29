@@ -57,6 +57,7 @@ export function SignupForm({
   const [sexo, setSexo] = useState('');
   const [estado, setEstado] = useState('');
   const [municipio, setMunicipio] = useState('');
+  const [bairro, setBairro] = useState('');
 
   const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -117,6 +118,10 @@ export function SignupForm({
       setErrorMessage('Município é obrigatório');
       return;
     }
+    if (!bairro.trim()) {
+      setErrorMessage('Bairro é obrigatório');
+      return;
+    }
 
     // Rate limit check
     if (!signupLimiter.canAttempt()) {
@@ -151,7 +156,8 @@ export function SignupForm({
             data_nascimento: dataNascimento,
             sexo,
             estado,
-            municipio
+            municipio,
+            bairro
           }
         }
       });
@@ -357,6 +363,20 @@ export function SignupForm({
                   disabled={step !== 'form'}
                 />
               </div>
+            </div>
+
+            <div>
+              <Label htmlFor="bairro" className="text-sm font-medium">
+                Bairro
+              </Label>
+              <Input
+                id="bairro"
+                type="text"
+                placeholder="Seu bairro"
+                value={bairro}
+                onChange={(e) => setBairro(e.target.value)}
+                disabled={step !== 'form'}
+              />
             </div>
 
             <div>
