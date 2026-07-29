@@ -42,7 +42,7 @@ const DEFAULT_SETTINGS: SystemSettings = {
   }
 };
 
-const SETTINGS_KEY = 'politiqui_settings';
+const SETTINGS_KEY = 'atlas_settings';
 
 export function getSystemSettings(): SystemSettings {
   try {
