@@ -53,6 +53,8 @@ export function SignupForm({
   const [showSenha, setShowSenha] = useState(false);
   const [showConfirma, setShowConfirma] = useState(false);
   const [aceitouTermos, setAceitouTermos] = useState(false);
+  const [dataNascimento, setDataNascimento] = useState('');
+  const [sexo, setSexo] = useState('');
 
   const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -97,6 +99,14 @@ export function SignupForm({
       setErrorMessage('Você precisa aceitar os termos para continuar.');
       return;
     }
+    if (!dataNascimento) {
+      setErrorMessage('Data de nascimento é obrigatória');
+      return;
+    }
+    if (!sexo) {
+      setErrorMessage('Sexo é obrigatório');
+      return;
+    }
 
     // Rate limit check
     if (!signupLimiter.canAttempt()) {
@@ -127,7 +137,9 @@ export function SignupForm({
             deputado_id: referrer?.deputado_id,
             indicado_por: referrer?.id,
             aceitou_termos: true,
-            data_aceite_termos: new Date().toISOString()
+            data_aceite_termos: new Date().toISOString(),
+            data_nascimento: dataNascimento,
+            sexo
           }
         }
       });
@@ -255,6 +267,39 @@ export function SignupForm({
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={step !== 'form'}
               />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="dataNascimento" className="text-sm font-medium">
+                  Nascimento
+                </Label>
+                <Input
+                  id="dataNascimento"
+                  type="date"
+                  value={dataNascimento}
+                  onChange={(e) => setDataNascimento(e.target.value)}
+                  disabled={step !== 'form'}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="sexo" className="text-sm font-medium">
+                  Sexo
+                </Label>
+                <select
+                  id="sexo"
+                  value={sexo}
+                  onChange={(e) => setSexo(e.target.value)}
+                  disabled={step !== 'form'}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="" disabled>Selecione...</option>
+                  <option value="masculino">Masculino</option>
+                  <option value="feminino">Feminino</option>
+                  <option value="outro">Outro / Prefiro não informar</option>
+                </select>
+              </div>
             </div>
 
             <div>

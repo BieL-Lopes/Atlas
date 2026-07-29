@@ -52,6 +52,8 @@ CREATE TABLE IF NOT EXISTS public.perfis (
   indicado_por             UUID REFERENCES public.perfis(id) ON DELETE SET NULL,
   aceitou_termos           BOOLEAN NOT NULL DEFAULT FALSE,
   data_aceite_termos       TIMESTAMPTZ,
+  data_nascimento          DATE,
+  sexo                     TEXT,
   created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
@@ -180,7 +182,7 @@ CREATE TRIGGER trigger_set_criado_por_nome
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
 BEGIN
-  INSERT INTO public.perfis (id, nome, role, regiao, deputado_id, indicado_por, aceitou_termos, data_aceite_termos)
+  INSERT INTO public.perfis (id, nome, role, regiao, deputado_id, indicado_por, aceitou_termos, data_aceite_termos, data_nascimento, sexo)
   VALUES (
     NEW.id,
     COALESCE(NEW.raw_user_meta_data->>'name', NEW.email),
@@ -193,7 +195,13 @@ BEGIN
       WHEN NEW.raw_user_meta_data->>'data_aceite_termos' IS NOT NULL
       THEN (NEW.raw_user_meta_data->>'data_aceite_termos')::timestamptz
       ELSE NULL
-    END
+    END,
+    CASE
+      WHEN NEW.raw_user_meta_data->>'data_nascimento' IS NOT NULL AND NEW.raw_user_meta_data->>'data_nascimento' != ''
+      THEN (NEW.raw_user_meta_data->>'data_nascimento')::DATE
+      ELSE NULL
+    END,
+    NEW.raw_user_meta_data->>'sexo'
   )
   ON CONFLICT (id) DO NOTHING;
   RETURN NEW;
