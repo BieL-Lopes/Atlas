@@ -55,6 +55,8 @@ export function SignupForm({
   const [aceitouTermos, setAceitouTermos] = useState(false);
   const [dataNascimento, setDataNascimento] = useState('');
   const [sexo, setSexo] = useState('');
+  const [estado, setEstado] = useState('');
+  const [municipio, setMunicipio] = useState('');
 
   const handleWhatsappChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
@@ -107,6 +109,14 @@ export function SignupForm({
       setErrorMessage('Sexo é obrigatório');
       return;
     }
+    if (!estado) {
+      setErrorMessage('Estado (UF) é obrigatório');
+      return;
+    }
+    if (!municipio.trim()) {
+      setErrorMessage('Município é obrigatório');
+      return;
+    }
 
     // Rate limit check
     if (!signupLimiter.canAttempt()) {
@@ -139,7 +149,9 @@ export function SignupForm({
             aceitou_termos: true,
             data_aceite_termos: new Date().toISOString(),
             data_nascimento: dataNascimento,
-            sexo
+            sexo,
+            estado,
+            municipio
           }
         }
       });
@@ -292,13 +304,58 @@ export function SignupForm({
                   value={sexo}
                   onChange={(e) => setSexo(e.target.value)}
                   disabled={step !== 'form'}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex h-9 w-full min-w-0 rounded-md border border-input bg-input-background px-3 py-1 text-base transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
                 >
                   <option value="" disabled>Selecione...</option>
                   <option value="masculino">Masculino</option>
                   <option value="feminino">Feminino</option>
                   <option value="outro">Outro / Prefiro não informar</option>
                 </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="estado" className="text-sm font-medium">
+                  Estado (UF)
+                </Label>
+                <select
+                  id="estado"
+                  value={estado}
+                  onChange={(e) => setEstado(e.target.value)}
+                  disabled={step !== 'form'}
+                  className="flex h-9 w-full min-w-0 rounded-md border border-input bg-input-background px-3 py-1 text-base transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                >
+                  <option value="" disabled>UF</option>
+                  <option value="AC">AC</option><option value="AL">AL</option>
+                  <option value="AP">AP</option><option value="AM">AM</option>
+                  <option value="BA">BA</option><option value="CE">CE</option>
+                  <option value="DF">DF</option><option value="ES">ES</option>
+                  <option value="GO">GO</option><option value="MA">MA</option>
+                  <option value="MT">MT</option><option value="MS">MS</option>
+                  <option value="MG">MG</option><option value="PA">PA</option>
+                  <option value="PB">PB</option><option value="PR">PR</option>
+                  <option value="PE">PE</option><option value="PI">PI</option>
+                  <option value="RJ">RJ</option><option value="RN">RN</option>
+                  <option value="RS">RS</option><option value="RO">RO</option>
+                  <option value="RR">RR</option><option value="SC">SC</option>
+                  <option value="SP">SP</option><option value="SE">SE</option>
+                  <option value="TO">TO</option>
+                </select>
+              </div>
+
+              <div>
+                <Label htmlFor="municipio" className="text-sm font-medium">
+                  Município
+                </Label>
+                <Input
+                  id="municipio"
+                  type="text"
+                  placeholder="Sua cidade"
+                  value={municipio}
+                  onChange={(e) => setMunicipio(e.target.value)}
+                  disabled={step !== 'form'}
+                />
               </div>
             </div>
 
