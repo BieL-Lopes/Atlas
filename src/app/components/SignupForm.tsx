@@ -412,17 +412,33 @@ export function SignupForm({
             )}
 
             <div className="pt-4 flex flex-col gap-3">
-              <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="w-full h-12 bg-[#635BFF] hover:bg-[#534BEB] text-white rounded-lg text-lg font-medium flex items-center justify-center gap-2">
+              <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="w-full flex items-center justify-center gap-2">
                 <UserPlus className="w-5 h-5" />
                 Participar
               </Button>
 
-              <a 
-                href="https://atlas-campaign-pulse.vercel.app/"
-                className="w-full h-12 bg-[#1B873B] hover:bg-[#167332] text-white rounded-lg text-lg font-medium flex items-center justify-center decoration-transparent"
-              >
-                Já sou cadastrado? Acessar
+              <a href="https://atlas-campaign-pulse.vercel.app/" className="w-full">
+                <Button type="button" variant="outline" className="w-full">
+                  Já sou cadastrado? Acessar
+                </Button>
               </a>
+            </div>
+
+            <div className="text-center mt-6 text-sm text-gray-500">
+              <p>
+                Base Política. Desenvolvido por{' '}
+                <a 
+                  href="https://atlas-campaign-pulse.vercel.app/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-blue-600 font-semibold hover:underline"
+                >
+                  Atlas
+                </a>
+              </p>
+              <p className="mt-1 text-xs">
+                Todos os direitos reservados @ Atlas {new Date().getFullYear()}
+              </p>
             </div>
           </form>
           </>
