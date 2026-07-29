@@ -318,7 +318,7 @@ export function SignupForm({
               <label htmlFor="aceitou-termos" className="text-xs text-gray-600 leading-relaxed cursor-pointer select-none">
                 Li e concordo com os{' '}
                 <a
-                  href="/termos"
+                  href="/termos.html"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gold-deep font-semibold underline hover:text-gold transition-colors"
