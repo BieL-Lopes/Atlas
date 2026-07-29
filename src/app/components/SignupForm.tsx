@@ -175,6 +175,11 @@ export function SignupForm({
         throw new Error(msg);
       }
 
+      // Quando identities vem vazio, significa que o e-mail já existe na base
+      if (authData.user && authData.user.identities && authData.user.identities.length === 0) {
+        throw new Error('Este e-mail já está cadastrado. Clique em "Já sou cadastrado? Acessar" para fazer login.');
+      }
+
       if (!authData.user) {
         throw new Error('Não foi possível criar a conta. Servidor não retornou os dados.');
       }
