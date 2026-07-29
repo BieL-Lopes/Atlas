@@ -45,7 +45,7 @@ export function SignupForm({
 }: SignupFormProps) {
   const [step, setStep] = useState<'form' | 'loading' | 'success' | 'error'>('form');
   const [errorMessage, setErrorMessage] = useState('');
-  
+
   const [nome, setNome] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [email, setEmail] = useState('');
@@ -185,27 +185,26 @@ export function SignupForm({
       }
 
       // Marca o convite como usado (apenas se existir inviteKey)
+      // Erro aqui não deve bloquear o cadastro
       if (inviteKey) {
-        const { error: inviteError } = await supabase
-          .from('invites')
-          .update({
-            usado: true,
-            usado_por: authData.user.id,
-            usado_em: new Date().toISOString()
-          })
-          .eq('chave_unica', inviteKey);
-
-        if (inviteError) {
-          console.error('Erro ao marcar convite como usado:', inviteError);
+        try {
+          await supabase
+            .from('invites')
+            .update({
+              usado: true,
+              usado_por: authData.user.id,
+              usado_em: new Date().toISOString()
+            })
+            .eq('chave_unica', inviteKey);
+        } catch (inviteErr) {
+          console.error('Erro ao marcar convite como usado:', inviteErr);
         }
       }
-
-
 
       signupLimiter.reset();
       setStep('success');
       setTimeout(() => {
-        onSignupComplete(true, 'Conta criada com sucesso! Faça login com seu CPF e senha.');
+        onSignupComplete(true, 'Conta criada! Verifique os próximos passos.');
       }, 2000);
     } catch (err: unknown) {
       console.error('Signup error:', err);
@@ -253,197 +252,197 @@ export function SignupForm({
                 </p>
               </div>
 
-            <div>
-              <Label htmlFor="nome" className="text-sm font-medium">
-                Nome Completo *
-              </Label>
-              <Input
-                id="nome"
-                placeholder="João Silva"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
-                disabled={step !== 'form'}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="whatsapp" className="text-sm font-medium">
-                WhatsApp *
-              </Label>
-              <Input
-                id="whatsapp"
-                placeholder="(00) 00000-0000"
-                value={whatsapp}
-                onChange={handleWhatsappChange}
-                disabled={step !== 'form'}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="email" className="text-sm font-medium">
-                E-mail *
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={step !== 'form'}
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="dataNascimento" className="text-sm font-medium">
-                  Nascimento *
+                <Label htmlFor="nome" className="text-sm font-medium">
+                  Nome Completo *
                 </Label>
                 <Input
-                  id="dataNascimento"
-                  type="date"
-                  value={dataNascimento}
-                  onChange={(e) => setDataNascimento(e.target.value)}
+                  id="nome"
+                  placeholder="João Silva"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
                   disabled={step !== 'form'}
                 />
               </div>
 
               <div>
-                <Label htmlFor="sexo" className="text-sm font-medium">
-                  Sexo *
+                <Label htmlFor="whatsapp" className="text-sm font-medium">
+                  WhatsApp *
                 </Label>
-                <select
-                  id="sexo"
-                  value={sexo}
-                  onChange={(e) => setSexo(e.target.value)}
-                  disabled={step !== 'form'}
-                  className="flex h-9 w-full min-w-0 rounded-md border border-input bg-input-background px-3 py-1 text-base transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-                >
-                  <option value="" disabled>Selecione...</option>
-                  <option value="masculino">Masculino</option>
-                  <option value="feminino">Feminino</option>
-                  <option value="outro">Outro / Prefiro não informar</option>
-                </select>
-              </div>
-            </div>
-
-            <LocationFields 
-              uf={estado}
-              setUf={setEstado}
-              cidade={municipio}
-              setCidade={setMunicipio}
-              bairro={bairro}
-              setBairro={setBairro}
-              disabled={step !== 'form'}
-              theme="auth"
-            />
-
-            <div>
-              <Label htmlFor="senha" className="text-sm font-medium">
-                Senha *
-              </Label>
-              <div className="relative">
                 <Input
-                  id="senha"
-                  type={showSenha ? 'text' : 'password'}
-                  placeholder="Mínimo 6 caracteres"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
+                  id="whatsapp"
+                  placeholder="(00) 00000-0000"
+                  value={whatsapp}
+                  onChange={handleWhatsappChange}
                   disabled={step !== 'form'}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowSenha(!showSenha)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  disabled={step !== 'form'}
-                >
-                  {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="confirma" className="text-sm font-medium">
-                Confirmar Senha *
-              </Label>
-              <div className="relative">
+              <div>
+                <Label htmlFor="email" className="text-sm font-medium">
+                  E-mail *
+                </Label>
                 <Input
-                  id="confirma"
-                  type={showConfirma ? 'text' : 'password'}
-                  placeholder="Repita a senha"
-                  value={confirmaSenha}
-                  onChange={(e) => setConfirmaSenha(e.target.value)}
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   disabled={step !== 'form'}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirma(!showConfirma)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
-                  disabled={step !== 'form'}
-                >
-                  {showConfirma ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
               </div>
-            </div>
 
-            {/* LGPD Consent Checkbox */}
-            <div className="flex items-start gap-3 pt-1">
-              <input
-                type="checkbox"
-                id="aceitou-termos"
-                checked={aceitouTermos}
-                onChange={(e) => { setAceitouTermos(e.target.checked); setErrorMessage(''); }}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="dataNascimento" className="text-sm font-medium">
+                    Nascimento *
+                  </Label>
+                  <Input
+                    id="dataNascimento"
+                    type="date"
+                    value={dataNascimento}
+                    onChange={(e) => setDataNascimento(e.target.value)}
+                    disabled={step !== 'form'}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="sexo" className="text-sm font-medium">
+                    Sexo *
+                  </Label>
+                  <select
+                    id="sexo"
+                    value={sexo}
+                    onChange={(e) => setSexo(e.target.value)}
+                    disabled={step !== 'form'}
+                    className="flex h-9 w-full min-w-0 rounded-md border border-input bg-input-background px-3 py-1 text-base transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
+                  >
+                    <option value="" disabled>Selecione...</option>
+                    <option value="masculino">Masculino</option>
+                    <option value="feminino">Feminino</option>
+                    <option value="outro">Outro / Prefiro não informar</option>
+                  </select>
+                </div>
+              </div>
+
+              <LocationFields
+                uf={estado}
+                setUf={setEstado}
+                cidade={municipio}
+                setCidade={setMunicipio}
+                bairro={bairro}
+                setBairro={setBairro}
                 disabled={step !== 'form'}
-                className="mt-1 h-4 w-4 rounded border-gray-300 text-gold-deep focus:ring-gold accent-amber-600 cursor-pointer flex-shrink-0"
+                theme="auth"
               />
-              <label htmlFor="aceitou-termos" className="text-xs text-gray-600 leading-relaxed cursor-pointer select-none">
-                Li e concordo com os{' '}
-                <a
-                  href="/termos.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gold-deep font-semibold underline hover:text-gold transition-colors"
-                >
-                  Termos de Uso e Política de Privacidade
-                </a>
-                , e aceito receber comunicações da campanha via WhatsApp.
-              </label>
-            </div>
 
-            {errorMessage && (
-              <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded">
-                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-600">{errorMessage}</p>
+              <div>
+                <Label htmlFor="senha" className="text-sm font-medium">
+                  Senha *
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="senha"
+                    type={showSenha ? 'text' : 'password'}
+                    placeholder="Mínimo 6 caracteres"
+                    value={senha}
+                    onChange={(e) => setSenha(e.target.value)}
+                    disabled={step !== 'form'}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowSenha(!showSenha)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    disabled={step !== 'form'}
+                  >
+                    {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
               </div>
-            )}
 
-            <div className="pt-4 flex flex-col gap-3">
-              <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="w-full flex items-center justify-center gap-2">
-                <UserPlus className="w-5 h-5" />
-                Participar
-              </Button>
+              <div>
+                <Label htmlFor="confirma" className="text-sm font-medium">
+                  Confirmar Senha *
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="confirma"
+                    type={showConfirma ? 'text' : 'password'}
+                    placeholder="Repita a senha"
+                    value={confirmaSenha}
+                    onChange={(e) => setConfirmaSenha(e.target.value)}
+                    disabled={step !== 'form'}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirma(!showConfirma)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    disabled={step !== 'form'}
+                  >
+                    {showConfirma ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
 
-              <Button type="button" variant="outline" className="w-full" onClick={onCancel}>
-                Já sou cadastrado? Acessar
-              </Button>
-            </div>
+              {/* LGPD Consent Checkbox */}
+              <div className="flex items-start gap-3 pt-1">
+                <input
+                  type="checkbox"
+                  id="aceitou-termos"
+                  checked={aceitouTermos}
+                  onChange={(e) => { setAceitouTermos(e.target.checked); setErrorMessage(''); }}
+                  disabled={step !== 'form'}
+                  className="mt-1 h-4 w-4 rounded border-gray-300 text-gold-deep focus:ring-gold accent-amber-600 cursor-pointer flex-shrink-0"
+                />
+                <label htmlFor="aceitou-termos" className="text-xs text-gray-600 leading-relaxed cursor-pointer select-none">
+                  Li e concordo com os{' '}
+                  <a
+                    href="/termos.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-gold-deep font-semibold underline hover:text-gold transition-colors"
+                  >
+                    Termos de Uso e Política de Privacidade
+                  </a>
+                  , e aceito receber comunicações da campanha via WhatsApp.
+                </label>
+              </div>
 
-            <div className="text-center mt-6 text-sm text-gray-500">
-              <p>
-                Base Política. Desenvolvido por{' '}
-                <a 
-                  href="https://atlas-campaign-pulse.vercel.app/" 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="text-blue-600 font-semibold hover:underline"
-                >
-                  Atlas
-                </a>
-              </p>
-              <p className="mt-1 text-xs">
-                Todos os direitos reservados @ Atlas {new Date().getFullYear()}
-              </p>
-            </div>
-          </form>
+              {errorMessage && (
+                <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded">
+                  <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-600">{errorMessage}</p>
+                </div>
+              )}
+
+              <div className="pt-4 flex flex-col gap-3">
+                <Button type="submit" disabled={step !== 'form' || !aceitouTermos} className="w-full flex items-center justify-center gap-2">
+                  <UserPlus className="w-5 h-5" />
+                  Participar
+                </Button>
+
+                <Button type="button" variant="outline" className="w-full" onClick={onCancel}>
+                  Já sou cadastrado? Acessar
+                </Button>
+              </div>
+
+              <div className="text-center mt-6 text-sm text-gray-500">
+                <p>
+                  Base Política. Desenvolvido por{' '}
+                  <a
+                    href="https://atlas-campaign-pulse.vercel.app/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 font-semibold hover:underline"
+                  >
+                    Atlas
+                  </a>
+                </p>
+                <p className="mt-1 text-xs">
+                  Todos os direitos reservados @ Atlas {new Date().getFullYear()}
+                </p>
+              </div>
+            </form>
           </>
         )}
 
