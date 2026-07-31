@@ -123,7 +123,7 @@ export function RegionCompareScreen({ electors }: Props) {
 
   if (regioes.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+      <div className="flex flex-col items-center justify-center py-16 text-gray-500">
         <GitCompare className="w-12 h-12 mb-3 opacity-40" />
         <p className="font-medium">Nenhum eleitor cadastrado ainda.</p>
       </div>

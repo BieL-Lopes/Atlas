@@ -70,21 +70,21 @@ export function CaptadorResultsScreen({ user, electors, onLogout, onViewRoute }:
                 ? <span style={{ color: RANK_COLORS[myRank - 1] }}>{RANK_LABELS[myRank - 1]}</span>
                 : myRank === 999 ? '-' : `#${myRank}`}
             </p>
-            <p className="text-xs text-gray-400 mt-0.5">Ranking</p>
+            <p className="text-xs text-gray-500 mt-0.5">Ranking</p>
           </div>
 
           {/* Streak */}
           <div className="bg-white rounded-2xl shadow p-4 flex flex-col items-center justify-center">
             <Flame className={`w-6 h-6 mb-1 transition-all ${myStreak > 0 ? 'text-orange-500 scale-110 animate-pulse' : 'text-gray-300'}`} />
             <p className="text-2xl font-bold text-gray-900">{myStreak}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Dias seguidos</p>
+            <p className="text-xs text-gray-500 mt-0.5">Dias seguidos</p>
           </div>
 
           {/* Total */}
           <div className="bg-white rounded-2xl shadow p-4 flex flex-col items-center justify-center">
             <Star className="w-6 h-6 text-gold-deep mb-1" />
             <p className="text-2xl font-bold text-gray-900">{myTotal}</p>
-            <p className="text-xs text-gray-400 mt-0.5">Total</p>
+            <p className="text-xs text-gray-500 mt-0.5">Total</p>
           </div>
         </div>
 
@@ -119,10 +119,10 @@ export function CaptadorResultsScreen({ user, electors, onLogout, onViewRoute }:
             </div>
             <div className="text-left">
               <p className="font-semibold text-gray-900 text-sm">Minha Rota</p>
-              <p className="text-xs text-gray-400">Histórico de check-ins no mapa</p>
+              <p className="text-xs text-gray-500">Histórico de check-ins no mapa</p>
             </div>
           </div>
-          <ChevronUp className="w-4 h-4 text-gray-400 rotate-90" />
+          <ChevronUp className="w-4 h-4 text-gray-500 rotate-90" />
         </button>
 
         {/* Medalhas */}
@@ -141,10 +141,10 @@ export function CaptadorResultsScreen({ user, electors, onLogout, onViewRoute }:
                   }`}
                 >
                   <span className="text-2xl mb-1">{medal.icon}</span>
-                  <p className={`text-xs font-bold text-center ${earned ? 'text-gray-900' : 'text-gray-400'}`}>
+                  <p className={`text-xs font-bold text-center ${earned ? 'text-gray-900' : 'text-gray-500'}`}>
                     {medal.label}
                   </p>
-                  <p className="text-xs text-gray-400">{medal.desc}</p>
+                  <p className="text-xs text-gray-500">{medal.desc}</p>
                 </div>
               );
             })}

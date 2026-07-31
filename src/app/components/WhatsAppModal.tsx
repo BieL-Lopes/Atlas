@@ -196,7 +196,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
               <p className="text-xs text-gray-500">Apenas eleitores com opt-in ativo</p>
             </div>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-400">
+          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -277,14 +277,14 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                         className={`px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
                           filtros.niveisVoto.includes(nivel)
                             ? NIVEL_COLORS[nivel]
-                            : 'bg-white text-gray-400 border-gray-200'
+                            : 'bg-white text-gray-500 border-gray-200'
                         }`}
                       >
                         {NIVEL_LABELS[nivel]}
                       </button>
                     ))}
                   </div>
-                  <p className="text-xs text-gray-400 mt-1.5 flex items-center gap-1">
+                  <p className="text-xs text-gray-500 mt-1.5 flex items-center gap-1">
                     <Info className="w-3 h-3" />
                     Oposição nunca incluída em disparos de campanha
                   </p>
@@ -322,7 +322,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
                     ? 'bg-emerald-50 border-emerald-200'
                     : 'bg-gray-50 border-gray-200'
                 }`}>
-                  <Users className={`w-5 h-5 flex-shrink-0 ${destinatarios.length > 0 ? 'text-emerald-600' : 'text-gray-400'}`} />
+                  <Users className={`w-5 h-5 flex-shrink-0 ${destinatarios.length > 0 ? 'text-emerald-600' : 'text-gray-500'}`} />
                   <div>
                     <p className={`font-bold text-sm ${destinatarios.length > 0 ? 'text-emerald-800' : 'text-gray-500'}`}>
                       {destinatarios.length} destinatário{destinatarios.length !== 1 ? 's' : ''}
@@ -337,7 +337,7 @@ export function WhatsAppModal({ user, electors, onClose, onSent }: Props) {
             <div>
               <div className="flex justify-between items-center mb-1.5">
                 <p className="text-xs font-semibold text-gray-500 uppercase">Mensagem</p>
-                <p className={`text-xs ${mensagem.length > 900 ? 'text-red-500' : 'text-gray-400'}`}>
+                <p className={`text-xs ${mensagem.length > 900 ? 'text-red-500' : 'text-gray-500'}`}>
                   {mensagem.length}/1000
                 </p>
               </div>

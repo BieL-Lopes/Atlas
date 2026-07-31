@@ -71,7 +71,7 @@ export function AuditLogsScreen({ user }: Props) {
         </div>
         <div className="flex items-center gap-2 mt-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
             <input
               type="text"
               value={searchTerm}
@@ -151,7 +151,7 @@ export function AuditLogsScreen({ user }: Props) {
           <p className="text-sm text-gray-500">
             {totalCount.toLocaleString('pt-BR')} registro{totalCount !== 1 ? 's' : ''} encontrado{totalCount !== 1 ? 's' : ''}
           </p>
-          <div className="flex items-center gap-1 text-xs text-gray-400">
+          <div className="flex items-center gap-1 text-xs text-gray-500">
             <Clock className="w-3 h-3" />
             Imutável
           </div>
@@ -166,7 +166,7 @@ export function AuditLogsScreen({ user }: Props) {
           <div className="bg-white rounded-xl shadow p-12 text-center">
             <FileText className="w-12 h-12 mx-auto mb-3 text-gray-300" />
             <p className="text-gray-500">Nenhum log encontrado</p>
-            <p className="text-xs text-gray-400 mt-1">Ajuste os filtros ou aguarde novas ações</p>
+            <p className="text-xs text-gray-500 mt-1">Ajuste os filtros ou aguarde novas ações</p>
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow overflow-hidden">
@@ -182,7 +182,7 @@ export function AuditLogsScreen({ user }: Props) {
                         </div>
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-gray-900 truncate">{log.userName || 'Sistema'}</p>
-                          <p className="text-xs text-gray-400">{formatDate(log.createdAt)}</p>
+                          <p className="text-xs text-gray-500">{formatDate(log.createdAt)}</p>
                         </div>
                       </div>
                       <span className={`flex-shrink-0 px-2.5 py-0.5 text-xs font-semibold rounded-full border ${badge.style}`}>
@@ -193,7 +193,7 @@ export function AuditLogsScreen({ user }: Props) {
                       <p className="text-sm text-gray-700">
                         <span className="font-medium">{log.entity}</span>
                         {log.entityId && (
-                          <span className="text-gray-400 ml-1 text-xs">#{log.entityId.slice(0, 8)}</span>
+                          <span className="text-gray-500 ml-1 text-xs">#{log.entityId.slice(0, 8)}</span>
                         )}
                       </p>
                       {log.details && Object.keys(log.details).length > 0 && (

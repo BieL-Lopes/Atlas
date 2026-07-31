@@ -74,7 +74,7 @@ export function QrScannerModal({ onScan, onClose }: Props) {
         <div id={READER_ID} className="w-full" />
 
         {!cameraReady && (
-          <div className="flex items-center justify-center h-32 text-gray-400 text-sm gap-2">
+          <div className="flex items-center justify-center h-32 text-gray-500 text-sm gap-2">
             <Camera className="w-4 h-4 animate-pulse" />
             Iniciando câmera...
           </div>

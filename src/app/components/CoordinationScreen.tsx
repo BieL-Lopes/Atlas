@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, lazy, Suspense } from 'react';
 import { Users, Target, Download, ChevronDown, ChevronRight, UserCheck, GitCompare, Megaphone, Trophy, Flame, MapPin, Map, TrendingUp, Calendar } from 'lucide-react';
 import { User } from '../lib/auth';
 import { ElectorData } from './CaptureForm';
@@ -7,7 +7,7 @@ import { ComunicadoModal } from './ComunicadoModal';
 import { buildRanking, MEDALS } from '../lib/gamification';
 import { avgScore } from '../lib/score';
 import { CheckinMapScreen } from './CheckinMapScreen';
-import { HeatmapScreen } from './HeatmapScreen';
+const HeatmapScreen = lazy(() => import('./HeatmapScreen').then(m => ({ default: m.HeatmapScreen })));
 
 interface Props {
   user: User;
@@ -92,7 +92,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
           )}
 
           {captadores.length === 0 ? (
-            <div className="bg-white rounded-xl shadow p-8 text-center text-gray-400">
+            <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
               <Users className="w-12 h-12 mx-auto mb-3 opacity-40" />
               <p>Nenhum captador vinculado a você ainda.</p>
             </div>
@@ -114,17 +114,17 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                         <div>
                           <p className="font-semibold text-gray-900">{c.name}</p>
                           {last ? (
-                            <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
+                            <p className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                               <Calendar className="w-3 h-3" />
                               Último: {new Date(last).toLocaleDateString('pt-BR')}
                             </p>
                           ) : (
-                            <p className="text-xs text-gray-400 mt-0.5">Nenhum cadastro ainda</p>
+                            <p className="text-xs text-gray-500 mt-0.5">Nenhum cadastro ainda</p>
                           )}
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-gold-deep text-lg">{count}</p>
-                          <p className="text-xs text-gray-400">{p}% da meta</p>
+                          <p className="text-xs text-gray-500">{p}% da meta</p>
                         </div>
                       </div>
                       <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
@@ -250,7 +250,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
       {coordTab === 'ranking' && (
         <div className="p-4">
           {ranking.length === 0 ? (
-            <div className="bg-white rounded-xl shadow p-8 text-center text-gray-400">
+            <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
               <Trophy className="w-12 h-12 mx-auto mb-3 opacity-30" />
               <p>Nenhum captador cadastrado ainda.</p>
             </div>
@@ -276,7 +276,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-900 truncate">{entry.name}</p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-500">
                           {entry.earnedMedalIds.map(id => MEDALS.find(m => m.id === id)?.icon).join(' ')}
                           {entry.streak > 0 && (
                             <span className="ml-1">
@@ -287,7 +287,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                       </div>
                       <div className="text-right shrink-0">
                         <p className="font-bold text-gold-deep">{entry.total}</p>
-                        <p className="text-xs text-gray-400">hoje: {entry.today}</p>
+                        <p className="text-xs text-gray-500">hoje: {entry.today}</p>
                       </div>
                     </div>
                   );
@@ -312,7 +312,9 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
       {/* Aba Heatmap */}
       {coordTab === 'heatmap' && (
         <div className="h-[calc(100vh-220px)]">
-          <HeatmapScreen electors={electors} users={users} />
+          <Suspense fallback={<div className="flex h-full items-center justify-center text-gray-500">Carregando mapa...</div>}>
+            <HeatmapScreen electors={electors} users={users} />
+          </Suspense>
         </div>
       )}
 
@@ -334,7 +336,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
               <p className="text-sm text-gray-500">Total Eleitores</p>
             </div>
             <p className="text-2xl font-bold text-gray-900">{grandTotal}</p>
-            <p className="text-xs text-gray-400">Meta: {grandTarget}</p>
+            <p className="text-xs text-gray-500">Meta: {grandTarget}</p>
           </div>
           <div className="bg-white rounded-xl shadow p-4">
             <div className="flex items-center gap-2 mb-1">
@@ -344,7 +346,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
             <p className="text-2xl font-bold text-emerald-600">
               {grandTarget > 0 ? Math.round((grandTotal / grandTarget) * 100) : 0}%
             </p>
-            <p className="text-xs text-gray-400">da meta geral</p>
+            <p className="text-xs text-gray-500">da meta geral</p>
           </div>
           {(() => {
             const score = avgScore(electors);
@@ -362,7 +364,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div className="h-2 rounded-full transition-all" style={{ width: `${score}%`, backgroundColor: color }} />
                 </div>
-                <p className="text-xs text-gray-400 mt-1">Engajamento {label} — média de {electors.length} eleitor{electors.length !== 1 ? 'es' : ''}</p>
+                <p className="text-xs text-gray-500 mt-1">Engajamento {label} — média de {electors.length} eleitor{electors.length !== 1 ? 'es' : ''}</p>
               </div>
             );
           })()}
@@ -403,11 +405,11 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                   <div className="flex items-center gap-3">
                     <div className="text-right">
                       <p className="font-bold text-gold-deep">{regionTotal}</p>
-                      <p className="text-xs text-gray-400">{regionPct}%</p>
+                      <p className="text-xs text-gray-500">{regionPct}%</p>
                     </div>
                     {isOpen
-                      ? <ChevronDown className="w-5 h-5 text-gray-400" />
-                      : <ChevronRight className="w-5 h-5 text-gray-400" />}
+                      ? <ChevronDown className="w-5 h-5 text-gray-500" />
+                      : <ChevronRight className="w-5 h-5 text-gray-500" />}
                   </div>
                 </button>
 
@@ -422,7 +424,7 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                 {isOpen && (
                   <div className="border-t border-gray-100 divide-y divide-gray-50">
                     {captadores.length === 0 ? (
-                      <p className="p-4 text-sm text-gray-400 text-center">Nenhum captador nesta região.</p>
+                      <p className="p-4 text-sm text-gray-500 text-center">Nenhum captador nesta região.</p>
                     ) : (
                       captadores.map(c => {
                         const count = countByCaptador(c.id);
@@ -434,16 +436,16 @@ export function CoordinationScreen({ user, electors, users, canExport }: Props) 
                               <div>
                                 <p className="font-medium text-gray-800 text-sm">{c.name}</p>
                                 {last ? (
-                                  <p className="text-xs text-gray-400">
+                                  <p className="text-xs text-gray-500">
                                     Último: {new Date(last).toLocaleDateString('pt-BR')}
                                   </p>
                                 ) : (
-                                  <p className="text-xs text-gray-400">Nenhum cadastro</p>
+                                  <p className="text-xs text-gray-500">Nenhum cadastro</p>
                                 )}
                               </div>
                               <div className="text-right">
                                 <p className="font-bold text-gold-deep">{count}</p>
-                                <p className="text-xs text-gray-400">{p}%</p>
+                                <p className="text-xs text-gray-500">{p}%</p>
                               </div>
                             </div>
                             <div className="w-full h-1.5 bg-gray-100 rounded-full overflow-hidden">

@@ -39,6 +39,7 @@ export default function App() {
   const [selectedElector, setSelectedElector] = useState<ElectorData | null>(null);
   const [electorToEdit, setElectorToEdit] = useState<ElectorData | null>(null);
   const [showImportModal, setShowImportModal] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
   const { isOnline, pendingCount, refreshCount, syncedAt } = useSync();
 
   const captadorStats = useMemo(() => {
@@ -75,51 +76,55 @@ export default function App() {
   // Carrega dados do IndexedDB na inicialização (com migração do localStorage)
   useEffect(() => {
     const loadData = async () => {
-      const savedUser = localStorage.getItem('atlas_user');
-      if (savedUser) {
-        // Valida que existe uma sessão Supabase ativa para o projeto atual
-        let sessionValid = true;
-        if (isSupabaseConfigured && supabase) {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (!session) {
-            // Sessão expirada ou de projeto diferente — força novo login
-            localStorage.removeItem('atlas_user');
-            sessionValid = false;
+      try {
+        const savedUser = localStorage.getItem('atlas_user');
+        if (savedUser) {
+          // Valida que existe uma sessão Supabase ativa para o projeto atual
+          let sessionValid = true;
+          if (isSupabaseConfigured && supabase) {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+              // Sessão expirada ou de projeto diferente — força novo login
+              localStorage.removeItem('atlas_user');
+              sessionValid = false;
+            }
+          }
+          if (sessionValid) {
+            setUser(JSON.parse(savedUser));
+            setCurrentScreen('home');
           }
         }
-        if (sessionValid) {
-          setUser(JSON.parse(savedUser));
-          setCurrentScreen('home');
+
+        // Migração one-time: move dados do localStorage para IndexedDB
+        const lsElectors = localStorage.getItem('atlas_electors');
+        if (lsElectors) {
+          const parsed: ElectorData[] = JSON.parse(lsElectors);
+          const migrated = parsed.map(e => ({
+            createdBy: 'desconhecido',
+            createdByName: 'Desconhecido',
+            statusFunil: 'contato' as const,
+            ...e,
+          }));
+          await db.electors.bulkPut(migrated);
+          localStorage.removeItem('atlas_electors');
         }
-      }
 
-      // Migração one-time: move dados do localStorage para IndexedDB
-      const lsElectors = localStorage.getItem('atlas_electors');
-      if (lsElectors) {
-        const parsed: ElectorData[] = JSON.parse(lsElectors);
-        const migrated = parsed.map(e => ({
-          createdBy: 'desconhecido',
-          createdByName: 'Desconhecido',
-          statusFunil: 'contato' as const,
-          ...e,
-        }));
-        await db.electors.bulkPut(migrated);
-        localStorage.removeItem('atlas_electors');
-      }
+        const all = await db.electors.orderBy('dataCadastro').reverse().toArray();
+        setElectors(all);
 
-      const all = await db.electors.orderBy('dataCadastro').reverse().toArray();
-      setElectors(all);
-
-      // Busca usuários do Supabase somente se já há sessão ativa
-      if (savedUser) {
-        await fetchUsers();
-        // Pull imediato ao carregar: garante que o app mostra dados do servidor
-        // sem precisar de page refresh (especialmente quando Dexie está vazio)
-        if (isSupabaseConfigured) {
-          await pullChanges();
-          const synced = await db.electors.orderBy('dataCadastro').reverse().toArray();
-          setElectors(synced);
+        // Busca usuários do Supabase somente se já há sessão ativa
+        if (savedUser) {
+          await fetchUsers();
+          // Pull imediato ao carregar: garante que o app mostra dados do servidor
+          // sem precisar de page refresh (especialmente quando Dexie está vazio)
+          if (isSupabaseConfigured) {
+            await pullChanges();
+            const synced = await db.electors.orderBy('dataCadastro').reverse().toArray();
+            setElectors(synced);
+          }
         }
+      } finally {
+        setIsInitializing(false);
       }
     };
     loadData();
@@ -309,6 +314,28 @@ export default function App() {
     setSelectedElector(elector);
     setCurrentScreen('profile');
   };
+
+  if (isInitializing) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col p-4 space-y-4 pt-10">
+        <div className="flex items-center space-x-4 mb-4">
+          <div className="w-16 h-16 bg-gray-200 rounded-full animate-pulse"></div>
+          <div className="space-y-2">
+            <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-3 w-24 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+        <div className="h-32 bg-gray-200 rounded-xl animate-pulse"></div>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="h-24 bg-gray-200 rounded-xl animate-pulse"></div>
+          <div className="h-24 bg-gray-200 rounded-xl animate-pulse"></div>
+        </div>
+        <div className="h-48 bg-gray-200 rounded-xl animate-pulse mt-8"></div>
+        <div className="flex-1"></div>
+        <div className="h-16 bg-gray-200 rounded-xl animate-pulse"></div>
+      </div>
+    );
+  }
 
   const handleUpdateElector = async (updatedElector: ElectorData) => {
     const updated = { ...updatedElector, updatedAt: new Date().toISOString() };

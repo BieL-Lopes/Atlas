@@ -268,7 +268,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               WhatsApp *
             </label>
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
                 type="tel"
                 value={whatsapp}
@@ -299,7 +299,7 @@ export function CaptureForm({ onBack, onSave, electorToEdit, onUpdate, onImportC
               Data de Nascimento *
             </label>
             <div className="relative">
-              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
               <input
                 type="date"
                 value={dataNascimento}

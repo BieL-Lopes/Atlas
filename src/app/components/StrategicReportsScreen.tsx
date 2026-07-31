@@ -190,23 +190,23 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
               <div className="p-4 border-b border-gray-100 flex items-center gap-2">
                 <Users className="w-5 h-5 text-gold-deep" />
                 <h2 className="font-bold text-gray-900">Produtividade por Captador</h2>
-                <span className="text-xs text-gray-400 ml-auto">Meta diária: {META_DIARIA}</span>
+                <span className="text-xs text-gray-500 ml-auto">Meta diária: {META_DIARIA}</span>
               </div>
               <div className="divide-y divide-gray-100">
                 {captadorData.length === 0 ? (
-                  <p className="p-6 text-center text-gray-400 text-sm">Nenhum captador cadastrado</p>
+                  <p className="p-6 text-center text-gray-500 text-sm">Nenhum captador cadastrado</p>
                 ) : (
                   captadorData.map(c => (
                     <div key={c.id} className="p-4">
                       <div className="flex items-center justify-between mb-2">
                         <div>
                           <p className="font-semibold text-gray-900 text-sm">{c.name}</p>
-                          <p className="text-xs text-gray-400">{c.regiao}</p>
+                          <p className="text-xs text-gray-500">{c.regiao}</p>
                         </div>
                         <div className="flex items-center gap-3">
                           <div className="text-right">
                             <p className="text-sm font-bold text-gold-deep">{c.today}/{c.metaDiaria}</p>
-                            <p className="text-xs text-gray-400">hoje</p>
+                            <p className="text-xs text-gray-500">hoje</p>
                           </div>
                           <div className={`px-2 py-1 rounded-lg text-xs font-bold ${barColor(c.pctDiaria)}`}>
                             {c.pctDiaria}%
@@ -257,7 +257,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
 
             <div className="space-y-2">
               {coordData.length === 0 ? (
-                <div className="bg-white rounded-xl shadow p-8 text-center text-gray-400">
+                <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
                   <Target className="w-12 h-12 mx-auto mb-3 opacity-40" />
                   <p>Nenhum coordenador regional cadastrado</p>
                 </div>
@@ -277,9 +277,9 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                         <div className="flex items-center gap-3">
                           <div className="text-right">
                             <p className="font-bold text-gold-deep">{rc.somaContatos}</p>
-                            <p className="text-xs text-gray-400">{rc.pctEquipe}%</p>
+                            <p className="text-xs text-gray-500">{rc.pctEquipe}%</p>
                           </div>
-                          {isOpen ? <ChevronDown className="w-5 h-5 text-gray-400" /> : <ChevronRight className="w-5 h-5 text-gray-400" />}
+                          {isOpen ? <ChevronDown className="w-5 h-5 text-gray-500" /> : <ChevronRight className="w-5 h-5 text-gray-500" />}
                         </div>
                       </button>
                       <div className="px-4 pb-3">
@@ -290,17 +290,17 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                       {isOpen && (
                         <div className="border-t border-gray-100 divide-y divide-gray-50">
                           {rc.captadores.length === 0 ? (
-                            <p className="p-4 text-sm text-gray-400 text-center">Nenhum captador</p>
+                            <p className="p-4 text-sm text-gray-500 text-center">Nenhum captador</p>
                           ) : (
                             rc.captadores.map(c => (
                               <div key={c.id} className="px-6 py-3 flex items-center justify-between">
                                 <div>
                                   <p className="text-sm font-medium text-gray-800">{c.name}</p>
-                                  <p className="text-xs text-gray-400">Hoje: {c.today}</p>
+                                  <p className="text-xs text-gray-500">Hoje: {c.today}</p>
                                 </div>
                                 <div className="text-right">
                                   <p className="font-bold text-gold-deep">{c.total}</p>
-                                  <p className="text-xs text-gray-400">{Math.round((c.total / META_TOTAL_CAPTADOR) * 100)}%</p>
+                                  <p className="text-xs text-gray-500">{Math.round((c.total / META_TOTAL_CAPTADOR) * 100)}%</p>
                                 </div>
                               </div>
                             ))
@@ -347,7 +347,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                         <div className="flex items-center gap-3 py-0.5">
                           <span className="w-6" />
                           <span className="w-28" />
-                          <div className="flex items-center gap-1 text-xs text-gray-400">
+                          <div className="flex items-center gap-1 text-xs text-gray-500">
                             <ArrowRight className="w-3 h-3" />
                             <span>
                               {funilData[i + 1].conversionRate}% conversão
@@ -391,7 +391,7 @@ export function StrategicReportsScreen({ user, electors, users }: Props) {
                     <div key={f.status} className="p-4 flex items-center justify-between">
                       <div className="flex items-center gap-2 text-sm">
                         <span>{prev.icon} {prev.label}</span>
-                        <ArrowRight className="w-4 h-4 text-gray-400" />
+                        <ArrowRight className="w-4 h-4 text-gray-500" />
                         <span>{f.icon} {f.label}</span>
                       </div>
                       <div className={`px-2.5 py-1 rounded-lg text-xs font-bold ${

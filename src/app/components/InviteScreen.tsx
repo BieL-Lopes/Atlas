@@ -1,5 +1,6 @@
+import { lazy, Suspense } from 'react';
 import { User } from '../lib/auth';
-import { InviteShareModule } from './InviteShareModule';
+const InviteShareModule = lazy(() => import('./InviteShareModule').then(m => ({ default: m.InviteShareModule })));
 import { Users } from 'lucide-react';
 
 interface InviteScreenProps {
@@ -19,12 +20,14 @@ export function InviteScreen({ user }: InviteScreenProps) {
 
       <div className="px-4 space-y-6">
         {/* Módulo Principal de Indicação */}
-        <InviteShareModule user={user} />
+        <Suspense fallback={<div className="animate-pulse bg-gray-200 h-16 rounded-xl"></div>}>
+          <InviteShareModule user={user} />
+        </Suspense>
 
         {/* Em Breve: Lista da Rede */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 text-center">
           <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Users className="w-8 h-8 text-gray-400" />
+            <Users className="w-8 h-8 text-gray-500" />
           </div>
           <h3 className="font-bold text-gray-900 mb-2">Membros Indicados</h3>
           <p className="text-sm text-gray-500">

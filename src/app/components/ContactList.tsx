@@ -235,7 +235,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
         {/* Barra de Busca e Botão de Filtros */}
         <div className="flex gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
             <input
               type="text"
               value={searchTerm}
@@ -362,7 +362,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
         {filteredContacts.length === 0 ? (
           <div className="text-center py-12">
             <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-              <Search className="w-10 h-10 text-gray-400" />
+              <Search className="w-10 h-10 text-gray-500" />
             </div>
             <p className="text-gray-600">
               {searchTerm ? 'Nenhum contato encontrado' : 'Nenhum contato cadastrado ainda'}
@@ -473,7 +473,7 @@ export function ContactList({ contacts, onBack, onDelete, onViewProfile, onAdd }
                   </div>
                 )}
 
-                <div className="text-xs text-gray-400 mt-2">
+                <div className="text-xs text-gray-500 mt-2">
                   Cadastrado em {formatDate(contact.dataCadastro)}
                 </div>
               </div>

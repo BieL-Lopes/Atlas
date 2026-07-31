@@ -164,11 +164,11 @@ export function HeatmapScreen({ electors, users }: Props) {
       {/* ── Mapa ou estado vazio ── */}
       <div className="flex-1 relative min-h-0">
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-400 px-8 text-center">
+          <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-500 px-8 text-center">
             <MapPin className="w-14 h-14 text-gray-200" />
             <p className="font-medium text-gray-600">Nenhum ponto com localização</p>
             {totalWithoutGPS > 0 && (
-              <p className="text-xs leading-5 text-gray-400">
+              <p className="text-xs leading-5 text-gray-500">
                 {totalWithoutGPS} eleitor{totalWithoutGPS !== 1 ? 'es' : ''} sem GPS.<br />
                 A localização é capturada ao cadastrar com acesso à localização ativo.
               </p>
@@ -248,7 +248,7 @@ export function HeatmapScreen({ electors, users }: Props) {
             );
           })}
           {totalWithoutGPS > 0 && (
-            <div className="ml-auto flex items-center gap-1 text-xs text-gray-400 shrink-0">
+            <div className="ml-auto flex items-center gap-1 text-xs text-gray-500 shrink-0">
               <MapPin className="w-3 h-3" />
               {totalWithoutGPS} sem GPS
             </div>

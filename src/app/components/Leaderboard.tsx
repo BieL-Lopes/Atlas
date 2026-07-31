@@ -71,7 +71,7 @@ export function Leaderboard({ tenantId, currentUserId }: LeaderboardProps) {
               rankIcon = <Medal className="w-6 h-6 text-yellow-500" />;
             } else if (entry.rank === 2) {
               rankStyles = "bg-gray-50/50 border-l-4 border-gray-400";
-              rankIcon = <Medal className="w-6 h-6 text-gray-400" />;
+              rankIcon = <Medal className="w-6 h-6 text-gray-500" />;
             } else if (entry.rank === 3) {
               rankStyles = "bg-orange-50/50 border-l-4 border-orange-500";
               rankIcon = <Medal className="w-6 h-6 text-orange-500" />;

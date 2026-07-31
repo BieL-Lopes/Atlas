@@ -54,14 +54,14 @@ export function ModalShell({
             </div>
             <div>
               <h2 className="font-bold text-gray-900">{title}</h2>
-              {subtitle && <p className="text-xs text-gray-400">{subtitle}</p>}
+              {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
             </div>
           </div>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
           >
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 

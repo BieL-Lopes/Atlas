@@ -112,14 +112,14 @@ export function InsightsPanel({ electors, users }: Props) {
                     <span title="Forte" className="text-emerald-600">{r.forte}✓</span>
                     <span title="Indeciso" className="text-yellow-600">{r.indeciso}?</span>
                     <span title="Oposição" className="text-red-600">{r.oposicao}✗</span>
-                    <span className="text-gray-400">/{r.total}</span>
+                    <span className="text-gray-500">/{r.total}</span>
                   </div>
                 </div>
                 <RiskBar value={r.riskScore} />
               </div>
             ))}
           </div>
-          <p className="text-xs text-gray-400 mt-3 flex items-center gap-1">
+          <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
             <TrendingUp className="w-3.5 h-3.5" />
             Score de risco: ponderação de fracos, indecisos e oposição
           </p>
@@ -151,7 +151,7 @@ export function InsightsPanel({ electors, users }: Props) {
       )}
 
       {electors.length === 0 && (
-        <div className="text-center py-12 text-gray-400">
+        <div className="text-center py-12 text-gray-500">
           <Bell className="w-12 h-12 mx-auto mb-3 opacity-30" />
           <p className="font-medium">Nenhum eleitor cadastrado ainda</p>
           <p className="text-sm mt-1">Os alertas aparecerão conforme os dados forem inseridos</p>

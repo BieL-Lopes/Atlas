@@ -153,7 +153,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
         <div className="bg-white rounded-2xl shadow-lg p-5 border border-gray-100">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">Seu QR pessoal</p>
+              <p className="text-xs text-gray-500 font-medium uppercase tracking-wide">Seu QR pessoal</p>
               <p className="font-semibold text-gray-800 text-sm">Use para check-in em eventos</p>
             </div>
             <button
@@ -175,7 +175,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
                   level="M"
                 />
               </div>
-              <p className="text-xs text-gray-400 text-center">
+              <p className="text-xs text-gray-500 text-center">
                 Mostre este código ao organizador do evento
               </p>
             </div>
@@ -197,7 +197,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
             <h2 className="font-bold text-gray-800">Próximos Eventos</h2>
           </div>
           {eventos.length === 0 ? (
-            <div className="bg-white rounded-xl p-6 text-center text-gray-400 text-sm">
+            <div className="bg-white rounded-xl p-6 text-center text-gray-500 text-sm">
               Nenhum evento programado
             </div>
           ) : (
@@ -220,7 +220,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
                         {evento.horario}
                       </span>
                     </div>
-                    <p className="flex items-center gap-1 text-xs text-gray-400 mt-1">
+                    <p className="flex items-center gap-1 text-xs text-gray-500 mt-1">
                       <MapPin className="w-3.5 h-3.5" />
                       {evento.local}
                     </p>
@@ -253,7 +253,7 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
             <h2 className="font-bold text-gray-800">Enquetes Ativas</h2>
           </div>
           {enquetes.length === 0 ? (
-            <div className="bg-white rounded-xl p-6 text-center text-gray-400 text-sm">
+            <div className="bg-white rounded-xl p-6 text-center text-gray-500 text-sm">
               Nenhuma enquete ativa no momento
             </div>
           ) : (
@@ -307,10 +307,10 @@ export function ElectorHomeScreen({ user, onLogout }: Props) {
                 </div>
                 <div>
                   <p className="text-sm font-semibold text-gray-800">WhatsApp da Campanha</p>
-                  <p className="text-xs text-gray-400">Tire dúvidas ou envie sugestões</p>
+                  <p className="text-xs text-gray-500">Tire dúvidas ou envie sugestões</p>
                 </div>
               </div>
-              <ChevronRight className="w-4 h-4 text-gray-400" />
+              <ChevronRight className="w-4 h-4 text-gray-500" />
             </a>
           </div>
         </section>

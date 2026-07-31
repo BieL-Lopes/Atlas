@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import {
   Users, Shield, Settings, ChevronRight, UserPlus, Trash2, Edit2,
   Download, BarChart2, TrendingUp, Target, Megaphone, Map, Bell, MessageCircle, Camera, Upload
@@ -9,7 +9,7 @@ import { ComunicadoModal } from './ComunicadoModal';
 import { GenerateInviteModal } from './GenerateInviteModal';
 import { CheckinPortariaModal } from './CheckinPortariaModal';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
-import { HeatmapScreen } from './HeatmapScreen';
+const HeatmapScreen = lazy(() => import('./HeatmapScreen').then(m => ({ default: m.HeatmapScreen })));
 import { SettingsCampaignModal } from './SettingsCampaignModal';
 import { SettingsVoteLevelsModal } from './SettingsVoteLevelsModal';
 import { SettingsRegionsModal } from './SettingsRegionsModal';
@@ -421,10 +421,10 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="p-2 text-gray-400 hover:text-gold hover:bg-gold rounded-lg transition-colors">
+                      <button className="p-2 text-gray-500 hover:text-gold hover:bg-gold rounded-lg transition-colors">
                         <Edit2 className="w-4 h-4" />
                       </button>
-                      <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                      <button className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
                         <Trash2 className="w-4 h-4" />
                       </button>
                       <ChevronRight className="w-5 h-5 text-gray-300" />
@@ -440,7 +440,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
         {activeTab === 'dashboard' && showDashboard && (
           <div className="space-y-4">
             {electors.length === 0 ? (
-              <div className="bg-white rounded-xl shadow p-8 text-center text-gray-400">
+              <div className="bg-white rounded-xl shadow p-8 text-center text-gray-500">
                 <BarChart2 className="w-12 h-12 mx-auto mb-3 opacity-40" />
                 <p className="font-medium">Nenhum eleitor cadastrado ainda.</p>
                 <p className="text-sm mt-1">Os gráficos aparecerão após os primeiros cadastros.</p>
@@ -568,10 +568,11 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
           </div>
         )}
 
-        {/* ── Tab Mapa ── */}
         {activeTab === 'mapa' && showDashboard && (
           <div className="h-[calc(100vh-180px)]">
-            <HeatmapScreen electors={electors} users={users} />
+            <Suspense fallback={<div className="flex h-full items-center justify-center text-gray-500">Carregando mapa...</div>}>
+              <HeatmapScreen electors={electors} users={users} />
+            </Suspense>
           </div>
         )}
 
@@ -618,7 +619,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
                 </h2>
               </div>
               {disparosHistory.length === 0 ? (
-                <div className="p-8 text-center text-gray-400">
+                <div className="p-8 text-center text-gray-500">
                   <MessageCircle className="w-10 h-10 mx-auto mb-2 opacity-25" />
                   <p className="text-sm">Nenhum disparo realizado ainda</p>
                 </div>
@@ -673,7 +674,7 @@ export function AdminScreen({ user, electors, users, canExport }: Props) {
                       <h3 className="font-semibold text-gray-900 text-left">{item.title}</h3>
                       <p className="text-sm text-gray-500">{item.desc}</p>
                     </div>
-                    <ChevronRight className="w-5 h-5 text-gray-400" />
+                    <ChevronRight className="w-5 h-5 text-gray-500" />
                   </button>
                 ))}
               </div>

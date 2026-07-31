@@ -61,12 +61,12 @@ export function SettingsRegionsModal({ settings, onClose, onSave }: Props) {
 
       <div className="max-h-60 overflow-y-auto space-y-2 border border-gray-100 rounded-xl p-2 bg-gray-50">
         {regions.length === 0 ? (
-          <p className="text-center text-sm text-gray-400 py-4">Nenhuma região cadastrada.</p>
+          <p className="text-center text-sm text-gray-500 py-4">Nenhuma região cadastrada.</p>
         ) : (
           regions.map((region, idx) => (
             <div key={idx} className="flex justify-between items-center bg-white p-2 px-3 rounded-lg border border-gray-200">
               <span className="text-sm text-gray-800">{region}</span>
-              <button onClick={() => handleRemove(region)} className="text-gray-400 hover:text-red-500 transition-colors">
+              <button onClick={() => handleRemove(region)} className="text-gray-500 hover:text-red-500 transition-colors">
                 <Trash2 className="w-4 h-4" />
               </button>
             </div>

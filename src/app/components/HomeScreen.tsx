@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { Plus, Users, TrendingUp, MapPin, LogOut, Clock, Calendar, PieChart, Megaphone, ChevronDown, ChevronUp, Flame, Target, Trophy } from 'lucide-react';
 import { UserRole, getPermissions, ROLE_LABELS } from '../lib/rbac';
 import { ElectorData } from './CaptureForm';
@@ -6,7 +6,7 @@ import { User } from '../lib/auth';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { META_DIARIA, MEDALS } from '../lib/gamification';
 import { toast } from 'sonner';
-import { InviteShareModule } from './InviteShareModule';
+const InviteShareModule = lazy(() => import('./InviteShareModule').then(m => ({ default: m.InviteShareModule })));
 
 interface Activity {
   id: string;
@@ -173,7 +173,9 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
       <div className="px-4 -mt-16">
         {user && (
           <div className="mb-6">
-            <InviteShareModule user={user} />
+            <Suspense fallback={<div className="animate-pulse bg-gray-200 h-16 rounded-xl"></div>}>
+              <InviteShareModule user={user} />
+            </Suspense>
           </div>
         )}
 
@@ -234,12 +236,12 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
                   captadorStats.streak > 0 ? 'text-orange-500' : 'text-gray-300'
                 }`} />
                 <p className="text-2xl font-bold text-gray-900">{captadorStats.streak}</p>
-                <p className="text-xs text-gray-400">Dias seguidos</p>
+                <p className="text-xs text-gray-500">Dias seguidos</p>
               </div>
               <div className="bg-white rounded-2xl shadow p-4 flex flex-col items-center justify-center">
                 <Trophy className="w-6 h-6 text-yellow-500 mb-1" />
                 <p className="text-2xl font-bold text-gray-900">#{captadorStats.rank}</p>
-                <p className="text-xs text-gray-400">Ranking</p>
+                <p className="text-xs text-gray-500">Ranking</p>
               </div>
             </div>
 
@@ -330,7 +332,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
             <h3 className="font-bold text-gray-900">Top 3 Regiões</h3>
           </div>
           {top3Regioes.length === 0 ? (
-            <p className="text-sm text-gray-400 text-center py-4">Nenhum eleitor cadastrado ainda</p>
+            <p className="text-sm text-gray-500 text-center py-4">Nenhum eleitor cadastrado ainda</p>
           ) : (
             <div className="space-y-4">
               {top3Regioes.map(([nome, count]) => (
@@ -365,7 +367,7 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
 
           <div className="space-y-3">
             {agendaHoje.length === 0 ? (
-              <div className="bg-white rounded-xl shadow p-4 text-center text-sm text-gray-400">
+              <div className="bg-white rounded-xl shadow p-4 text-center text-sm text-gray-500">
                 Nenhum item na agenda para hoje
               </div>
             ) : (
@@ -432,13 +434,13 @@ export function HomeScreen({ user, userName, totalCadastros, votoStats, onNaviga
                   >
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold text-gray-900 text-sm truncate">{com.titulo}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-xs text-gray-500 mt-0.5">
                         {com.remetente_nome} · {new Date(com.criado_em).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     {expandedCom === com.id
-                      ? <ChevronUp className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />
-                      : <ChevronDown className="w-4 h-4 text-gray-400 shrink-0 mt-0.5" />}
+                      ? <ChevronUp className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
+                      : <ChevronDown className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />}
                   </button>
                   {expandedCom === com.id && (
                     <div className="px-4 pb-4">

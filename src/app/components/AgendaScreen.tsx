@@ -305,13 +305,13 @@ export function AgendaScreen({ user }: AgendaScreenProps) {
                     <div className="space-y-1 text-sm text-gray-600">
                       {activity.location && (
                         <div className="flex items-center">
-                          <MapPin className="w-4 h-4 mr-2 text-gray-400" />
+                          <MapPin className="w-4 h-4 mr-2 text-gray-500" />
                           <span>{activity.location}</span>
                         </div>
                       )}
                       {activity.electorName && (
                         <div className="flex items-center">
-                          <Users className="w-4 h-4 mr-2 text-gray-400" />
+                          <Users className="w-4 h-4 mr-2 text-gray-500" />
                           <span>{activity.electorName}</span>
                         </div>
                       )}

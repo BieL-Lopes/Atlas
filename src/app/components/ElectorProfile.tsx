@@ -210,7 +210,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
 
             {elector.createdByName && elector.createdByName !== 'Desconhecido' && (
               <div className="flex items-center text-gray-500 text-xs border-t border-gray-100 pt-2 mt-2">
-                <UserCheck className="w-4 h-4 mr-3 text-gray-400" />
+                <UserCheck className="w-4 h-4 mr-3 text-gray-500" />
                 <span>Cadastrado por <span className="font-medium">{elector.createdByName}</span>
                   {elector.regiao ? ` — ${elector.regiao}` : ''}
                 </span>
@@ -243,7 +243,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
                     level="M"
                   />
                 </div>
-                <p className="text-xs text-gray-400 text-center">
+                <p className="text-xs text-gray-500 text-center">
                   Escaneie para preencher o título automaticamente
                 </p>
               </div>
@@ -422,7 +422,7 @@ export function ElectorProfile({ elector, onBack, onUpdate, onEdit }: ElectorPro
                   <div className="text-center py-8 text-gray-500">
                     <Clock className="w-12 h-12 mx-auto mb-2 text-gray-300" />
                     <p className="text-sm">Nenhuma visita ou reunião registrada</p>
-                    <p className="text-xs text-gray-400 mt-2">Use a aba Agenda para criar atividades</p>
+                    <p className="text-xs text-gray-500 mt-2">Use a aba Agenda para criar atividades</p>
                   </div>
                 ) : (
                   <div className="space-y-3">

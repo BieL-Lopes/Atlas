@@ -132,17 +132,17 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
         <div className="bg-white border-b border-gray-200 px-4 py-3 grid grid-cols-3 text-center divide-x divide-gray-100">
           <div>
             <p className="text-lg font-bold text-gold-deep">{myElectors.length}</p>
-            <p className="text-xs text-gray-400">Cadastros</p>
+            <p className="text-xs text-gray-500">Cadastros</p>
           </div>
           <div>
             <p className="text-lg font-bold text-emerald-600">{myGPS.length}</p>
-            <p className="text-xs text-gray-400">Com GPS</p>
+            <p className="text-xs text-gray-500">Com GPS</p>
           </div>
           <div>
             <p className="text-lg font-bold text-orange-500 flex items-center justify-center gap-0.5">
               <Flame className="w-4 h-4" />{myStreak}
             </p>
-            <p className="text-xs text-gray-400">Streak</p>
+            <p className="text-xs text-gray-500">Streak</p>
           </div>
         </div>
       )}
@@ -153,7 +153,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
           <div className="h-full flex flex-col items-center justify-center bg-gray-200 text-gray-500">
             <MapPin className="w-10 h-10 mb-2 opacity-40" />
             <p className="text-sm">Nenhum check-in com localização ainda.</p>
-            <p className="text-xs text-gray-400 mt-1">GPS é capturado automaticamente ao cadastrar.</p>
+            <p className="text-xs text-gray-500 mt-1">GPS é capturado automaticamente ao cadastrar.</p>
           </div>
         ) : (
           <MapContainer
@@ -180,7 +180,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
                       <div className="text-sm">
                         <p className="font-bold">{e.nome}</p>
                         <p className="text-gray-500">{e.bairro}, {e.cidade}</p>
-                        <p className="text-gray-400 text-xs mt-1">{formatDate(e.dataCadastro)}</p>
+                        <p className="text-gray-500 text-xs mt-1">{formatDate(e.dataCadastro)}</p>
                       </div>
                     </Popup>
                   </CircleMarker>
@@ -200,7 +200,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
                           <p className="font-bold text-xs" style={{ color }}>● {captName}</p>
                           <p>{e.nome}</p>
                           <p className="text-gray-500">{e.bairro}, {e.cidade}</p>
-                          <p className="text-gray-400 text-xs mt-1">{formatDate(e.dataCadastro)}</p>
+                          <p className="text-gray-500 text-xs mt-1">{formatDate(e.dataCadastro)}</p>
                         </div>
                       </Popup>
                     </CircleMarker>
@@ -229,7 +229,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
                       style={{ background: CAPTADOR_COLORS[i % CAPTADOR_COLORS.length] }}
                     />
                     <span className="font-medium text-gray-700">{c.name}</span>
-                    <span className="text-gray-400">({count})</span>
+                    <span className="text-gray-500">({count})</span>
                   </div>
                 );
               })}
@@ -241,7 +241,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
         {isCaptador && (
           <>
             {myGPS.length === 0 ? (
-              <div className="bg-white rounded-2xl shadow p-6 text-center text-gray-400">
+              <div className="bg-white rounded-2xl shadow p-6 text-center text-gray-500">
                 <Calendar className="w-10 h-10 mx-auto mb-2 opacity-30" />
                 <p className="text-sm">Histórico aparecerá aqui conforme você cadastrar eleitores com GPS ativo.</p>
               </div>
@@ -261,9 +261,9 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
                         <MapPin className="w-4 h-4 text-gold-soft shrink-0" />
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-gray-900 truncate">{e.nome}</p>
-                          <p className="text-xs text-gray-400">{e.bairro}, {e.cidade}</p>
+                          <p className="text-xs text-gray-500">{e.bairro}, {e.cidade}</p>
                         </div>
-                        <p className="text-xs text-gray-400 shrink-0">
+                        <p className="text-xs text-gray-500 shrink-0">
                           {new Date(e.dataCadastro).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                         </p>
                       </div>
@@ -282,7 +282,7 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
               <p className="text-sm font-bold text-gray-900">Resumo por captador</p>
             </div>
             {captadores.length === 0 ? (
-              <p className="p-4 text-sm text-gray-400 text-center">Nenhum captador cadastrado.</p>
+              <p className="p-4 text-sm text-gray-500 text-center">Nenhum captador cadastrado.</p>
             ) : (
               <div className="divide-y divide-gray-50">
                 {captadores.map((c, i) => {
@@ -301,13 +301,13 @@ export function CheckinMapScreen({ user, electors, users, onBack, mode = 'captad
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-gray-900 truncate">{c.name}</p>
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-gray-500">
                           {lastDate ? `Último: ${formatDate(lastDate)}` : 'Sem cadastros'}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-bold text-gold-deep">{total}</p>
-                        <p className="text-xs text-gray-400">{withGPS} GPS</p>
+                        <p className="text-xs text-gray-500">{withGPS} GPS</p>
                       </div>
                     </div>
                   );

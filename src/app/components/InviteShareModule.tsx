@@ -44,6 +44,7 @@ export function InviteShareModule({ user }: InviteShareModuleProps) {
             <input
               type="text"
               readOnly
+              aria-label="Link de indicação"
               value={inviteLink}
               className="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl px-3 py-2.5 focus:outline-none"
             />

@@ -347,7 +347,7 @@ export function SignupForm({
                   <button
                     type="button"
                     onClick={() => setShowSenha(!showSenha)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                     disabled={step !== 'form'}
                   >
                     {showSenha ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -371,7 +371,7 @@ export function SignupForm({
                   <button
                     type="button"
                     onClick={() => setShowConfirma(!showConfirma)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
                     disabled={step !== 'form'}
                   >
                     {showConfirma ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

@@ -252,7 +252,7 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
               <div className="flex items-center gap-2">
                 <h2 className="font-bold text-gray-900">Importar Contatos</h2>
                 <div className="relative group">
-                  <Info className="w-4 h-4 text-gray-400 cursor-help transition-colors hover:text-gold" />
+                  <Info className="w-4 h-4 text-gray-500 cursor-help transition-colors hover:text-gold" />
                   <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-gray-800 text-white text-xs rounded-lg p-3 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 shadow-xl border border-gray-700 pointer-events-none">
                     <p className="font-semibold mb-2 border-b border-gray-700 pb-1">Colunas esperadas:</p>
                     <ul className="space-y-1.5 text-gray-300">
@@ -275,7 +275,7 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
             </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
@@ -294,12 +294,12 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
                   : 'border-gray-300 hover:border-gold-deep hover:bg-gray-50'
               }`}
             >
-              <FileSpreadsheet className={`w-14 h-14 mx-auto mb-4 ${isDragging ? 'text-gold-deep' : 'text-gray-400'}`} />
+              <FileSpreadsheet className={`w-14 h-14 mx-auto mb-4 ${isDragging ? 'text-gold-deep' : 'text-gray-500'}`} />
               <p className="text-lg font-semibold text-gray-700 mb-1">
                 {isDragging ? 'Solte o arquivo aqui' : 'Arraste o arquivo ou clique para selecionar'}
               </p>
               <p className="text-sm text-gray-500">Suporta .csv e .xlsx (máx. 10MB)</p>
-              <div className="mt-4 flex gap-2 justify-center text-xs text-gray-400">
+              <div className="mt-4 flex gap-2 justify-center text-xs text-gray-500">
                 <span className="px-2 py-1 bg-gray-100 rounded">nome</span>
                 <span className="px-2 py-1 bg-gray-100 rounded">whatsapp</span>
                 <span className="px-2 py-1 bg-gray-100 rounded">cidade</span>
@@ -339,7 +339,7 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
                   <p className="text-xs text-gray-500">Válidos</p>
                 </div>
                 <div className={`rounded-lg p-3 text-center ${invalidCount > 0 ? 'bg-red-50' : 'bg-gray-50'}`}>
-                  <p className={`text-xl font-bold ${invalidCount > 0 ? 'text-red-600' : 'text-gray-400'}`}>{invalidCount}</p>
+                  <p className={`text-xl font-bold ${invalidCount > 0 ? 'text-red-600' : 'text-gray-500'}`}>{invalidCount}</p>
                   <p className="text-xs text-gray-500">Com erros</p>
                 </div>
               </div>
@@ -363,7 +363,7 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
                     <tbody className="divide-y divide-gray-100">
                       {validationResults.slice(0, 5).map((v) => (
                         <tr key={v.index} className={v.isValid ? '' : 'bg-red-50'}>
-                          <td className="px-3 py-2 text-xs text-gray-400">{v.index}</td>
+                          <td className="px-3 py-2 text-xs text-gray-500">{v.index}</td>
                           <td className="px-3 py-2 font-medium text-gray-900 max-w-[120px] truncate">{v.row.nome || '—'}</td>
                           <td className="px-3 py-2 text-gray-600 max-w-[100px] truncate">{v.row.whatsapp || '—'}</td>
                           <td className="px-3 py-2 text-gray-600 max-w-[100px] truncate">{v.row.cidade || '—'}</td>
@@ -428,7 +428,7 @@ export function MassImportModal({ user, onClose, onImported }: Props) {
                   <p className="text-xs text-gray-600">Erros</p>
                 </div>
               </div>
-              <p className="text-xs text-gray-400">Os contatos serão sincronizados automaticamente com o servidor.</p>
+              <p className="text-xs text-gray-500">Os contatos serão sincronizados automaticamente com o servidor.</p>
             </div>
           )}
         </div>
