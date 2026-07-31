@@ -63,7 +63,7 @@ export function Leaderboard({ tenantId, currentUserId }: LeaderboardProps) {
           entries.map((entry) => {
             const isMe = entry.id === currentUserId;
             
-            let rankStyles = "bg-white";
+            let rankStyles: string;
             let rankIcon = null;
             
             if (entry.rank === 1) {

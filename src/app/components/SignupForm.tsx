@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, CheckCircle, AlertCircle, Loader2, Eye, EyeOff, User as UserIcon, UserPlus } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { ROLE_LABELS } from '../lib/rbac';
 import { LocationFields } from './LocationFields';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -214,13 +215,7 @@ export function SignupForm({
     }
   };
 
-  const roleDisplayNames: Record<string, string> = {
-    administrador: 'Administrador',
-    sub_coordenador: 'Sub-Coordenador',
-    lideranca: 'Liderança',
-    colaborador: 'Colaborador / Voluntário',
-    cabo_eleitoral: 'Cabo Eleitoral / Captador de Voto'
-  };
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -248,7 +243,7 @@ export function SignupForm({
                   Criar Conta
                 </h2>
                 <p className="text-gray-600 text-sm">
-                  Perfil: <strong>{roleDisplayNames[role]}</strong>
+                  Perfil: <strong>{ROLE_LABELS[role] || role}</strong>
                 </p>
               </div>
 

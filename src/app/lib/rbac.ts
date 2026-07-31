@@ -10,9 +10,11 @@ export type UserRole =
 export type Tab = 'home' | 'contacts' | 'agenda' | 'polls' | 'admin' | 'coordination' | 'results' | 'logs' | 'reports' | 'invite';
 
 // Labels amigaveis para os papeis
-export const ROLE_LABELS: Record<UserRole, string> = {
+export const ROLE_LABELS: Record<string, string> = {
   candidato: 'Candidato',
   coordenador: 'Coordenador',
+  administrador: 'Administrador',
+  sub_coordenador: 'Sub-Coordenador',
   lideranca: 'Liderança',
   colaborador: 'Colaborador / Voluntário',
   cabo_eleitoral: 'Cabo Eleitoral / Captador de Voto'

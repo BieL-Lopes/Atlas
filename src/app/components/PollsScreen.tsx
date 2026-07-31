@@ -31,8 +31,6 @@ export function PollsScreen({ user }: PollsScreenProps) {
 
   const canManage = getPermissions(user.role).canManagePolls;
 
-  useEffect(() => { fetchPolls(); }, []);
-
   const fetchPolls = async () => {
     setLoading(true);
     if (isSupabaseConfigured && supabase) {
@@ -64,6 +62,8 @@ export function PollsScreen({ user }: PollsScreenProps) {
     }
     setLoading(false);
   };
+
+  useEffect(() => { fetchPolls(); }, []);
 
   const handleCreate = async () => {
     const titulo = formTitulo.trim();

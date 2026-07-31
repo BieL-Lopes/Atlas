@@ -60,13 +60,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       const pathname = window.location.pathname;
       const match = pathname.match(/^\/convite\/(.+)$/);
       
-      let refId = null;
-      if (match) {
-        refId = match[1];
-      } else {
-        const params = new URLSearchParams(window.location.search);
-        refId = params.get('ref');
-      }
+      const refId = match 
+        ? match[1] 
+        : new URLSearchParams(window.location.search).get('ref');
 
       if (refId) {
         // Altera imediatamente o estado para forçar a renderização do formulário de cadastro
@@ -79,11 +75,12 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
               .single();
           
           if (data) {
+            const row = data as any;
             const refData: ReferrerData = {
-              id: data.id,
-              nome: data.nome,
-              regiao: data.regiao,
-              deputado_id: data.deputado_id
+              id: row.id,
+              nome: row.nome,
+              regiao: row.regiao,
+              deputado_id: row.deputado_id
             };
             setReferrer(refData);
           }

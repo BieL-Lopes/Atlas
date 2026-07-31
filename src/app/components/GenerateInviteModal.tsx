@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { X, Copy, Check, UserPlus, MapPin } from 'lucide-react';
+import { Copy, Check, UserPlus, MapPin } from 'lucide-react';
 import { UserRole, ROLE_LABELS } from '../lib/rbac';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
 import { User } from '../lib/auth';
 import { getSystemSettings } from '../lib/settings';
+import { ModalShell } from './ModalShell';
+import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
 
 interface GenerateInviteModalProps {
   user: User;
@@ -15,8 +17,8 @@ export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps)
   const [selectedRegion, setSelectedRegion] = useState('');
   const [generatedCode, setGeneratedCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState(false);
   const [error, setError] = useState('');
+  const { copied, copyToClipboard } = useCopyToClipboard();
   const regions = getSystemSettings().regions;
 
   // Região é obrigatória para todos os papéis exceto candidato
@@ -61,115 +63,103 @@ export function GenerateInviteModal({ user, onClose }: GenerateInviteModalProps)
     setLoading(false);
   };
 
-  const handleCopy = () => {
-    if (generatedCode) {
-      navigator.clipboard.writeText(generatedCode);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
-  };
+  const inviteLink = generatedCode
+    ? `${window.location.origin}/convite/${generatedCode}`
+    : '';
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-xl">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-          <h2 className="font-bold text-gray-900 flex items-center gap-2">
-            <UserPlus className="w-5 h-5 text-gold-deep" />
-            Gerar Convite
-          </h2>
-          <button onClick={onClose} className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
+    <ModalShell
+      title="Gerar Convite"
+      subtitle="Crie um link de acesso"
+      icon={UserPlus}
+      onClose={onClose}
+      maxWidth="max-w-md"
+    >
+      {!generatedCode ? (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Perfil de Acesso
+            </label>
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as UserRole)}
+              className="w-full border-gray-300 rounded-xl shadow-sm py-2.5 px-3 focus:ring-gold-deep focus:border-gold-deep"
+            >
+              {Object.entries(ROLE_LABELS).map(([key, label]) => (
+                <option key={key} value={key}>{label}</option>
+              ))}
+            </select>
+            <p className="text-xs text-gray-500 mt-2">
+              Um código único será gerado para que o usuário crie sua conta com este perfil.
+            </p>
+          </div>
 
-        <div className="p-6">
-          {!generatedCode ? (
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Perfil de Acesso
-                </label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as UserRole)}
-                  className="w-full border-gray-300 rounded-xl shadow-sm py-2.5 px-3 focus:ring-gold-deep focus:border-gold-deep"
-                >
-                  {Object.entries(ROLE_LABELS).map(([key, label]) => (
-                    <option key={key} value={key}>{label}</option>
-                  ))}
-                </select>
-                <p className="text-xs text-gray-500 mt-2">
-                  Um código único será gerado para que o usuário crie sua conta com este perfil.
-                </p>
-              </div>
-
-              {requiresRegion && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    <span className="flex items-center gap-1.5">
-                      <MapPin className="w-4 h-4 text-gold-deep" />
-                      Região *
-                    </span>
-                  </label>
-                  <select
-                    value={selectedRegion}
-                    onChange={(e) => setSelectedRegion(e.target.value)}
-                    className="w-full border-gray-300 rounded-xl shadow-sm py-2.5 px-3 focus:ring-gold-deep focus:border-gold-deep"
-                  >
-                    <option value="">Selecione a região...</option>
-                    {regions.map((region) => (
-                      <option key={region} value={region}>{region}</option>
-                    ))}
-                  </select>
-                  <p className="text-xs text-gray-500 mt-1">
-                    O voluntário será vinculado a esta região ao se cadastrar.
-                  </p>
-                </div>
-              )}
-
-              {error && (
-                <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
-                  {error}
-                </div>
-              )}
-
-              <button
-                onClick={handleGenerate}
-                disabled={loading}
-                className="w-full py-3 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold transition-colors disabled:opacity-50"
+          {requiresRegion && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                <span className="flex items-center gap-1.5">
+                  <MapPin className="w-4 h-4 text-gold-deep" />
+                  Região *
+                </span>
+              </label>
+              <select
+                value={selectedRegion}
+                onChange={(e) => setSelectedRegion(e.target.value)}
+                className="w-full border-gray-300 rounded-xl shadow-sm py-2.5 px-3 focus:ring-gold-deep focus:border-gold-deep"
               >
-                {loading ? 'Gerando...' : 'Gerar Código de Convite'}
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-6 text-center">
-              <div>
-                <p className="text-sm text-gray-600 mb-2">Código gerado com sucesso!</p>
-                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-4 flex items-center justify-between">
-                  <span className="text-3xl font-mono font-bold tracking-widest text-gray-900 mx-auto">
-                    {generatedCode}
-                  </span>
-                </div>
-              </div>
-
-              <button
-                onClick={handleCopy}
-                className="w-full py-3 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-semibold transition-colors"
-              >
-                {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5" />}
-                {copied ? 'Copiado!' : 'Copiar Código'}
-              </button>
-
-              <button
-                onClick={onClose}
-                className="w-full py-3 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold transition-colors"
-              >
-                Concluir
-              </button>
+                <option value="">Selecione a região...</option>
+                {regions.map((region) => (
+                  <option key={region} value={region}>{region}</option>
+                ))}
+              </select>
+              <p className="text-xs text-gray-500 mt-1">
+                O voluntário será vinculado a esta região ao se cadastrar.
+              </p>
             </div>
           )}
+
+          {error && (
+            <div className="p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+              {error}
+            </div>
+          )}
+
+          <button
+            onClick={handleGenerate}
+            disabled={loading}
+            className="w-full py-3 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold transition-colors disabled:opacity-50"
+          >
+            {loading ? 'Gerando...' : 'Gerar Código de Convite'}
+          </button>
         </div>
-      </div>
-    </div>
+      ) : (
+        <div className="space-y-6 text-center">
+          <div>
+            <p className="text-sm text-gray-600 mb-2">Link gerado com sucesso!</p>
+            <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-4 flex items-center justify-between overflow-x-auto">
+              <span className="text-lg font-mono font-bold text-gray-900 mx-auto whitespace-nowrap">
+                {inviteLink}
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={() => copyToClipboard(inviteLink)}
+            className="w-full py-3 flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl font-semibold transition-colors"
+          >
+            {copied ? <Check className="w-5 h-5 text-emerald-600" /> : <Copy className="w-5 h-5" />}
+            {copied ? 'Link Copiado!' : 'Copiar Link'}
+          </button>
+
+          <button
+            onClick={onClose}
+            className="w-full py-3 bg-gold-deep hover:bg-gold-deep text-white rounded-xl font-semibold transition-colors"
+          >
+            Concluir
+          </button>
+        </div>
+      )}
+    </ModalShell>
   );
 }

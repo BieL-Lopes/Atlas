@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react';
-import { X, Download, Upload, Database } from 'lucide-react';
+import { useRef } from 'react';
+import { Download, Upload, Database } from 'lucide-react';
 import { toast } from 'sonner';
+import { ModalShell } from './ModalShell';
 
 interface Props {
   onClose: () => void;
@@ -68,69 +69,51 @@ export function SettingsBackupModal({ onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-end sm:items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg">
-        {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-gray-100">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-gold/10 rounded-xl flex items-center justify-center">
-              <Database className="w-5 h-5 text-gold-deep" />
-            </div>
-            <div>
-              <h2 className="font-bold text-gray-900">Backup de Dados</h2>
-              <p className="text-xs text-gray-400">Exportar e restaurar via JSON</p>
-            </div>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-xl transition-colors">
-            <X className="w-5 h-5 text-gray-400" />
+    <ModalShell
+      title="Backup de Dados"
+      subtitle="Exportar e restaurar via JSON"
+      icon={Database}
+      onClose={onClose}
+      footerActions={[
+        { label: 'Fechar', onClick: onClose, variant: 'secondary' },
+      ]}
+    >
+      <div className="space-y-6">
+        <div className="bg-blue-50 border border-gold-deep rounded-xl p-4">
+          <p className="text-sm text-gold-deep font-medium mb-1">Exportar Base de Dados</p>
+          <p className="text-xs text-gold-deep mb-3">
+            Gera um arquivo .json com todos os eleitores, usuários e configurações salvas no dispositivo atual.
+          </p>
+          <button
+            onClick={handleExport}
+            className="w-full py-2.5 bg-gold-deep hover:bg-gold-deep text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            Baixar Backup
           </button>
         </div>
 
-        {/* Content */}
-        <div className="p-5 space-y-6">
-          <div className="bg-blue-50 border border-gold-deep rounded-xl p-4">
-            <p className="text-sm text-gold-deep font-medium mb-1">Exportar Base de Dados</p>
-            <p className="text-xs text-gold-deep mb-3">
-              Gera um arquivo .json com todos os eleitores, usuários e configurações salvas no dispositivo atual.
-            </p>
-            <button
-              onClick={handleExport}
-              className="w-full py-2.5 bg-gold-deep hover:bg-gold-deep text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
-            >
-              <Download className="w-4 h-4" />
-              Baixar Backup
-            </button>
-          </div>
-
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-            <p className="text-sm text-red-800 font-medium mb-1">Restaurar Base de Dados</p>
-            <p className="text-xs text-red-700 mb-3">
-              Cuidado: Carregar um backup substituirá <strong>TODOS</strong> os dados atuais deste dispositivo.
-            </p>
-            <input
-              type="file"
-              accept=".json"
-              ref={fileInputRef}
-              onChange={handleImport}
-              className="hidden"
-            />
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
-            >
-              <Upload className="w-4 h-4" />
-              Carregar Backup
-            </button>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="p-5 pt-0">
-          <button onClick={onClose} className="w-full py-2.5 border border-gray-200 text-gray-600 rounded-xl font-semibold text-sm hover:bg-gray-50 transition-colors">
-            Fechar
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p className="text-sm text-red-800 font-medium mb-1">Restaurar Base de Dados</p>
+          <p className="text-xs text-red-700 mb-3">
+            Cuidado: Carregar um backup substituirá <strong>TODOS</strong> os dados atuais deste dispositivo.
+          </p>
+          <input
+            type="file"
+            accept=".json"
+            ref={fileInputRef}
+            onChange={handleImport}
+            className="hidden"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white rounded-lg font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+          >
+            <Upload className="w-4 h-4" />
+            Carregar Backup
           </button>
         </div>
       </div>
-    </div>
+    </ModalShell>
   );
 }

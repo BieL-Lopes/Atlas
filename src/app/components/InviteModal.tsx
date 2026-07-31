@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { AlertCircle, CheckCircle, Loader2, X } from 'lucide-react';
 import { supabase, isSupabaseConfigured } from '../lib/supabase';
+import { ROLE_LABELS } from '../lib/rbac';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -74,13 +75,7 @@ export function InviteModal({ onClose, onInviteValidated }: InviteModalProps) {
     onClose();
   };
 
-  const roleDisplayNames: Record<string, string> = {
-    administrador: 'Administrador',
-    sub_coordenador: 'Sub-Coordenador',
-    lideranca: 'Liderança',
-    colaborador: 'Colaborador / Voluntário',
-    cabo_eleitoral: 'Cabo Eleitoral / Captador de Voto'
-  };
+
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -171,7 +166,7 @@ export function InviteModal({ onClose, onInviteValidated }: InviteModalProps) {
               </h2>
               <p className="text-gray-600 text-sm">
                 Seu perfil de acesso foi confirmado como{' '}
-                <strong>{roleDisplayNames[validatedRole]}</strong>
+                <strong>{ROLE_LABELS[validatedRole] || validatedRole}</strong>
               </p>
             </div>
 

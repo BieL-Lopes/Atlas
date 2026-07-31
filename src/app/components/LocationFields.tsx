@@ -46,6 +46,7 @@ export function LocationFields({
 
   useEffect(() => {
     if (!uf) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMunicipios([]);
       return;
     }

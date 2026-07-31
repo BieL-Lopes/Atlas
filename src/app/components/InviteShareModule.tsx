@@ -1,24 +1,18 @@
-import { useState } from 'react';
-import { Copy, Check, MessageCircle, Share2, Users } from 'lucide-react';
+import { Copy, Check, MessageCircle, Users } from 'lucide-react';
 import { User } from '../lib/auth';
+import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
 
 interface InviteShareModuleProps {
   user: User;
 }
 
 export function InviteShareModule({ user }: InviteShareModuleProps) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copyToClipboard } = useCopyToClipboard();
 
   // Usa o origin atual para o link dinâmico, formato amigável /convite/CODIGO (fallback para ID se legado)
   const refCode = user.codigoConvite || user.id;
   const inviteLink = `${window.location.origin}/convite/${refCode}`;
   const promotionalText = `Olá! Tudo bem? Passando para te fazer um convite especial. Cadastre-se agora para receber as novidades da nossa campanha em primeira mão e fazer parte desse time. Clique no link e venha com a gente: ${inviteLink}`;
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(inviteLink);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const handleShareWhatsApp = () => {
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(promotionalText)}`;
@@ -54,7 +48,7 @@ export function InviteShareModule({ user }: InviteShareModuleProps) {
               className="flex-1 bg-gray-50 border border-gray-200 text-gray-700 text-sm rounded-xl px-3 py-2.5 focus:outline-none"
             />
             <button
-              onClick={handleCopy}
+              onClick={() => copyToClipboard(inviteLink)}
               className="flex items-center justify-center w-12 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl transition-colors"
               title="Copiar link"
             >

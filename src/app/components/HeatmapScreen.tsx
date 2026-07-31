@@ -88,7 +88,11 @@ export function HeatmapScreen({ electors, users }: Props) {
   const toggle = (v: VotoKey) =>
     setActiveVotos(prev => {
       const s = new Set(prev);
-      s.has(v) ? s.delete(v) : s.add(v);
+      if (s.has(v)) {
+        s.delete(v);
+      } else {
+        s.add(v);
+      }
       return s;
     });
 
