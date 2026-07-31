@@ -8,6 +8,7 @@ export interface User {
   regiao?: string;
   deputadoId?: string;
   coordenadorRegionalId?: string;
+  codigoConvite?: string;
 }
 
 
@@ -41,7 +42,7 @@ export async function authenticate(login: string, password: string): Promise<Use
     if (!error && data.user) {
       const { data: profile } = await supabase
         .from('perfis')
-        .select('id, nome, role, regiao, deputado_id, coordenador_regional_id')
+        .select('id, nome, role, regiao, deputado_id, coordenador_regional_id, codigo_convite')
         .eq('id', data.user.id)
         .single();
       if (profile) {
@@ -52,6 +53,7 @@ export async function authenticate(login: string, password: string): Promise<Use
           regiao: (profile.regiao as string) ?? undefined,
           deputadoId: (profile.deputado_id as string) ?? undefined,
           coordenadorRegionalId: (profile.coordenador_regional_id as string) ?? undefined,
+          codigoConvite: (profile.codigo_convite as string) ?? undefined,
         };
       }
     }

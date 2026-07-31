@@ -54,11 +54,20 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [showConfirmRegistration, setShowConfirmRegistration] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
-  // Lê parâmetro ?ref= da URL para MMN
+  // Lê o formato /convite/ID ou parâmetro ?ref= da URL para MMN
   useEffect(() => {
     const checkReferral = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const refId = params.get('ref');
+      const pathname = window.location.pathname;
+      const match = pathname.match(/^\/convite\/(.+)$/);
+      
+      let refId = null;
+      if (match) {
+        refId = match[1];
+      } else {
+        const params = new URLSearchParams(window.location.search);
+        refId = params.get('ref');
+      }
+
       if (refId) {
         // Altera imediatamente o estado para forçar a renderização do formulário de cadastro
         setSignupData({ role: 'cabo_eleitoral' });

@@ -57,8 +57,82 @@ CREATE TABLE IF NOT EXISTS public.perfis (
   estado                   TEXT,
   municipio                TEXT,
   bairro                   TEXT,
+  codigo_convite           TEXT UNIQUE,
   created_at               TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+-- =========================================
+-- Encurtador de Link: Geração de Código de Convite
+-- =========================================
+CREATE OR REPLACE FUNCTION public.generate_short_code()
+RETURNS TEXT LANGUAGE plpgsql AS $$
+DECLARE
+  chars TEXT := 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  result TEXT := '';
+  i INTEGER := 0;
+BEGIN
+  FOR i IN 1..6 LOOP
+    result := result || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
+  END LOOP;
+  RETURN result;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION public.set_codigo_convite()
+RETURNS TRIGGER LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  IF NEW.codigo_convite IS NULL THEN
+    -- Tenta até 5 vezes gerar um código único (caso raríssimo de colisão)
+    FOR i IN 1..5 LOOP
+      NEW.codigo_convite := public.generate_short_code();
+      BEGIN
+        -- Tenta um select básico para ver se já existe
+        PERFORM 1 FROM public.perfis WHERE codigo_convite = NEW.codigo_convite;
+        IF NOT FOUND THEN
+          EXIT;
+        END IF;
+      EXCEPTION WHEN OTHERS THEN
+        -- Ignora erros e tenta de novo
+      END;
+    END LOOP;
+  END IF;
+  RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trigger_set_codigo_convite ON public.perfis;
+CREATE TRIGGER trigger_set_codigo_convite
+  BEFORE INSERT ON public.perfis
+  FOR EACH ROW EXECUTE FUNCTION public.set_codigo_convite();
+
+-- =========================================
+-- Retorna os dados do referenciador via UUID ou código curto
+-- =========================================
+DROP FUNCTION IF EXISTS public.get_referrer_info(uuid);
+
+CREATE OR REPLACE FUNCTION public.get_referrer_info(p_id TEXT)
+RETURNS TABLE (
+  id UUID,
+  nome TEXT,
+  regiao TEXT,
+  deputado_id TEXT
+) LANGUAGE plpgsql SECURITY DEFINER AS $$
+BEGIN
+  -- Tenta buscar primeiro assumindo que é um código curto
+  RETURN QUERY
+    SELECT p.id, p.nome, p.regiao, p.deputado_id
+    FROM public.perfis p
+    WHERE p.codigo_convite = p_id;
+
+  -- Se não encontrou e o texto parece ser um UUID, tenta buscar pelo ID original (retrocompatibilidade)
+  IF NOT FOUND AND p_id ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' THEN
+    RETURN QUERY
+      SELECT p.id, p.nome, p.regiao, p.deputado_id
+      FROM public.perfis p
+      WHERE p.id = p_id::UUID;
+  END IF;
+END;
+$$;
 
 COMMENT ON COLUMN public.perfis.aceitou_termos IS 'LGPD: Registro de consentimento explícito do usuário aos Termos de Uso e Política de Privacidade';
 COMMENT ON COLUMN public.perfis.data_aceite_termos IS 'LGPD: Timestamp exato (imutável) do momento em que o usuário aceitou os termos';

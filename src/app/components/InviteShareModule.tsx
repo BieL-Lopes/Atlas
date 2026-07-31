@@ -9,8 +9,9 @@ interface InviteShareModuleProps {
 export function InviteShareModule({ user }: InviteShareModuleProps) {
   const [copied, setCopied] = useState(false);
 
-  // Usa o origin atual para o link dinâmico, adicionando ?ref=ID
-  const inviteLink = `${window.location.origin}/?ref=${user.id}`;
+  // Usa o origin atual para o link dinâmico, formato amigável /convite/CODIGO (fallback para ID se legado)
+  const refCode = user.codigoConvite || user.id;
+  const inviteLink = `${window.location.origin}/convite/${refCode}`;
   const promotionalText = `Olá! Tudo bem? Passando para te fazer um convite especial. Cadastre-se agora para receber as novidades da nossa campanha em primeira mão e fazer parte desse time. Clique no link e venha com a gente: ${inviteLink}`;
 
   const handleCopy = () => {
